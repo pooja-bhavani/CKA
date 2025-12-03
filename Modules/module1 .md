@@ -202,3 +202,30 @@ kubectl cluster-info
 - **Security Tokens** - kubelet can use short-lived, audience-bound ServiceAccount tokens that are automatically rotated
 - **Pod-Level Resources** - enable containers to share CPU and memory from a common pod allocation
 - **Job Success Policy** - allows jobs to succeed when a subset of pods complete successfully
+
+---
+
+## Cluster Lifecycle Management (kubeadm)
+
+Initialize a Single Control Plane
+```
+sudo kubeadm init \
+  --pod-network-cidr=10.244.0.0/16 \
+  --apiserver-advertise-address=<CONTROL_PLANE_IP>
+```
+**Set up kubectl**
+```
+mkdir -p $HOME/.kube
+sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+sudo chown $(id -u):$(id -g) $HOME/.kube/config
+```
+Install a CNI (e.g. Calico, Flannel, Cilium) so Pods can communicate
+#### Weave Net
+```
+kubectl apply -f https://github.com/weaveworks/weave/releases/download/v2.8.1/weave-daemonset-k8s.yaml
+```
+## Join Worker Nodes
+```
+sudo kubeadm join <control-plane-ip>:6443 --token <token> \
+    --discovery-token-ca-cert-hash sha256:<hash>
+    ```
