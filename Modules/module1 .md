@@ -196,6 +196,8 @@ kubectl get pods -A
 # Check cluster info
 kubectl cluster-info
 ```
-## How kind clusters in v1.34 support advanced features 
-Provides **Dynamic Resource Allocation** for GPUs, TPUs, NICs, etc
-
+## Kubernetes v1.34 support advanced features 
+- Provides **Dynamic Resource Allocation** for GPUs, TPUs, NICs, etc
+- **Delayed Job Pod Replacement** -  This policy only creates replacement pods when the original pod is completely terminated
+- **Pod-Level Resources** - enable containers to share CPU and memory from a common pod allocation
+- **Job Success Policy** - allows jobs to succeed when a subset of pods complete successfully.
