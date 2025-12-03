@@ -39,6 +39,8 @@ spec:
     image: nginx
 ```
 
+### Examles
+
 ### Role and RoleBinding (namespace‑scoped)
 Motive: Allow app-sa to list/get/watch Pods only in dev namespace.
 
