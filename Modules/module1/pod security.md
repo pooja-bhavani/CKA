@@ -173,7 +173,7 @@ spec:
 ```
 
 Solution: Pod (using PVC instead of hostPath):
-
+```yaml
 text
 spec:
   volumes:
@@ -186,6 +186,7 @@ spec:
     volumeMounts:
     - name: app-logs
       mountPath: /logs
+```
 
 **Debugding Steps:**
 
