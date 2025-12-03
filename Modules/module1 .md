@@ -94,6 +94,17 @@ How kube-proxy Works:
 ```
 Client Pod → Service IP → kube-proxy rules → Backend Pod
 ```
+
+### Container Runtime
+Purpose: Software responsible for running containers on the node.
+
+Responsibilities:
+
+Pulls container images from registries
+Unpacks and runs containers
+Manages container lifecycle
+Provides container isolation
+
 Understanding how components interact is crucial for troubleshooting.
 
 ### Pod Creation Flow
