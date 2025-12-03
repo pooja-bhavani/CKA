@@ -144,9 +144,9 @@ Understanding how components interact is crucial for troubleshooting.
 ```
 
 ### CNI (Container Network Interface) Plugin
-Provides Pod networking
-Examples: Calico, Flannel, Weave, Cilium
-Must be installed for Pod-to-Pod communication
+- Provides Pod networking
+- Examples: Calico, Flannel, Weave, Cilium
+- Must be installed for Pod-to-Pod communication
 
 ---
 
