@@ -174,7 +174,6 @@ spec:
 
 Solution: Pod (using PVC instead of hostPath):
 ```yaml
-text
 spec:
   volumes:
   - name: app-logs
