@@ -183,4 +183,17 @@ kind create cluster --name k8s-v134 --image kindest/node:v1.34.0
 ```
 
 
+### Check Cluster Components
+
+```bash
+# Check nodes
+kubectl get nodes -o wide
+
+# Check system pods
+kubectl get pods -
+
+# Check cluster info
+kubectl cluster-info
+```
+
 
