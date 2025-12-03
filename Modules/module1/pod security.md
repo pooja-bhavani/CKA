@@ -94,3 +94,12 @@ kubectl get namespaces --show-labels
 kubectl get namespace default -o yaml
 ```
 
+## Admission Controllers
+
+### What are Admission Controllers?
+
+Admission controllers are plugins that intercept requests to the Kubernetes API server before object persistence. They can:
+- **Validate**: Check if request meets requirements
+- **Mutate**: Modify the request
+- **Reject**: Deny the request
+
