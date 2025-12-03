@@ -190,7 +190,7 @@ kind create cluster --name k8s-v134 --image kindest/node:v1.34.0
 kubectl get nodes -o wide
 
 # Check system pods
-kubectl get pods -
+kubectl get pods -A
 
 # Check cluster info
 kubectl cluster-info
