@@ -78,3 +78,18 @@ kubectl label namespace team-a \
   pod-security.kubernetes.io/audit=baseline \
   pod-security.kubernetes.io/warn=baseline
 ```
+
+## Implementing Pod Security
+
+### Step 1: Check Current Configuration
+
+```bash
+# Check if Pod Security Admission is enabled
+kubectl api-resources | grep podsecurity
+
+# Check existing namespace labels
+kubectl get namespaces --show-labels
+
+# Check specific namespace
+kubectl get namespace default -o yaml
+```
