@@ -141,3 +141,52 @@ Admission controllers are plugins that intercept requests to the Kubernetes API 
 # Check enabled admission controllers
 kubectl exec -n kube-system kube-apiserver-<node> -- kube-apiserver -h | grep enable-admission-plugins
 ```
+---
+
+## Troubleshooting Admission Errors
+
+### Common Error Patterns
+
+#### Example 1 – HostPath blocked by restricted policy
+
+Error:
+```
+Error from server (Forbidden): error when creating "pod.yaml": 
+pods "nginx" is forbidden: violates PodSecurity "restricted:latest": 
+hostPath volumes are not allowed
+```
+Cause: restricted profile disallows hostPath because it can expose the node filesystem.
+
+Problem Pod:
+```
+spec:
+  volumes:
+  - name: host-logs
+    hostPath:
+      path: /var/log
+  containers:
+  - name: nginx
+    image: nginx
+    volumeMounts:
+    - name: host-logs
+      mountPath: /logs
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
