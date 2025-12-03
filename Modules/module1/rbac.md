@@ -12,6 +12,8 @@ RBAC (Role‑Based Access Control) is the authorization mechanism in K8s. That a
 - **ClusterRoleBinding**: Grants ClusterRole permissions to subjects cluster-wide
 - **ServiceAccount**: Provides identity for processes running in Pods
 
+### Examples
+
 ### ServiceAccount creation and use
 ```
 # Create namespace and ServiceAccount
@@ -39,7 +41,6 @@ spec:
     image: nginx
 ```
 
-### Examles
 
 ### Role and RoleBinding (namespace‑scoped)
 Motive: Allow app-sa to list/get/watch Pods only in dev namespace.
