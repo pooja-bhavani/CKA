@@ -278,22 +278,21 @@ A High Availability (HA) Kubernetes cluster eliminates single points of failure 
 - Requires more nodes (3 for etcd + 2+ for control plane)
 - More complex to set up and manage
 
-nfrastructure Requirements
-Minimum for HA:
+### Infrastructure Requirements
 
-3 control plane nodes (odd number recommended: 3, 5, 7)
-3+ worker nodes
-1 load balancer (can be external or software-based)
-Per Control Plane Node:
+**Minimum for HA:**
+- 3 control plane nodes (odd number recommended: 3, 5, 7)
+- 3+ worker nodes
+- 1 load balancer (can be external or software-based)
 
-2 CPUs (4 recommended)
-4GB RAM (8GB recommended)
-50GB disk space
-Network connectivity between all nodes
-Load Balancer:
+**Per Control Plane Node:**
+- 2 CPUs (4 recommended)
+- 4GB RAM (8GB recommended)
+- 50GB disk space
+- Network connectivity between all nodes
 
-Can be hardware (F5, Citrix) or software (HAProxy, nginx)
-Must support TCP load balancing
-Health checks for API server (port 6443)
-
+**Load Balancer:**
+- Can be hardware (F5, Citrix) or software (HAProxy, nginx)
+- Must support TCP load balancing
+- Health checks for API server
   
