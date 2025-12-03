@@ -226,8 +226,11 @@ kubectl apply -f https://github.com/weaveworks/weave/releases/download/v2.8.1/we
 ```
 ## Join Worker Nodes
 ```
-sudo kubeadm join <control-plane-ip>:6443 --token <token> \
-    --discovery-token-ca-cert-hash sha256:<hash>
+sudo kubeadm join LOAD_BALANCER_DNS:6443 \
+  --token <token> \
+  --discovery-token-ca-cert-hash sha256:<hash> \
+  --control-plane \
+  --certificate-key <cert-key>
 ```
 ---
 
