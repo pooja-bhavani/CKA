@@ -21,13 +21,15 @@ ServiceAccounts provide an identity for processes running in Pods. Every namespa
 ### Examples
 
 ### ServiceAccount creation and use
+
+#### Create namespace and ServiceAccount
 ```
-# Create namespace and ServiceAccount
 kubectl create namespace dev
 kubectl create serviceaccount app-sa -n dev
 ```
+
+#### Inspect
 ```
-# Inspect
 kubectl get sa -n dev
 kubectl describe sa app-sa -n dev
 ```
