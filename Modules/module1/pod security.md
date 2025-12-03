@@ -93,3 +93,4 @@ kubectl get namespaces --show-labels
 # Check specific namespace
 kubectl get namespace default -o yaml
 ```
+
