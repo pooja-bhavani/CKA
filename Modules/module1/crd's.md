@@ -14,8 +14,9 @@ CRDs allow you to extend Kubernetes by defining new resource types without modif
 - Manage complex applications declaratively
 - Leverage Kubernetes features (RBAC, kubectl, API server)
 - Enable GitOps workflows
+- Provide a contract that Operators/controllers can watch and reconcile, encoding operational runbooks into code.
 
-  ### CRD Architecture
+### CRD Architecture
 
 ```
 ┌─────────────────────────────────────┐
@@ -33,3 +34,66 @@ CRDs allow you to extend Kubernetes by defining new resource types without modif
     │(built-in)│        │ (custom) │
     └─────────┘         └──────────┘
 ```
+### Understanding Operators
+
+**What is an Operator?**
+Operator is a method of packaging, deploying, and managing a Kubernetes application. It extends Kubernetes by using custom resources and controllers to automate operational tasks.
+
+Operator = CRD + Controller + Operational Knowledge
+
+### Operator Pattern
+
+```
+┌─────────────────────────────────────────┐
+│           Kubernetes API                │
+└────────────┬────────────────────────────┘
+             │
+             ▼
+┌─────────────────────────────────────────┐
+│         Custom Resource (CR)            │
+│  apiVersion: example.com/v1             │
+│  kind: Database                         │
+│  spec:                                  │
+│    engine: postgres                     │
+│    replicas: 3                          │
+└────────────┬────────────────────────────┘
+             │
+             │ watches
+             ▼
+┌─────────────────────────────────────────┐
+│         Operator (Controller)           │
+│                                         │
+│  1. Watch for changes                   │
+│  2. Compare desired vs actual state     │
+│  3. Take action to reconcile            │
+│  4. Update status                       │
+└────────────┬────────────────────────────┘
+             │
+             │ creates/manages
+             ▼
+┌─────────────────────────────────────────┐
+│      Kubernetes Resources               │
+│  - StatefulSet                          │
+│  - Service                              │
+│  - ConfigMap                            │
+│  - PersistentVolumeClaim                │
+└─────────────────────────────────────────┘
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
