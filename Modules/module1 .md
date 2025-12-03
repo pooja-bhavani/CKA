@@ -154,7 +154,7 @@ Understanding how components interact is crucial for troubleshooting.
 
 **kubectl:**
 ```bash
-curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+curl -LO "https://dl.k8s.io/release/v1.34.0/bin/linux/amd64/kubectl"
 chmod +x kubectl
 sudo mv kubectl /usr/local/bin/
 ```
@@ -164,6 +164,9 @@ sudo mv kubectl /usr/local/bin/
 curl -Lo ./kind https://kind.sigs.k8s.io/dl/v0.20.0/kind-linux-amd64
 chmod +x ./kind
 sudo mv ./kind /usr/local/bin/kind
+
+# Then create v1.34 cluster:
+kind create cluster --image kindest/node:v1.34.0
 ```
 **Helm:**
 ```bash
