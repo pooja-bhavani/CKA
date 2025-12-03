@@ -158,7 +158,7 @@ hostPath volumes are not allowed
 Cause: restricted profile disallows hostPath because it can expose the node filesystem.
 
 Problem Pod:
-```
+```yaml
 spec:
   volumes:
   - name: host-logs
