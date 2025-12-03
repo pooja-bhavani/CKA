@@ -228,4 +228,72 @@ kubectl apply -f https://github.com/weaveworks/weave/releases/download/v2.8.1/we
 ```
 sudo kubeadm join <control-plane-ip>:6443 --token <token> \
     --discovery-token-ca-cert-hash sha256:<hash>
-    ```
+```
+---
+
+## HA Configuration
+
+**Overview**
+
+A High Availability (HA) Kubernetes cluster eliminates single points of failure by running multiple control plane nodes. This ensures the cluster remains operational even if one or more control plane nodes fail.
+
+### Components
+
+```
+                    ┌─────────────────┐
+                    │  Load Balancer  │
+                    │   (HAProxy/     │
+                    │    nginx)       │
+                    └────────┬────────┘
+                             │
+          ┌──────────────────┼──────────────────┐
+          │                  │                  │
+    ┌─────▼─────┐      ┌─────▼─────┐     ┌─────▼─────┐
+    │ Control   │      │ Control   │     │ Control   │
+    │ Plane 1   │      │ Plane 2   │     │ Plane 3   │
+    │           │      │           │     │           │
+    │ + etcd    │◄────►│ + etcd    │◄───►│ + etcd    │
+    └───────────┘      └───────────┘     └───────────┘
+          │                  │                  │
+          └──────────────────┼──────────────────┘
+                             │
+          ┌──────────────────┼──────────────────┐
+          │                  │                  │
+    ┌─────▼─────┐      ┌─────▼─────┐     ┌─────▼─────┐
+    │  Worker   │      │  Worker   │     │  Worker   │
+    │  Node 1   │      │  Node 2   │     │  Node 3   │
+    └───────────┘      └───────────┘     └───────────┘
+```
+### Key Concepts
+
+**Stacked etcd Topology** (Recommended for most cases):
+- etcd runs on the same nodes as control plane components
+- Simpler to set up and manage
+- Requires fewer nodes (minimum 3)
+- If a control plane node fails, both control plane and etcd member are lost
+
+**External etcd Topology**:
+- etcd runs on separate dedicated nodes
+- More resilient (control plane and etcd failures are independent)
+- Requires more nodes (3 for etcd + 2+ for control plane)
+- More complex to set up and manage
+
+nfrastructure Requirements
+Minimum for HA:
+
+3 control plane nodes (odd number recommended: 3, 5, 7)
+3+ worker nodes
+1 load balancer (can be external or software-based)
+Per Control Plane Node:
+
+2 CPUs (4 recommended)
+4GB RAM (8GB recommended)
+50GB disk space
+Network connectivity between all nodes
+Load Balancer:
+
+Can be hardware (F5, Citrix) or software (HAProxy, nginx)
+Must support TCP load balancing
+Health checks for API server (port 6443)
+
+  
