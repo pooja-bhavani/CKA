@@ -121,4 +121,80 @@ roleRef:
   name: pod-reader-cluster
 ```
 
+## Troubleshooting
 
+### Checking Permissions
+
+#### kubectl auth can-i
+
+```bash
+# Check if current user can create pods
+kubectl auth can-i create pods
+
+# Check if current user can delete deployments in namespace
+kubectl auth can-i delete deployments --namespace=production
+
+# Check as another user
+kubectl auth can-i get pods --as=jane
+
+# Check as ServiceAccount
+kubectl auth can-i list secrets --as=system:serviceaccount:default:app-sa
+
+# List all permissions for current user
+kubectl auth can-i --list
+
+# List all permissions in namespace
+kubectl auth can-i --list --namespace=production
+```
+### Error Examples
+
+#### Error 1: ServiceAccount Cannot Access Resources
+
+**Error:**
+```
+Error from server (Forbidden): deployments.apps is forbidden: 
+User "system:serviceaccount:default:app-sa" cannot list resource "deployments"
+```
+
+**Debug:**
+```bash
+# Check ServiceAccount permissions
+kubectl auth can-i list deployments \
+  --as=system:serviceaccount:default:app-sa \
+  --namespace=default
+
+# Check RoleBindings for ServiceAccount
+kubectl get rolebindings -n default -o yaml | grep -A 10 "app-sa"
+
+# Describe ServiceAccount
+kubectl describe serviceaccount app-sa -n default
+```
+**Solution:**
+
+### Create Role and RoleBinding
+```yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: deployment-reader
+  namespace: default
+rules:
+- apiGroups: ["apps"]
+  resources: ["deployments"]
+  verbs: ["get", "list", "watch"]
+```
+```
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: app-sa-deployment-reader
+  namespace: default
+subjects:
+- kind: ServiceAccount
+  name: app-sa
+  namespace: default
+roleRef:
+  kind: Role
+  name: deployment-reader
+  apiGroup: rbac.authorization.k8s.io
+```
