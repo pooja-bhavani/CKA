@@ -196,5 +196,6 @@ kubectl get pods -A
 # Check cluster info
 kubectl cluster-info
 ```
-
+## How kind clusters in v1.34 support advanced features 
+Provides **Dynamic Resource Allocation** for GPUs, TPUs, NICs, etc
 
