@@ -150,17 +150,6 @@ Understanding how components interact is crucial for troubleshooting.
 
 ---
 
-### Installation for K8s v1.34
-
-
-
-
-**kind:**
-
-**Helm:**
-
-
-
 # Installation for Kubernetes v1.34
 
 **kubectl v1.34**
