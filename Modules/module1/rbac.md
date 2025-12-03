@@ -197,3 +197,31 @@ roleRef:
   name: deployment-reader
   apiGroup: rbac.authorization.k8s.io
 ```
+#### Error 2: Forbidden - User Cannot Perform Action
+
+**Error:**
+```
+Error from server (Forbidden): pods is forbidden: 
+User "jane" cannot list resource "pods" in API group "" in the namespace "default"
+```
+
+**Debug:**
+```bash
+# Check if user has permission
+kubectl auth can-i list pods --as=jane --namespace=default
+
+# Check RoleBindings for user
+kubectl get rolebindings -n default -o yaml | grep -A 5 "name: jane"
+
+# Check ClusterRoleBindings for user
+kubectl get clusterrolebindings -o yaml | grep -A 5 "name: jane"
+```
+
+**Solution:**
+```bash
+# Create appropriate RoleBinding
+kubectl create rolebinding jane-pod-reader \
+  --role=pod-reader \
+  --user=jane \
+  --namespace=default
+```
