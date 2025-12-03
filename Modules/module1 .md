@@ -161,9 +161,10 @@ sudo mv kubectl /usr/local/bin/
 
 **kind (supports v1.34)**
 ```
-curl -Lo ./kind https://kind.sigs.k8s.io/dl/v0.20.0/kind-linux-amd64
+curl -Lo ./kind https://kind.sigs.k8s.io/dl/v0.23.0/kind-linux-amd64
 chmod +x ./kind
 sudo mv ./kind /usr/local/bin/kind
+
 ```
 
 **Helm 3 (compatible with v1.34)**
