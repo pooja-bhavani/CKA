@@ -12,6 +12,12 @@ RBAC (Role‑Based Access Control) is the authorization mechanism in K8s. That a
 - **ClusterRoleBinding**: Grants ClusterRole permissions to subjects cluster-wide
 - **ServiceAccount**: Provides identity for processes running in Pods
 
+## ServiceAccounts
+
+### What are ServiceAccounts?
+
+ServiceAccounts provide an identity for processes running in Pods. Every namespace has a default ServiceAccount.
+
 ### Examples
 
 ### ServiceAccount creation and use
@@ -43,6 +49,7 @@ spec:
 
 
 ### Role and RoleBinding (namespace‑scoped)
+
 Motive: Allow app-sa to list/get/watch Pods only in dev namespace.
 
 **Roles**
@@ -78,10 +85,38 @@ kubectl apply -f <filename.yaml>
 kubectl apply -f <filename.yaml>
 ```
 
+## ClusterRole and ClusterRoleBinding
 
+Motive: Allow app-sa to list/get/watch Pods in all namespace.
 
+**clusterrole**
 
+```
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: pod-reader-cluster
+rules:
+- apiGroups: [""]
+  resources: ["pods"]
+  verbs: ["get", "list", "watch"]
+```
 
+**ClusterRoleBinding**
 
+```
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: pod-reader-cluster-binding
+subjects:
+- kind: ServiceAccount
+  name: app-sa
+  namespace: dev
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: pod-reader-cluster
+```
 
 
