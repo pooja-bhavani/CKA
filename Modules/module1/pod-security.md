@@ -187,7 +187,7 @@ spec:
       mountPath: /logs
 ```
 
-**Debugding Steps:**
+**Debugging Steps:**
 
 ```bash
 # Check namespace Pod Security labels
