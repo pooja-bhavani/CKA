@@ -172,21 +172,121 @@ spec:
       mountPath: /logs
 ```
 
+Solution: Pod (using PVC instead of hostPath):
+
+text
+spec:
+  volumes:
+  - name: app-logs
+    persistentVolumeClaim:
+      claimName: app-logs-pvc
+  containers:
+  - name: nginx
+    image: nginx
+    volumeMounts:
+    - name: app-logs
+      mountPath: /logs
 
 
+**Error Message:**
+```
+Error from server (Forbidden): error when creating "pod.yaml": pods "my-pod" is forbidden: 
+violates PodSecurity "restricted:latest": allowPrivilegeEscalation != false 
+(container "nginx" must set securityContext.allowPrivilegeEscalation=false)
+```
+
+**Cause**: Pod doesn't meet restricted security standard
+
+**Solution:**
+```yaml
+# Add required security context
+spec:
+  containers:
+  - name: nginx
+    image: nginx
+    securityContext:
+      allowPrivilegeEscalation: false
+      runAsNonRoot: true
+      runAsUser: 1000
+      capabilities:
+        drop: ["ALL"]
+```
+
+**Error Message:**
+```
+Error from server (Forbidden): error when creating "pod.yaml": pods "my-pod" is forbidden: 
+violates PodSecurity "restricted:latest": allowPrivilegeEscalation != false 
+(container "nginx" must set securityContext.allowPrivilegeEscalation=false)
+```
+
+**Cause**: Pod doesn't meet restricted security standard
+
+**Solution:**
+```yaml
+# Add required security context
+spec:
+  containers:
+  - name: nginx
+    image: nginx
+    securityContext:
+      allowPrivilegeEscalation: false
+      runAsNonRoot: true
+      runAsUser: 1000
+      capabilities:
+        drop: ["ALL"]
+```
+
+#### Example 1: Pod Security Violation
+
+**Error Message:**
+```
+Error from server (Forbidden): error when creating "pod.yaml": pods "my-pod" is forbidden: 
+violates PodSecurity "restricted:latest": allowPrivilegeEscalation != false 
+(container "nginx" must set securityContext.allowPrivilegeEscalation=false)
+```
+
+**Cause**: Pod doesn't meet restricted security standard
+
+### Common Error Patterns
+
+#### Example 2: Pod Security Violation
+
+**Error Message:**
+```
+Error from server (Forbidden): error when creating "pod.yaml": pods "my-pod" is forbidden: 
+violates PodSecurity "restricted:latest": allowPrivilegeEscalation != false 
+(container "nginx" must set securityContext.allowPrivilegeEscalation=false)
+```
 
 
+**Solution:**
+```yaml
+# Add required security context
+spec:
+  containers:
+  - name: nginx
+    image: nginx
+    securityContext:
+      allowPrivilegeEscalation: false
+      runAsNonRoot: true
+      runAsUser: 1000
+      capabilities:
+        drop: ["ALL"]
+```
 
+**Debugding Steps:**
 
+```bash
+# Check namespace Pod Security labels
+kubectl get namespace <namespace> -o yaml | grep pod-security
 
+# Try with warn mode first
+kubectl label namespace <namespace> \
+  pod-security.kubernetes.io/enforce=privileged \
+  pod-security.kubernetes.io/warn=restricted \
+  --overwrite
 
-
-
-
-
-
-
-
-
-
+# Create pod and see warnings
+kubectl apply -f pod.yaml
+```
 
