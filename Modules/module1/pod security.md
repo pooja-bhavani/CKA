@@ -47,3 +47,34 @@ Pod Security Admission operates in three modes per namespace:
 - **Behavior**: Allows pods but shows warning to user
 - **Use**: Development and testing
 - **Effect**: Pod created, warning displayed
+
+### Namespace Labels
+
+Configure Pod Security using namespace labels:
+
+```yaml
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: my-namespace
+  labels:
+    # Enforce restricted standard
+    pod-security.kubernetes.io/enforce: restricted
+    pod-security.kubernetes.io/enforce-version: v1.34
+    
+    # Audit baseline standard
+    pod-security.kubernetes.io/audit: baseline
+    pod-security.kubernetes.io/audit-version: v1.34
+    
+    # Warn on privileged violations
+    pod-security.kubernetes.io/warn: baseline
+    pod-security.kubernetes.io/warn-version: v1.34
+```
+
+Namespaces are labeled to select profile + mode, for example:
+```
+kubectl label namespace team-a \
+  pod-security.kubernetes.io/enforce=restricted \
+  pod-security.kubernetes.io/audit=baseline \
+  pod-security.kubernetes.io/warn=baseline
+```
