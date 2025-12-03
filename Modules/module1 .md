@@ -5,13 +5,13 @@ This module covers 25% of the CKA exam and focuses on understanding, installing,
 ## Learnings
 By completing this module, you will be able to:
 
-Understand Kubernetes cluster architecture and components
-Install and configure clusters using kind and kubeadm
-Set up highly available (HA) cluster configurations
-Implement Pod Security standards and troubleshoot admission errors
-Configure RBAC (Role-Based Access Control) for secure access
-Work with Custom Resource Definitions (CRDs) and Operators
-Deploy applications using Helm and Kustomize
+- Understand Kubernetes cluster architecture and components
+- Install and configure clusters using kind and kubeadm
+- Set up highly available (HA) cluster configurations
+- Implement Pod Security standards and troubleshoot admission errors
+- Configure RBAC (Role-Based Access Control) for secure access
+- Work with Custom Resource Definitions (CRDs) and Operators
+- Deploy applications using Helm and Kustomize
 
 ## Cluster Architecture
 
