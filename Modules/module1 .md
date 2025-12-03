@@ -152,29 +152,46 @@ Understanding how components interact is crucial for troubleshooting.
 
 ### Installation for K8s v1.34
 
-**kubectl:**
-```bash
+
+
+
+**kind:**
+
+**Helm:**
+
+
+
+# Installation for Kubernetes v1.34
+
+**kubectl v1.34**
+```
 curl -LO "https://dl.k8s.io/release/v1.34.0/bin/linux/amd64/kubectl"
 chmod +x kubectl
 sudo mv kubectl /usr/local/bin/
 ```
 
-**kind:**
-```bash
+**kind (supports v1.34)**
+```
 curl -Lo ./kind https://kind.sigs.k8s.io/dl/v0.20.0/kind-linux-amd64
 chmod +x ./kind
 sudo mv ./kind /usr/local/bin/kind
-
-# Then create v1.34 cluster:
-kind create cluster --image kindest/node:v1.34.0
 ```
-**Helm:**
-```bash
+
+**Helm 3 (compatible with v1.34)**
+```
 curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
 ```
+# Verify installations
+```
+kubectl version --client
+kind version
+helm version
+```
 
-
-
+**Create v1.34 cluster**
+```
+kind create cluster --name k8s-v134 --image kindest/node:v1.34.0
+```
 
 
 
