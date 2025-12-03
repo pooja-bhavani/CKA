@@ -26,3 +26,24 @@ Purpose: Follows pod hardening best practices
 - Most secure, based on current Pod hardening best practices.
 - Security-critical applications
 - Enforces non‑root, seccomp, and limited capabilities and restricts host access patterns.​
+
+## Pod Security Admission
+
+### Admission Modes
+
+Pod Security Admission operates in three modes per namespace:
+
+#### 1. enforce
+- **Behavior**: Rejects pods that violate the policy
+- **Use**: Production namespaces
+- **Effect**: Pod creation fails
+
+#### 2. audit
+- **Behavior**: Allows pods but logs violations
+- **Use**: Monitoring and gradual rollout
+- **Effect**: Pod created, event logged
+
+#### 3. warn
+- **Behavior**: Allows pods but shows warning to user
+- **Use**: Development and testing
+- **Effect**: Pod created, warning displayed
