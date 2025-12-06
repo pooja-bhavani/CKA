@@ -314,7 +314,15 @@ spec:
   replicas: 3  # ✅ Integer type
 ```
 
-### Error 2: Multiple Storage Versions
+### Example 2: Multiple Storage Versions
+
+**Scenario**
+
+You are building a Kubernetes Operator for managing databases.
+Your team wants to support two API versions of the Database CRD:
+
+- v1beta1 → older version
+- v1 → stable version
 
 **Error Message:**
 ```
@@ -382,5 +390,8 @@ spec:
           type: object
 ```
 
+### Why?
+Kubernetes allows only one storage version because the version is used to store objects in etcd.
+If two versions are marked as storage, Kubernetes does not know which format to use.
 
 
