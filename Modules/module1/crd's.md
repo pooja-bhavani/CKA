@@ -364,7 +364,7 @@ spec:
   - name: v1
     served: true
     storage: true  # ✅ Only one storage version
-    schema: # ✅ Not storage version
+    schema:        # ✅ Not storage version
     deprecated: true
     schema:
       openAPIV3Schema:
