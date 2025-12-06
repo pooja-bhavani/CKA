@@ -360,23 +360,26 @@ metadata:
   name: databases.example.com
 spec:
   group: example.com
-  versions:
-  - name: v1
-    served: true
-    storage: true  # ✅ Only one storage version
-    schema:        # ✅ Not storage version
-    deprecated: true
-    schema:
-      openAPIV3Schema:
-        type: object
-        properties:
-          spec:
-            type: object
   scope: Namespaced
   names:
     plural: databases
     singular: database
     kind: Database
+  versions:
+    - name: v1
+      served: true
+      storage: true     # ✅ Only one storage version
+      schema:
+        openAPIV3Schema:
+          type: object
+
+    - name: v1beta1
+      served: true
+      storage: false    # ❗ This must be false
+      deprecated: true
+      schema:
+        openAPIV3Schema:
+          type: object
 ```
 
 
