@@ -285,19 +285,15 @@ kubectl auth can-i --list --as=system:serviceaccount:<namespace>:<sa>
 ### Scenario
 
 You are working in a cloud platform team responsible for managing internal PostgreSQL databases using a custom Kubernetes Operator.
-Your organization has defined a custom resource called Database, which developers use to request new PostgreSQL instances for their applications.
-
-A junior DevOps engineer submits the following manifest to create a new database:
+Your organization has defined a custom resource called Database, which developers use to request new PostgreSQL instances for their applications. A junior DevOps engineer submits the following manifest to create a new database:
 ```bash
 spec:
   replicas: "three"
 ```
 
-However, in your CRD definition, spec.replicas is strictly defined as an integer (since it represents the number of database replicas).
+However, in your CRD definition, spec.replicas is strictly defined as an integer (since it represents the number of database replicas). When they apply the manifest Kubernetes immediately rejects the request why? 
 
-When they apply the manifest Kubernetes immediately rejects the request why? 
-
-Because the value "three" is a string, not a number.
+-> Because the value "three" is a string, not a number.
 
 
 **Error Message:**
