@@ -221,20 +221,155 @@ spec:
         subset: v1
 ```
 
+## Troubleshooting
 
+**Common CRD Issues**
 
+#### Issue 1: CRD Not Found
 
+**Error:**
+```
+error: the server doesn't have a resource type "databases"
+```
 
+**Debug:**
+```bash
+# Check if CRD exists
+kubectl get crds | grep database
 
+# Check CRD details
+kubectl get crd databases.example.com
+```
 
+**Solution:**
+```bash
+# Apply the CRD
+kubectl apply -f database-crd.yaml
 
+# Verify
+kubectl get crds databases.example.com
+```
+### Debugging Workflow
 
+```bash
+# 1. Check CRD exists
+kubectl get crds
 
+# 2. Check CRD details
+kubectl describe crd <crd-name>
 
+# 3. Check custom resources
+kubectl get <resource-type> --all-namespaces
 
+# 4. Check resource details
+kubectl describe <resource-type> <name>
 
+# 5. Check operator pod
+kubectl get pods -n <operator-namespace>
 
+# 6. Check operator logs
+kubectl logs -n <operator-namespace> <operator-pod> -f
 
+# 7. Check events
+kubectl get events --sort-by='.lastTimestamp'
+
+# 8. Check RBAC
+kubectl auth can-i --list --as=system:serviceaccount:<namespace>:<sa>
+```
+---
+
+## Few Examples for CRD's and how to resolve
+
+### Error 6: Type Mismatch
+
+**Error Message:**
+```
+The Database "my-db" is invalid: 
+spec.replicas: Invalid value: "three": spec.replicas in body must be of type integer: "string"
+```
+
+**Cause:** Field value type doesn't match schema type
+
+**❌ Incorrect Custom Resource:**
+```yaml
+apiVersion: example.com/v1
+kind: Database
+metadata:
+  name: my-db
+spec:
+  engine: postgres
+  version: "14.5"
+  replicas: "three"  # ❌ String instead of integer
+```
+
+**✅ Correct Custom Resource:**
+```yaml
+apiVersion: example.com/v1
+kind: Database
+metadata:
+  name: my-db
+spec:
+  engine: postgres
+  version: "14.5"
+  replicas: 3  # ✅ Integer type
+```
+
+**Cause:** More than one version has `storage: true`
+
+**❌ Incorrect CRD:**
+```yaml
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  name: databases.example.com
+spec:
+  group: example.com
+  versions:
+  - name: v1
+    served: true
+    storage: true  # ❌ Both marked as storage
+    schema:
+      openAPIV3Schema:
+        type: object
+  - name: v1beta1
+    served: true
+    storage: true  # ❌ Both marked as storage
+    schema:
+      openAPIV3Schema:
+        type: object
+  scope: Namespaced
+  names:
+    plural: databases
+    singular: database
+    kind: Database
+```
+
+**✅ Correct CRD:**
+```yaml
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  name: databases.example.com
+spec:
+  group: example.com
+  versions:
+  - name: v1
+    served: true
+    storage: true  # ✅ Only one storage version
+    schema: # ✅ Not storage version
+    deprecated: true
+    schema:
+      openAPIV3Schema:
+        type: object
+        properties:
+          spec:
+            type: object
+  scope: Namespaced
+  names:
+    plural: databases
+    singular: database
+    kind: Database
+```
 
 
 
