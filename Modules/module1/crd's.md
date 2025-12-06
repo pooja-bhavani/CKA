@@ -280,7 +280,7 @@ kubectl auth can-i --list --as=system:serviceaccount:<namespace>:<sa>
 
 ## Few Examples for CRD's and how to resolve
 
-### Error 6: Type Mismatch
+### Example 1: Type Mismatch
 
 **Error Message:**
 ```
@@ -312,6 +312,14 @@ spec:
   engine: postgres
   version: "14.5"
   replicas: 3  # ✅ Integer type
+```
+
+### Error 2: Multiple Storage Versions
+
+**Error Message:**
+```
+The CustomResourceDefinition "databases.example.com" is invalid: 
+spec.versions: Invalid value: ...: must have exactly one version marked as storage version
 ```
 
 **Cause:** More than one version has `storage: true`
