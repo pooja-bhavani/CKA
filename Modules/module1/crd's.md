@@ -282,6 +282,17 @@ kubectl auth can-i --list --as=system:serviceaccount:<namespace>:<sa>
 
 ### Example 1: Type Mismatch
 
+### Scenario
+
+You are working in a cloud team that manages internal PostgreSQL databases using a Kubernetes Operator.
+Your company uses a custom resource named Database to provision database instances. A junior DevOps engineer creates a new Database resource to provision a PostgreSQL instance.
+However, they mistakenly set:
+```yaml
+spec.replicas: "three"
+```
+The CRD schema defines spec.replicas as an integer, not a string. When you apply the manifest Kubernetes rejects the request with a clear validation error. How will you resolve it?
+
+
 **Error Message:**
 ```
 The Database "my-db" is invalid: 
