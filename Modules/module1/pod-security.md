@@ -203,3 +203,81 @@ kubectl label namespace <namespace> \
 kubectl apply -f pod.yaml
 ```
 
+#### Example 2 : ResourceQuota Exceeded
+
+**Error Message:**
+```
+Error from server (Forbidden): pods "my-pod" is forbidden: 
+exceeded quota: compute-quota, requested: requests.cpu=2, used: requests.cpu=8, limited: requests.cpu=10
+```
+
+**Solution:**
+```bash
+# Check quota
+kubectl get resourcequota -n <namespace>
+kubectl describe resourcequota compute-quota -n <namespace>
+
+# Reduce pod resources or increase quota
+kubectl edit resourcequota compute-quota -n <namespace>
+```
+---
+
+#### Example 3: LimitRange Violation
+
+**Error Message:**
+```
+Error from server (Forbidden): pods "my-pod" is forbidden: 
+maximum cpu usage per Container is 2, but limit is 4
+```
+
+**Solution:**
+```bash
+# Check LimitRange
+kubectl get limitrange -n <namespace>
+kubectl describe limitrange <limitrange-name> -n <namespace>
+
+# Adjust pod resources
+spec:
+  containers:
+  - name: nginx
+    resources:
+      limits:
+        cpu: "2"
+        memory: "2Gi"
+```
+### Debugging Workflow
+
+```bash
+# 1. Check admission error details
+kubectl apply -f pod.yaml --dry-run=server -o yaml
+
+# 2. Check namespace Pod Security labels
+kubectl get namespace <namespace> -o yaml
+
+# 3. Check events
+kubectl get events -n <namespace> --sort-by='.lastTimestamp'
+
+# 4. Check API server logs
+kubectl logs -n kube-system kube-apiserver-<node>
+
+# 5. Test with different security levels
+kubectl label namespace <namespace> \
+  pod-security.kubernetes.io/enforce=privileged \
+  --overwrite
+
+# 6. Gradually increase restrictions
+kubectl label namespace <namespace> \
+  pod-security.kubernetes.io/enforce=baseline \
+  --overwrite
+```
+---
+
+## Exam Tips
+
+1. **Know the Three Standards**: Privileged, Baseline, Restricted
+2. **Understand Modes**: enforce, audit, warn
+3. **Label Format**: `pod-security.kubernetes.io/<mode>: <level>`
+4. **Common Fixes**: runAsNonRoot, drop capabilities, seccomp profile
+5. **Debugging**: Use `--dry-run=server` to test
+6. **Quick Fix**: Temporarily set to privileged, then fix and restore
+7. **Check Events**: `kubectl get events` shows admission errors
