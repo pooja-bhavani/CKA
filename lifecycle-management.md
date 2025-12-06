@@ -1,7 +1,5 @@
 # Cluster Lifecycle Management
 
-[← Back to Installation](README.md)
-
 ## Overview
 
 Cluster lifecycle management involves maintaining, upgrading, backing up, and restoring Kubernetes clusters. These operations are critical for production environments.
