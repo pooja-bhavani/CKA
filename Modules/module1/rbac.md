@@ -146,9 +146,9 @@ kubectl auth can-i --list
 # List all permissions in namespace
 kubectl auth can-i --list --namespace=production
 ```
-### Error Examples
+### Examples
 
-#### Error 1: ServiceAccount Cannot Access Resources
+#### Example 1: ServiceAccount Cannot Access Resources
 
 **Error:**
 ```
@@ -197,7 +197,7 @@ roleRef:
   name: deployment-reader
   apiGroup: rbac.authorization.k8s.io
 ```
-#### Error 2: Forbidden - User Cannot Perform Action
+#### Example 2: Forbidden - User Cannot Perform Action
 
 **Error:**
 ```
@@ -225,3 +225,23 @@ kubectl create rolebinding jane-pod-reader \
   --user=jane \
   --namespace=default
 ```
+
+#### Example 3: Multiple Resources:
+
+- To assign roles for multiple resources
+
+```yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: app-manager
+  namespace: production
+rules:
+- apiGroups: [""]
+  resources: ["pods", "services", "configmaps", "secrets"]
+  verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+- apiGroups: ["apps"]
+  resources: ["deployments", "replicasets"]
+  verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+```
+
