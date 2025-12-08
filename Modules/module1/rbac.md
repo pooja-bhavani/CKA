@@ -293,4 +293,72 @@ roleRef:
   apiGroup: rbac.authorization.k8s.io
 ```
 
+#### Example 5: Incorrect Configuration
 
+**Problem: Wrong API group specified (empty string instead of "apps")**
+
+```yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: deployment-manager
+  namespace: production
+rules:
+- apiGroups: [""]  # ❌ WRONG! Deployments are not in core API group
+  resources: ["deployments"]
+  verbs: ["get", "list", "create", "update", "delete"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: bob-deployment-manager
+  namespace: production
+subjects:
+- kind: User
+  name: bob
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: Role
+  name: deployment-manager
+  apiGroup: rbac.authorization.k8s.io
+```
+
+### ✅ Correct Configuration
+
+```yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: deployment-manager
+  namespace: production
+rules:
+- apiGroups: ["apps"]  # ✅ CORRECT! Deployments are in "apps" API group
+  resources: ["deployments"]
+  verbs: ["get", "list", "create", "update", "delete"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: bob-deployment-manager
+  namespace: production
+subjects:
+- kind: User
+  name: bob
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: Role
+  name: deployment-manager
+  apiGroup: rbac.authorization.k8s.io
+```
+
+### Verification
+```bash
+# Test permission
+kubectl auth can-i create deployments --as=bob --namespace=production
+# Output: yes
+
+# Try creating a deployment
+kubectl create deployment nginx --image=nginx --as=bob --namespace=production
+```
+
+---
