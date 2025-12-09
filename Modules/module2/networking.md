@@ -126,4 +126,6 @@ kubectl get svc web-loadbalancer
 
 ## Endpoints
 
+**What are Endpoints?**
+
 
