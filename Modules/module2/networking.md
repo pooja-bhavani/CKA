@@ -127,5 +127,11 @@ kubectl get svc web-loadbalancer
 ## Endpoints
 
 **What are Endpoints?**
+Endpoints are the actual IP addresses and ports of pods that match a service's selector. Kubernetes automatically creates and manages Endpoints objects.
+
+**To View Endpoints**:
+```bash
+kubectl get endpoints
+kubectl describe endpoints <service-name>
 
 
