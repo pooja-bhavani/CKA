@@ -199,4 +199,37 @@ spec:
     - port: 3306
       targetPort: 3306
 ```
+## Troubleshooting 
 
+### Error 1: Service Not Accessible
+
+**Symptoms**:
+```bash
+curl: (7) Failed to connect to service
+```
+
+**Debug Steps**:
+```bash
+# 1. Check if service exists
+kubectl get svc <service-name>
+
+# 2. Check endpoints (are pods selected?)
+kubectl get endpoints <service-name>
+
+# 3. Check pod labels match service selector
+kubectl get pods --show-labels
+kubectl describe svc <service-name> | grep Selector
+
+# 4. Check if pods are running
+kubectl get pods -l app=<label>
+
+# 5. Test from within cluster
+kubectl run test-pod --image=busybox --rm -it -- wget -O- http://<service-name>
+```
+
+**Solution**:
+- Ensure pod labels match service selector
+- Verify pods are in Running state
+- Check targetPort matches container port
+
+---
