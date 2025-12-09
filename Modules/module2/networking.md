@@ -135,3 +135,68 @@ kubectl get endpoints
 kubectl describe endpoints <service-name>
 
 
+## Common Scenarios and Use Cases
+
+### Scenario 1: Exposing a Multi-Tier Application
+
+```yaml
+# Frontend - LoadBalancer (external access)
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend
+spec:
+  type: LoadBalancer
+  selector:
+    tier: frontend
+  ports:
+    - port: 80
+      targetPort: 3000
+
+---
+# Backend - ClusterIP (internal only)
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend
+spec:
+  type: ClusterIP
+  selector:
+    tier: backend
+  ports:
+    - port: 8080
+      targetPort: 8080
+
+---
+# Database - ClusterIP (internal only)
+apiVersion: v1
+kind: Service
+metadata:
+  name: database
+spec:
+  type: ClusterIP
+  selector:
+    tier: database
+  ports:
+    - port: 5432
+      targetPort: 5432
+```
+
+### Scenario 2: Headless Service (StatefulSets)
+
+Use case: For direct pod-to-pod communication, StatefulSets where each pod needs a stable DNS name.
+
+```yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysql-headless
+spec:
+  clusterIP: None  # Headless service
+  selector:
+    app: mysql
+  ports:
+    - port: 3306
+      targetPort: 3306
+```
+
