@@ -31,7 +31,7 @@ Kubernetes imposes the following fundamental requirements on any networking impl
 3. **Pods in the host network** can communicate with all pods on all nodes without NAT
 
 ### Network Model Diagram
-
+```plain text
 ┌─────────────────────────────────────────────────────────────┐
 │                         Cluster                             │
 │                                                             │
@@ -53,7 +53,7 @@ Kubernetes imposes the following fundamental requirements on any networking impl
 │  └──────────────────┘              └──────────────────┘     │
 │                                                             │
 └─────────────────────────────────────────────────────────────┘
-
+```
 
 ### 1. Network Namespace
 
