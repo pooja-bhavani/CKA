@@ -203,7 +203,7 @@ spec:
 
 ### Error 1: Service Not Accessible
 
-**Symptoms**:
+**Error**:
 ```bash
 curl: (7) Failed to connect to service
 ```
@@ -236,7 +236,7 @@ kubectl run test-pod --image=busybox --rm -it -- wget -O- http://<service-name>
 
 ### Error 3: NodePort Not Accessible
 
-**Symptoms**:
+**Error**:
 ```bash
 curl: (7) Failed to connect to <NODE_IP>:<NODE_PORT>
 ```
