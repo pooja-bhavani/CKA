@@ -218,7 +218,7 @@ kubectl get endpoints <service-name>
 
 # 3. Check pod labels match service selector
 kubectl get pods --show-labels
-kubectl describe svc <service-name> | grep Selector
+kubectl describe svc <service-name> 
 
 # 4. Check if pods are running
 kubectl get pods -l app=<label>
@@ -231,5 +231,36 @@ kubectl run test-pod --image=busybox --rm -it -- wget -O- http://<service-name>
 - Ensure pod labels match service selector
 - Verify pods are in Running state
 - Check targetPort matches container port
+
+---
+
+### Error 3: NodePort Not Accessible
+
+**Symptoms**:
+```bash
+curl: (7) Failed to connect to <NODE_IP>:<NODE_PORT>
+```
+
+**Debug Steps**:
+```bash
+# 1. Verify NodePort service
+kubectl get svc <service-name>
+
+# 2. Check firewall rules
+# Ensure NodePort range (30000-32767) is open
+
+# 3. Test from node itself
+ssh <node>
+curl localhost:<nodeport>
+
+# 4. Check kube-proxy
+kubectl get pods -n kube-system 
+kubectl logs -n kube-system <kube-proxy-pod>
+```
+
+**Solution**:
+- Open firewall ports for NodePort range
+- Verify kube-proxy is running on all nodes
+- Check cloud security groups allow traffic
 
 ---
