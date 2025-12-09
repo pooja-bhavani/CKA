@@ -133,7 +133,7 @@ Endpoints are the actual IP addresses and ports of pods that match a service's s
 ```bash
 kubectl get endpoints
 kubectl describe endpoints <service-name>
-
+```
 
 ## Common Scenarios and Use Cases
 
