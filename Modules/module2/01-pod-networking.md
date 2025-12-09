@@ -32,7 +32,6 @@ Kubernetes imposes the following fundamental requirements on any networking impl
 
 ### Network Model Diagram
 
-```
 ┌─────────────────────────────────────────────────────────────┐
 │                         Cluster                             │
 │                                                             │
@@ -54,7 +53,7 @@ Kubernetes imposes the following fundamental requirements on any networking impl
 │  └──────────────────┘              └──────────────────┘     │
 │                                                             │
 └─────────────────────────────────────────────────────────────┘
-```
+
 
 ### 1. Network Namespace
 
