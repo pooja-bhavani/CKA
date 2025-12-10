@@ -338,4 +338,57 @@ Flow:
 4. Pod B receives packet
 ```
 ## Troubleshooting Pod Networking
+### Error 1: Pod Cannot Reach Other Pods
+
+**Symptoms**:
+```bash
+kubectl exec -it pod-a -- ping 10.244.2.2
+# PING 10.244.2.2 (10.244.2.2): 56 data bytes
+# Request timeout
+```
+
+**Debug Steps**:
+```bash
+# 1. Check if pod has IP address
+kubectl get pod pod-a -o wide
+
+# 2. Check CNI pods are running
+kubectl get pods -n kube-system | grep -E 'calico|flannel|weave|cilium'
+
+# 3. Check CNI logs
+kubectl logs -n kube-system <cni-pod-name>
+
+# 4. Verify CNI configuration on node
+ssh <node>
+cat /etc/cni/net.d/*
+
+# 5. Check routing table in pod
+kubectl exec -it pod-a -- ip route
+
+# 6. Check node routing
+ssh <node>
+ip route | grep cni
+
+# 7. Test from node to pod
+ssh <node>
+ping 10.244.2.2
+```
+
+**Solutions**:
+
+**A. CNI pods not running**:
+```bash
+# Restart CNI daemonset
+kubectl rollout restart daemonset <cni-name> -n kube-system
+
+# Example for Calico
+kubectl rollout restart daemonset calico-node -n kube-system
+```
+
+**B. CNI configuration missing**:
+```bash
+# Reinstall CNI plugin
+kubectl apply -f <cni-manifest-url>
+```
+---
 
