@@ -338,9 +338,9 @@ Flow:
 4. Pod B receives packet
 ```
 ## Troubleshooting Pod Networking
-### Error 1: Pod Cannot Reach Other Pods
+### Example 1: Pod Cannot Reach Other Pods
 
-**Symptoms**:
+**Error**:
 ```bash
 kubectl exec -it pod-a -- ping 10.244.2.2
 # PING 10.244.2.2 (10.244.2.2): 56 data bytes
