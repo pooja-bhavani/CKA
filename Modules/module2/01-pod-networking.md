@@ -312,7 +312,7 @@ cilium status
 
 ## Pod-to-Pod Communication Scenarios
 
-### Scenario 1: Same Node Communication
+### Scenario: Same Node Communication
 
 ```
 ┌─────────────────────────────────────┐
@@ -337,3 +337,5 @@ Flow:
 3. Bridge forwards to Pod B's veth
 4. Pod B receives packet
 ```
+## Troubleshooting Pod Networking
+
