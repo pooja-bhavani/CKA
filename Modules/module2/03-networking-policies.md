@@ -126,3 +126,63 @@ spec:
 ```
 
 ---
+
+## Troubleshooting Guide
+
+### Examples
+
+#### Example 1: Policy Not Working (Traffic Still Flows)
+
+**Error**:
+- Applied Network Policy but pods can still communicate
+- No traffic blocking observed
+
+**Debug Steps**:
+```bash
+# 1. Check if CNI supports Network Policies
+kubectl get pods -n kube-system | grep -E 'calico|cilium|weave'
+
+# 2. Verify policy exists
+kubectl get networkpolicy -A
+
+# 3. Check policy details
+kubectl describe networkpolicy <policy-name> -n <namespace>
+
+# 4. Verify pod labels match policy selector
+kubectl get pods --show-labels -n <namespace>
+
+# 5. Check if policy is selecting pods
+kubectl get networkpolicy <policy-name> -n <namespace> -o yaml
+```
+
+**Solutions**:
+- Install a CNI that supports Network Policies (Calico, Cilium)
+- Verify pod labels match `podSelector`
+- Ensure policy is in the correct namespace
+- Check for conflicting policies that might allow traffic
+
+---
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
