@@ -248,7 +248,30 @@ spec:
 
 ---
 
+## Best Practices
 
+1. **Start with Default Deny**: Apply default deny first, then explicitly allow needed traffic
+2. **Always Allow DNS**: Include DNS egress rules in every policy
+3. **Use Namespace Labels**: Label namespaces for easier policy management
+4. **Test Incrementally**: Apply policies one at a time and test
+5. **Use Descriptive Names**: Name policies clearly (e.g., `allow-frontend-to-backend`)
+6. **Monitor Impact**: Check logs and metrics after applying policies
+7. **Version Control**: Store policies in Git for tracking changes
+
+---
+
+## Exam Tips
+
+1. **Know the structure**: `podSelector`, `policyTypes`, `ingress`, `egress`
+2. **Empty selector `{}`**: Matches all pods in namespace
+3. **DNS is critical**: Always include DNS egress rules
+4. **Label namespaces**: Required for `namespaceSelector` to work
+5. **Test with wget/curl**: Use `kubectl exec` to test connectivity
+6. **Default behavior**: No policy = all allowed; any policy = default deny
+7. **Multiple policies**: Policies are additive (union of all rules)
+8. **Practice scenarios**: Default deny, namespace isolation, multi-tier apps
+
+---
 
 
 
