@@ -95,6 +95,34 @@ spec:
     - Egress
 ```
 
-**What it does**: Blocks all ingress and egress traffic for all pods in the namespace
+**What it does**: It blocks all ingress and egress traffic for all pods in the namespace
+
+---
+
+### Pattern 2: Allow Traffic from Specific Pods
+
+**Use case**: Frontend pods can access backend, but nothing else can
+
+```yaml
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-frontend-to-backend
+  namespace: default
+spec:
+  podSelector:
+    matchLabels:
+      app: backend
+  policyTypes:
+    - Ingress
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              app: frontend
+      ports:
+        - protocol: TCP
+          port: 8080
+```
 
 ---
