@@ -40,3 +40,61 @@ kubectl describe networkpolicy test-netpolicy
 2. **Egress**: Controls outgoing traffic from pods
 
 ---
+
+## Basic Network Policy Structure
+
+```yaml
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: example-policy
+  namespace: default
+spec:
+  podSelector:          # Which pods this policy applies to
+    matchLabels:
+      app: myapp
+  policyTypes:          # Types of traffic to control
+    - Ingress
+    - Egress
+  ingress:              # Ingress rules
+    - from:
+        - podSelector:
+            matchLabels:
+              role: frontend
+      ports:
+        - protocol: TCP
+          port: 80
+  egress:               # Egress rules
+    - to:
+        - podSelector:
+            matchLabels:
+              role: database
+      ports:
+        - protocol: TCP
+          port: 5432
+```
+
+---
+
+## Common Use Cases and Patterns
+
+### Pattern 1: Default Deny All Traffic
+
+**Use case**: Start with zero-trust, then explicitly allow needed traffic
+
+```yaml
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: default-deny-all
+  namespace: production
+spec:
+  podSelector: {}  # Empty selector = all pods in namespace
+  policyTypes:
+    - Ingress
+    - Egress
+```
+
+**What it does**: Blocks all ingress and egress traffic for all pods in the namespace
+
+---
