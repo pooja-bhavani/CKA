@@ -163,7 +163,54 @@ kubectl get networkpolicy <policy-name> -n <namespace> -o yaml
 
 ---
 
+### Example 2: Pod Cannot Communicate After Policy Applied
 
+**Error**:
+```bash
+# From inside pod
+wget: can't connect to remote host: Connection timed out
+```
+**Debug Steps**:
+```bash
+# 1. Check which policies affect the pod
+kubectl get networkpolicy -n <namespace>
+kubectl describe networkpolicy -n <namespace>
+
+# 2. Verify pod labels
+kubectl get pod <pod-name> -n <namespace> --show-labels
+
+# 3. Test connectivity
+kubectl exec -it <pod-name> -n <namespace> -- wget -O- --timeout=5 http://<target-service>
+
+# 4. Check if DNS is allowed
+kubectl exec -it <pod-name> -n <namespace> -- nslookup kubernetes.default
+
+# 5. Review policy rules
+kubectl get networkpolicy <policy-name> -n <namespace> -o yaml
+```
+
+**Solutions**:
+```yaml
+# Add DNS egress rule (most common fix)
+egress:
+  - to:
+      - namespaceSelector:
+          matchLabels:
+            name: kube-system
+    ports:
+      - protocol: UDP
+        port: 53
+
+# Or allow all DNS
+egress:
+  - to:
+      - namespaceSelector: {}
+    ports:
+      - protocol: UDP
+        port: 53
+```
+
+---
 
 
 
