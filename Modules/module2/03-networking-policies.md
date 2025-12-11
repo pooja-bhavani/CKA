@@ -212,7 +212,41 @@ egress:
 
 ---
 
+### Example 4: Default Deny Blocks Everything
 
+**Error**:
+- Applied default deny policy
+- Nothing works, including DNS
+
+**Debug Steps**:
+```bash
+# Check all policies in namespace
+kubectl get networkpolicy -n <namespace>
+
+# Test DNS
+kubectl exec -it <pod-name> -n <namespace> -- nslookup google.com
+```
+
+**Solution**:
+```yaml
+# Always allow DNS when using default deny
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-dns
+spec:
+  podSelector: {}
+  policyTypes:
+    - Egress
+  egress:
+    - to:
+        - namespaceSelector: {}
+      ports:
+        - protocol: UDP
+          port: 53
+```
+
+---
 
 
 
