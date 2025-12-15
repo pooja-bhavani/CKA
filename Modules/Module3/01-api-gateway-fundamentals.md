@@ -171,10 +171,10 @@ Gateway API separates responsibilities:
 ### Step 1: Install Gateway API CRDs
 
 ```bash
-# Install Gateway API CRDs
-kubectl apply -f https://github.com/kubernetes-sigs/gateway-api/releases/download/v1.0.0/standard-install.yaml
+# Install Gateway API CRDs 
+kubectl apply --server-side -f https://github.com/kubernetes-sigs/gateway-api/releases/download/v1.4.1/standard-install.yaml
 
-# Verify installation
+# Verify installation (should show v1 and v1beta1 as available versions for backward compatibility)
 kubectl get crd | grep gateway
 ```
 
@@ -182,7 +182,8 @@ kubectl get crd | grep gateway
 
 ```bash
 # Install Envoy Gateway
-kubectl apply -f https://github.com/envoyproxy/gateway/releases/download/v0.6.0/install.yaml
+kubectl apply --server-side -f https://github.com/envoyproxy/gateway/releases/download/v1.6.1/install.yaml
+
 
 # Verify installation
 kubectl get pods -n envoy-gateway-system
@@ -191,7 +192,7 @@ kubectl get pods -n envoy-gateway-system
 ### Step 3: Create GatewayClass
 
 ```yaml
-apiVersion: gateway.networking.k8s.io/v1beta1
+apiVersion: gateway.networking.k8s.io/v1
 kind: GatewayClass
 metadata:
   name: envoy
@@ -202,7 +203,7 @@ spec:
 ### Step 4: Create Gateway
 
 ```yaml
-apiVersion: gateway.networking.k8s.io/v1beta1
+apiVersion: gateway.networking.k8s.io/v1
 kind: Gateway
 metadata:
   name: my-gateway
@@ -218,7 +219,7 @@ spec:
 ### Step 5: Create HTTPRoute
 
 ```yaml
-apiVersion: gateway.networking.k8s.io/v1beta1
+apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
 metadata:
   name: my-route
@@ -245,7 +246,7 @@ spec:
 ### Scenario 1: Path-Based Routing
 
 ```yaml
-apiVersion: gateway.networking.k8s.io/v1beta1
+apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
 metadata:
   name: path-routing
@@ -283,7 +284,7 @@ spec:
 ### Scenario 2: Header-Based Routing
 
 ```yaml
-apiVersion: gateway.networking.k8s.io/v1beta1
+apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
 metadata:
   name: header-routing
@@ -312,7 +313,7 @@ spec:
 ### Scenario 3: Host-Based Routing
 
 ```yaml
-apiVersion: gateway.networking.k8s.io/v1beta1
+apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
 metadata:
   name: host-routing
@@ -352,7 +353,7 @@ spec:
 
 ```yaml
 # Shared Gateway
-apiVersion: gateway.networking.k8s.io/v1beta1
+apiVersion: gateway.networking.k8s.io/v1
 kind: Gateway
 metadata:
   name: saas-gateway
@@ -388,7 +389,7 @@ spec:
           port: 80
 ---
 # Customer 2 Route (in customer2 namespace)
-apiVersion: gateway.networking.k8s.io/v1beta1
+apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
 metadata:
   name: customer2-route
