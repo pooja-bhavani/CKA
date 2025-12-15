@@ -54,9 +54,9 @@ Gateway API solves the limitations it includes specific resources for these need
 
 ---
 
-## Step-by-Step Migration Examples
+## Step-by-Step Migration Example
 
-### Example 1: Basic Ingress to HTTPRoute
+### Example: Basic Ingress to HTTPRoute
 
 **Original Ingress**:
 ```yaml
