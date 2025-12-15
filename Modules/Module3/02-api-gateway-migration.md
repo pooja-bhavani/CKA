@@ -22,4 +22,10 @@ This guide covers the migration process from traditional Kubernetes Ingress to G
 It provides a centralized way to manage external access to services running inside a Kubernetes cluster, typically HTTP/HTTPS traffic at the L7 layer. It provides centralizedmechanism to manage all inbound requests to backend applications.
 Instead of individual load balancers per service.
 
- 
+### Limitations of Ingress 
+- Ingress specifically is designed for HTTP/HTTPS (Layer 7)
+- Lack of standardization
+- Couldn't handle TCP/UDP traffic or advanced routing
+
+### Gateway API Solution
+Gateway API solves the limitations it includes specific resources for these needs: TCPRoute, UDPRoute, TLSRoute, and GRPCRoute, providing comprehensive L4/L7 support 
