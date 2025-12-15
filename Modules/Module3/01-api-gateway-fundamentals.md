@@ -140,3 +140,233 @@ spec:
 
 ---
 
+## Role-Oriented Design
+
+Gateway API separates responsibilities:
+
+```
+┌─────────────────────────────────────────────────┐
+│ Infrastructure Provider                         │
+│ - Installs Gateway Controller                   │
+│ - Creates GatewayClass                          │
+└─────────────────────────────────────────────────┘
+                    ↓
+┌─────────────────────────────────────────────────┐
+│ Cluster Operator                                │
+│ - Creates Gateway instances                     │
+│ - Configures listeners and policies             │
+└─────────────────────────────────────────────────┘
+                    ↓
+┌─────────────────────────────────────────────────┐
+│ Application Developer                           │
+│ - Creates HTTPRoute/TCPRoute                    │
+│ - Defines routing rules                         │
+└─────────────────────────────────────────────────┘
+```
+
+---
+
+## Basic Setup Example
+
+### Step 1: Install Gateway API CRDs
+
+```bash
+# Install Gateway API CRDs
+kubectl apply -f https://github.com/kubernetes-sigs/gateway-api/releases/download/v1.0.0/standard-install.yaml
+
+# Verify installation
+kubectl get crd | grep gateway
+```
+
+### Step 2: Install a Gateway Controller (Envoy Gateway Example)
+
+```bash
+# Install Envoy Gateway
+kubectl apply -f https://github.com/envoyproxy/gateway/releases/download/v0.6.0/install.yaml
+
+# Verify installation
+kubectl get pods -n envoy-gateway-system
+```
+
+### Step 3: Create GatewayClass
+
+```yaml
+apiVersion: gateway.networking.k8s.io/v1beta1
+kind: GatewayClass
+metadata:
+  name: envoy
+spec:
+  controllerName: gateway.envoyproxy.io/gatewayclass-controller
+```
+
+### Step 4: Create Gateway
+
+```yaml
+apiVersion: gateway.networking.k8s.io/v1beta1
+kind: Gateway
+metadata:
+  name: my-gateway
+  namespace: default
+spec:
+  gatewayClassName: envoy
+  listeners:
+    - name: http
+      protocol: HTTP
+      port: 80
+```
+
+### Step 5: Create HTTPRoute
+
+```yaml
+apiVersion: gateway.networking.k8s.io/v1beta1
+kind: HTTPRoute
+metadata:
+  name: my-route
+  namespace: default
+spec:
+  parentRefs:
+    - name: my-gateway
+  hostnames:
+    - "myapp.example.com"
+  rules:
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /
+      backendRefs:
+        - name: my-service
+          port: 80
+```
+
+---
+
+## Advanced Routing Scenarios
+
+### Scenario 1: Path-Based Routing
+
+```yaml
+apiVersion: gateway.networking.k8s.io/v1beta1
+kind: HTTPRoute
+metadata:
+  name: path-routing
+spec:
+  parentRefs:
+    - name: my-gateway
+  hostnames:
+    - "api.example.com"
+  rules:
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /v1
+      backendRefs:
+        - name: api-v1
+          port: 8080
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /v2
+      backendRefs:
+        - name: api-v2
+          port: 8080
+    - matches:
+        - path:
+            type: Exact
+            value: /health
+      backendRefs:
+        - name: health-service
+          port: 8080
+```
+
+---
+
+### Scenario 2: Header-Based Routing
+
+```yaml
+apiVersion: gateway.networking.k8s.io/v1beta1
+kind: HTTPRoute
+metadata:
+  name: header-routing
+spec:
+  parentRefs:
+    - name: my-gateway
+  rules:
+    - matches:
+        - headers:
+            - name: X-Version
+              value: beta
+      backendRefs:
+        - name: beta-service
+          port: 8080
+    - matches:
+        - headers:
+            - name: X-Version
+              value: stable
+      backendRefs:
+        - name: stable-service
+          port: 8080
+```
+
+---
+
+### Scenario 3: Host-Based Routing
+
+```yaml
+apiVersion: gateway.networking.k8s.io/v1beta1
+kind: HTTPRoute
+metadata:
+  name: host-routing
+spec:
+  parentRefs:
+    - name: my-gateway
+  hostnames:
+    - "api.example.com"
+  rules:
+    - backendRefs:
+        - name: api-service
+          port: 8080
+---
+apiVersion: gateway.networking.k8s.io/v1beta1
+kind: HTTPRoute
+metadata:
+  name: web-routing
+spec:
+  parentRefs:
+    - name: my-gateway
+  hostnames:
+    - "www.example.com"
+  rules:
+    - backendRefs:
+        - name: web-service
+          port: 80
+```
+
+
+---
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
