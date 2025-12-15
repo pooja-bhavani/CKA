@@ -84,7 +84,7 @@ spec:
 
 **Step 1: Create GatewayClass** (if not exists)
 ```yaml
-apiVersion: gateway.networking.k8s.io/v1beta1
+apiVersion: gateway.networking.k8s.io/v1
 kind: GatewayClass
 metadata:
   name: nginx
@@ -94,7 +94,7 @@ spec:
 
 **Step 2: Create Gateway**
 ```yaml
-apiVersion: gateway.networking.k8s.io/v1beta1
+apiVersion: gateway.networking.k8s.io/v1
 kind: Gateway
 metadata:
   name: example-gateway
@@ -112,7 +112,7 @@ spec:
 
 **Step 3: Create HTTPRoute**
 ```yaml
-apiVersion: gateway.networking.k8s.io/v1beta1
+apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
 metadata:
   name: basic-route
@@ -133,3 +133,165 @@ spec:
 ```
 
 ---
+
+## Advanced Migration Scenarios
+
+### Scenario 1: Canary Deployment (Not Possible with Ingress)
+
+**Ingress Limitation**: Cannot split traffic by percentage
+
+**Gateway API Solution**:
+```yaml
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: canary-route
+spec:
+  parentRefs:
+    - name: example-gateway
+  hostnames:
+    - "app.example.com"
+  rules:
+    - backendRefs:
+        - name: app-stable
+          port: 80
+          weight: 90  # 90% to stable
+        - name: app-canary
+          port: 80
+          weight: 10  # 10% to canary
+```
+
+---
+
+### Scenario 2: Header-Based Routing (Limited in Ingress)
+
+**Ingress Limitation**: Requires complex annotations, not standardized
+
+**Gateway API Solution**:
+```yaml
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: header-route
+spec:
+  parentRefs:
+    - name: example-gateway
+  rules:
+    - matches:
+        - headers:
+            - name: X-Version
+              value: beta
+      backendRefs:
+        - name: beta-service
+          port: 80
+    - matches:
+        - headers:
+            - name: X-Version
+              value: stable
+      backendRefs:
+        - name: stable-service
+          port: 80
+```
+
+---
+
+
+## Testing Migration
+
+### Pre-Migration Testing
+
+```bash
+# Test existing Ingress
+curl -H "Host: example.com" http://<INGRESS_IP>/
+
+# Check Ingress status
+kubectl get ingress -A
+kubectl describe ingress <ingress-name>
+```
+### Post-Migration Testing
+
+```bash
+# Get Gateway address
+GATEWAY_IP=$(kubectl get gateway <gateway-name> -o jsonpath='{.status.addresses[0].value}')
+
+# Test HTTPRoute
+curl -H "Host: example.com" http://$GATEWAY_IP/
+
+# Compare responses
+diff <(curl -s -H "Host: example.com" http://<INGRESS_IP>/) \
+     <(curl -s -H "Host: example.com" http://$GATEWAY_IP/)
+```
+
+## Troubleshooting Migration Issues
+
+### Issue 1: HTTPRoute Not Attached
+
+**Error**:
+```bash
+kubectl get httproute
+# NAME           HOSTNAMES         AGE
+# example-route  ["example.com"]   5m
+
+# But traffic doesn't flow
+```
+
+**Debug**:
+```bash
+# Check HTTPRoute status
+kubectl describe httproute example-route
+
+# Check parent status
+kubectl get httproute example-route -o jsonpath='{.status.parents}' | jq
+
+# Verify Gateway allows routes from this namespace
+kubectl get gateway example-gateway -o yaml | grep -A 10 allowedRoutes
+```
+
+**Solution**:
+```yaml
+# Update Gateway to allow routes
+spec:
+  listeners:
+    - name: http
+      protocol: HTTP
+      port: 80
+      allowedRoutes:
+        namespaces:
+          from: All  # or Same, or Selector
+```
+
+---
+
+### Issue 2: Path Matching Differences
+
+**Error**: Paths that worked with Ingress don't work with HTTPRoute
+
+**Debug**:
+```bash
+# Test specific paths
+curl -v -H "Host: example.com" http://$GATEWAY_IP/api/v1/users
+
+# Check HTTPRoute matches
+kubectl get httproute example-route -o yaml | grep -A 10 matches
+```
+
+**Solution**:
+- Ingress `Prefix` = Gateway API `PathPrefix`
+- Ingress `Exact` = Gateway API `Exact`
+- Ingress `ImplementationSpecific` = Gateway API `RegularExpression` (if supported)
+
+---
+
+## Best Practices
+
+1. **Migrate incrementally**: Start with non-critical services
+2. **Run in parallel**: Keep Ingress running during migration
+3. **Test thoroughly**: Validate all paths and hosts
+4. **Monitor metrics**: Compare latency and error rates
+5. **Document changes**: Keep track of what was converted
+6. **Use separate Gateways**: Different Gateways for different environments
+7. **Validate TLS**: Ensure certificates work correctly
+8. **Plan rollback**: Have a clear rollback procedure
+
+---
+
