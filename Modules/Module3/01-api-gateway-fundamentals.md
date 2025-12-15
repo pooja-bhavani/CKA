@@ -344,6 +344,69 @@ spec:
 
 ---
 
+## Real-World Use Cases
+
+### Use Case 1: Multi-Tenant Platform
+
+**Scenario**: SaaS platform with multiple customers, each with their own subdomain
+
+```yaml
+# Shared Gateway
+apiVersion: gateway.networking.k8s.io/v1beta1
+kind: Gateway
+metadata:
+  name: saas-gateway
+  namespace: platform
+spec:
+  gatewayClassName: envoy
+  listeners:
+    - name: http
+      protocol: HTTP
+      port: 80
+      allowedRoutes:
+        namespaces:
+          from: Selector
+          selector:
+            matchLabels:
+              tenant: "true"
+---
+# Customer 1 Route (in customer1 namespace)
+apiVersion: gateway.networking.k8s.io/v1beta1
+kind: HTTPRoute
+metadata:
+  name: customer1-route
+  namespace: customer1
+spec:
+  parentRefs:
+    - name: saas-gateway
+      namespace: platform
+  hostnames:
+    - "customer1.saas.example.com"
+  rules:
+    - backendRefs:
+        - name: customer1-app
+          port: 80
+---
+# Customer 2 Route (in customer2 namespace)
+apiVersion: gateway.networking.k8s.io/v1beta1
+kind: HTTPRoute
+metadata:
+  name: customer2-route
+  namespace: customer2
+spec:
+  parentRefs:
+    - name: saas-gateway
+      namespace: platform
+  hostnames:
+    - "customer2.saas.example.com"
+  rules:
+    - backendRefs:
+        - name: customer2-app
+          port: 80
+```
+
+---
+
 
 
 
