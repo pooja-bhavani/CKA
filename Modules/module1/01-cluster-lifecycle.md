@@ -18,7 +18,7 @@ By completing this module, you will be able to:
 ### Control Plane Components
 The control plane is the brain of the Kubernetes cluster. It maintains the desired state of the cluster and responds to changes.
 
-#### kube-apiserver
+#### Api-Server
 Purpose: The API server is the front-end for the Kubernetes control plane and the central management entity.
 
 Responsibilities:
