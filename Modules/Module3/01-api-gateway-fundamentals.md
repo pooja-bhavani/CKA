@@ -502,6 +502,18 @@ kubectl describe httproute my-route
 
 ---
 
+## Best Practices
+
+1. **Separate Concerns**: Use different namespaces for infrastructure (Gateway) and applications (HTTPRoute)
+2. **Use GatewayClass**: Define clear GatewayClasses for different environments (dev, staging, prod)
+3. **Limit Route Attachment**: Use `allowedRoutes` to control which namespaces can attach routes
+4. **Monitor Status**: Check Gateway and HTTPRoute status conditions regularly
+5. **Use Weights for Rollouts**: Gradually shift traffic using weight-based routing
+6. **Validate Before Production**: Test routes in staging with same Gateway configuration
+7. **Document Hostnames**: Maintain a registry of hostnames and their owners
+8. **Use TLS**: Always use HTTPS in production with proper certificates
+
+---
 
 
 
