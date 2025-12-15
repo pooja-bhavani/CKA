@@ -34,6 +34,6 @@ The more you engage, the more visibility you create for your profile 🌟
 ## 🧩 Finding it Difficult?
 
 Don't worry — share your doubt as a post or reach out on:
-💬 **[Discord Community](https://discord.gg/yMDNaYEP)**
-💭 **[LinkedIn](https://www.linkedin.com/in/shubhamlondhe1996/)**
-💬 **[Official Website](https://www.trainwithshubham.com/)** 
+- 💬 **[Discord Community](https://discord.gg/yMDNaYEP)**
+- 💭 **[LinkedIn](https://www.linkedin.com/in/shubhamlondhe1996/)**
+- 💬 **[Official Website](https://www.trainwithshubham.com/)** 
