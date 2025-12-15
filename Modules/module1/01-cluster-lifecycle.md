@@ -21,7 +21,7 @@ The control plane is the brain of the Kubernetes cluster. It maintains the desir
 ### Api-Server
 Purpose: The API server is the front-end for the Kubernetes control plane and the central management entity.
 
-Responsibilities:
+**Responsibilities:**
 
 Exposes the Kubernetes API (REST interface)
 Validates and processes API requests
@@ -47,7 +47,7 @@ kubectl create deployment nginx --image=nginx
 ### etcd
 Purpose: Distributed, reliable key-value store that serves as Kubernetes' backing store for all cluster data.
 
-Responsibilities:
+**Responsibilities:**
 
 Stores all cluster state and configuration
 Maintains consistency across the cluster
@@ -67,7 +67,7 @@ Respects constraints and requirements
 ### kube-controller-manager
 Purpose: Runs controller processes that regulate the state of the cluster.
 
-Responsibilities:
+**Responsibilities:**
 
 Watches cluster state through API server
 Makes changes to move current state toward desired state
@@ -79,7 +79,7 @@ Worker nodes run the actual application workloads. Each worker node contains the
 ### kubelet
 Purpose: Primary node agent that runs on each worker node and ensures containers are running in Pods.
 
-Responsibilities:
+**Responsibilities:**
 
 Registers node with API server
 Watches API server for Pods assigned to its node
@@ -91,7 +91,7 @@ Mounts volumes as specified in Pod specs
 ### kube-proxy
 Purpose: Network proxy that runs on each node and maintains network rules for Pod communication.
 
-Responsibilities:
+**Responsibilities:**
 
 Implements Kubernetes Service abstraction
 Maintains network rules on nodes
@@ -111,7 +111,7 @@ Client Pod → Service IP → kube-proxy rules → Backend Pod
 ### Container Runtime
 Purpose: Software responsible for running containers on the node.
 
-Responsibilities:
+**Responsibilities:**
 
 Pulls container images from registries
 Unpacks and runs containers
