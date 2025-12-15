@@ -181,8 +181,142 @@ kubectl logs -n kube-system -l k8s-app=kube-dns | grep -i error
 
 ---
 
+### Example 2: External DNS Not Working
 
+**Error**:
+```bash
+kubectl exec -it test-pod -- nslookup google.com
+# Server:    10.96.0.10
+# Address 1: 10.96.0.10
+# nslookup: can't resolve 'google.com'
+```
 
+**Debug Steps**:
+```bash
+# 1. Check CoreDNS forward configuration
+kubectl get configmap coredns -n kube-system -o yaml | grep -A 3 forward
+
+# 2. Test DNS from CoreDNS pod
+kubectl exec -it -n kube-system <coredns-pod> -- nslookup google.com
+
+# 3. Check node's DNS configuration
+cat /etc/resolv.conf
+
+# 4. Check CoreDNS logs for forwarding errors
+kubectl logs -n kube-system -l k8s-app=kube-dns | grep -i forward
+```
+
+**Solutions**:
+
+**A. Upstream DNS not reachable**:
+```bash
+# Test from node
+nslookup google.com
+
+# If node DNS works, check CoreDNS forward config
+kubectl edit configmap coredns -n kube-system
+
+# Change forward to use public DNS
+forward . 8.8.8.8 1.1.1.1
+```
+
+**B. Network policy blocking DNS**:
+```bash
+# Check network policies
+kubectl get networkpolicy -A
+
+# Add DNS egress rule
+kubectl apply -f - <<EOF
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-dns
+spec:
+  podSelector: {}
+  policyTypes:
+    - Egress
+  egress:
+    - to:
+        - namespaceSelector: {}
+      ports:
+        - protocol: UDP
+          port: 53
+EOF
+```
+---
+
+### Example 3: CoreDNS Pods CrashLooping
+
+**Error**:
+```bash
+kubectl get pods -n kube-system -l k8s-app=kube-dns
+# NAME                       READY   STATUS             RESTARTS
+# coredns-5d78c9869d-abc123  0/1     CrashLoopBackOff   5
+```
+
+**Debug Steps**:
+```bash
+# 1. Check pod logs
+kubectl logs -n kube-system <coredns-pod>
+
+# 2. Check previous logs
+kubectl logs -n kube-system <coredns-pod> --previous
+
+# 3. Describe pod
+kubectl describe pod -n kube-system <coredns-pod>
+
+# 4. Check events
+kubectl get events -n kube-system --sort-by='.lastTimestamp'
+```
+
+**Common Causes and Solutions**:
+
+**A. Corefile syntax error**
+```bash
+# Check logs for syntax errors
+kubectl logs -n kube-system <coredns-pod> | grep -i error
+
+# Fix Corefile
+kubectl edit configmap coredns -n kube-system
+
+# Restart CoreDNS
+kubectl rollout restart deployment coredns -n kube-system
+```
+**B. Loop detection**:
+```bash
+# Logs show: "plugin/loop: Loop detected"
+# This means CoreDNS is forwarding to itself
+
+# Check node's /etc/resolv.conf
+cat /etc/resolv.conf
+
+# If it points to 127.0.0.x, update CoreDNS forward
+kubectl edit configmap coredns -n kube-system
+
+# Change:
+forward . /etc/resolv.conf
+# To:
+forward . 8.8.8.8 1.1.1.1
+```
+
+**C. Resource limits**:
+```bash
+# Check resource usage
+kubectl top pod -n kube-system -l k8s-app=kube-dns
+
+# Increase limits
+kubectl edit deployment coredns -n kube-system
+
+# Update resources:
+resources:
+  limits:
+    memory: 256Mi
+  requests:
+    cpu: 100m
+    memory: 128Mi
+```
+
+---
 
 
 
