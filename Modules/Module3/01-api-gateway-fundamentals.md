@@ -26,7 +26,7 @@ Gateway API is increasingly important for modern Kubernetes:
 
 | Feature | Ingress | Gateway API |
 |---------|---------|-------------|
-| **API Maturity** | Stable (v1) | Beta (v1beta1) |
+| **API Maturity** | Stable (v1) | Stable (v1) |
 | **Expressiveness** | Basic routing | Advanced routing |
 | **Role Separation** | Single resource | Multiple resources |
 | **Protocol Support** | HTTP/HTTPS | HTTP, HTTPS, TCP, UDP, gRPC |
