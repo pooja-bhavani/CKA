@@ -21,3 +21,45 @@ Gateway API is increasingly important for modern Kubernetes:
 - Must know core objects: Gateway, HTTPRoute, GatewayClass
 
 ---
+
+## Gateway API vs Ingress
+
+| Feature | Ingress | Gateway API |
+|---------|---------|-------------|
+| **API Maturity** | Stable (v1) | Beta (v1beta1) |
+| **Expressiveness** | Basic routing | Advanced routing |
+| **Role Separation** | Single resource | Multiple resources |
+| **Protocol Support** | HTTP/HTTPS | HTTP, HTTPS, TCP, UDP, gRPC |
+| **Traffic Splitting** | Limited | Native support |
+| **Header Routing** | Via annotations | Native support |
+| **Extensibility** | Annotations | Custom resources |
+| **Multi-tenancy** | Limited | Built-in |
+
+---
+
+## Core Concepts
+
+### 1. GatewayClass
+
+**What it is**: Defines the controller that will implement the Gateway (like StorageClass for storage)
+
+**Who manages it**: Cluster administrator / Infrastructure provider
+
+**Example**:
+```yaml
+apiVersion: gateway.networking.k8s.io/v1beta1
+kind: GatewayClass
+metadata:
+  name: istio
+spec:
+  controllerName: istio.io/gateway-controller
+```
+
+**Common GatewayClasses**:
+- `istio`: Istio Gateway Controller
+- `envoy`: Envoy Gateway
+- `nginx`: NGINX Gateway Controller
+- `traefik`: Traefik Gateway Controller
+
+---
+
