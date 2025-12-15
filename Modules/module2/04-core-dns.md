@@ -318,7 +318,18 @@ resources:
 
 ---
 
+## Best Practices
 
+1. **Monitor CoreDNS**: Set up alerts for CoreDNS pod failures
+2. **Scale appropriately**: Run at least 2 replicas for HA
+3. **Tune cache**: Increase cache TTL for stable services
+4. **Use FQDN**: Use fully qualified names for cross-namespace communication
+5. **Test DNS**: Include DNS tests in application health checks
+6. **Backup Corefile**: Keep a backup of custom CoreDNS configurations
+7. **Resource limits**: Set appropriate CPU and memory limits
+8. **Log monitoring**: Monitor CoreDNS logs for errors and warnings
+
+---
 
 
 
