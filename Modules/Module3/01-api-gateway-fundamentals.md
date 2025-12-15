@@ -63,3 +63,80 @@ spec:
 
 ---
 
+### 2. Gateway
+
+**What it is**: Represents a load balancer instance that listens for traffic
+
+**Who manages it**: Cluster operator
+
+**Example**:
+```yaml
+apiVersion: gateway.networking.k8s.io/v1beta1
+kind: Gateway
+metadata:
+  name: example-gateway
+  namespace: default
+spec:
+  gatewayClassName: istio
+  listeners:
+    - name: http
+      protocol: HTTP
+      port: 80
+      allowedRoutes:
+        namespaces:
+          from: All
+```
+
+**Key Fields**:
+- `gatewayClassName`: Which GatewayClass to use
+- `listeners`: Ports and protocols to listen on
+- `allowedRoutes`: Which namespaces can attach routes
+
+---
+
+### 3. HTTPRoute
+
+**What it is**: Defines HTTP routing rules (like Ingress rules)
+
+**Who manages it**: Application developer
+
+**Example**:
+```yaml
+apiVersion: gateway.networking.k8s.io/v1beta1
+kind: HTTPRoute
+metadata:
+  name: example-route
+  namespace: default
+spec:
+  parentRefs:
+    - name: example-gateway
+  hostnames:
+    - "example.com"
+  rules:
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /api
+      backendRefs:
+        - name: api-service
+          port: 8080
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /
+      backendRefs:
+        - name: web-service
+          port: 80
+```
+
+---
+
+### 4. Other Route Types
+
+**TCPRoute**: Layer 4 TCP routing
+**UDPRoute**: Layer 4 UDP routing
+**TLSRoute**: TLS routing based on SNI
+**GRPCRoute**: gRPC-specific routing
+
+---
+
