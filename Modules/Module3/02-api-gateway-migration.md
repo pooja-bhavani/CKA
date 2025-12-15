@@ -29,3 +29,107 @@ Instead of individual load balancers per service.
 
 ### Gateway API Solution
 Gateway API solves the limitations it includes specific resources for these needs: TCPRoute, UDPRoute, TLSRoute, and GRPCRoute, providing comprehensive L4/L7 support 
+
+---
+
+## Migration Strategy
+
+### Phase 1: Preparation
+1. Install Gateway API CRDs
+2. Install Gateway Controller
+3. Create GatewayClass
+4. Inventory existing Ingress resources
+
+### Phase 2: Parallel Running
+1. Create Gateway resources
+2. Convert Ingress to HTTPRoute
+3. Test Gateway API routes
+4. Validate traffic flow
+
+### Phase 3: Cutover
+1. Update DNS or load balancer
+2. Monitor traffic
+3. Deprecate Ingress resources
+4. Clean up old resources
+
+---
+
+## Step-by-Step Migration Examples
+
+### Example 1: Basic Ingress to HTTPRoute
+
+**Original Ingress**:
+```yaml
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: basic-ingress
+  namespace: default
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: example.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: web-service
+                port:
+                  number: 80
+```
+
+**Converted to Gateway API**:
+
+**Step 1: Create GatewayClass** (if not exists)
+```yaml
+apiVersion: gateway.networking.k8s.io/v1beta1
+kind: GatewayClass
+metadata:
+  name: nginx
+spec:
+  controllerName: k8s-gateway.nginx.org/nginx-gateway-controller
+```
+
+**Step 2: Create Gateway**
+```yaml
+apiVersion: gateway.networking.k8s.io/v1beta1
+kind: Gateway
+metadata:
+  name: example-gateway
+  namespace: default
+spec:
+  gatewayClassName: nginx
+  listeners:
+    - name: http
+      protocol: HTTP
+      port: 80
+      allowedRoutes:
+        namespaces:
+          from: Same
+```
+
+**Step 3: Create HTTPRoute**
+```yaml
+apiVersion: gateway.networking.k8s.io/v1beta1
+kind: HTTPRoute
+metadata:
+  name: basic-route
+  namespace: default
+spec:
+  parentRefs:
+    - name: example-gateway
+  hostnames:
+    - "example.com"
+  rules:
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /
+      backendRefs:
+        - name: web-service
+          port: 80
+```
+
+---
