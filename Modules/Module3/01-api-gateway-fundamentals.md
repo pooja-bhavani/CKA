@@ -408,10 +408,99 @@ spec:
 
 ---
 
+### Use Case 2: Blue-Green Deployment
 
+**Scenario**: Switch traffic between blue and green deployments
 
+```yaml
+# Initially: 100% blue
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: blue-green
+spec:
+  parentRefs:
+    - name: my-gateway
+  hostnames:
+    - "app.example.com"
+  rules:
+    - backendRefs:
+        - name: app-blue
+          port: 80
+          weight: 100
+        - name: app-green
+          port: 80
+          weight: 0
 
+# After validation: Switch to 100% green
+# Just update weights:
+#   - app-blue: weight: 0
+#   - app-green: weight: 100
+```
 
+---
+
+### Use Case 3: API Versioning
+
+**Scenario**: Route API requests based on version in path or header
+
+```yaml
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: api-versioning
+spec:
+  parentRefs:
+    - name: api-gateway
+  hostnames:
+    - "api.example.com"
+  rules:
+    # Version in path: /v1/users
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /v1
+      backendRefs:
+        - name: api-v1
+          port: 8080
+    # Version in path: /v2/users
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /v2
+      backendRefs:
+        - name: api-v2
+          port: 8080
+    # Version in header: X-API-Version: v3
+    - matches:
+        - headers:
+            - name: X-API-Version
+              value: v3
+      backendRefs:
+        - name: api-v3
+          port: 8080
+```
+
+---
+
+## Checking Gateway Status
+
+```bash
+# Check Gateway status
+kubectl get gateway
+
+# Detailed Gateway status
+kubectl describe gateway my-gateway
+
+# Check HTTPRoute status
+kubectl get httproute
+
+# Describe HTTPRoute
+kubectl describe httproute my-route
+
+```
+
+---
 
 
 
