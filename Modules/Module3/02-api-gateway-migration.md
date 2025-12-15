@@ -16,7 +16,7 @@ This guide covers the migration process from traditional Kubernetes Ingress to G
 
 ## Why Kubernetes is Evolving Beyond Ingress: The Rise of the Gateway API
 
-**Firstly let's understand what is ingress what are it's limitations**
+***Firstly let's understand what is ingress what are it's limitations***
 
 ### What is Ingress in Kubernetes?
 It provides a centralized way to manage external access to services running inside a Kubernetes cluster, typically HTTP/HTTPS traffic at the L7 layer. It provides centralizedmechanism to manage all inbound requests to backend applications.
