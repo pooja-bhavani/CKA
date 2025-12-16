@@ -32,7 +32,7 @@ Don't worry — share your doubt as a post or reach out on:
 - 💭 **[LinkedIn](https://www.linkedin.com/in/shubhamlondhe1996/)**
 - 💬 **[Official Website](https://www.trainwithshubham.com/)** 
 
-## 💡 Day 2 Pro-Tip
+## 💡 Pro-Tip
 ---
 > Labels are the "Glue": If your service shows ENDPOINTS: <none>, your selectors don't match your Pod labels.
 
