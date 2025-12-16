@@ -1,8 +1,5 @@
 # Day 1 – Introduction to Kubernetes & Container Orchestration Basics
 
-[![Challenge](https://img.shields.io/badge/Challenge-10%20Days-brightgreen?style=for-the-badge)](https://github.com/pooja-bhavani/kiro-cka)
-[![Difficulty](https://img.shields.io/badge/Difficulty-Beginner%20to%20Advanced-orange?style=for-the-badge)](https://github.com/pooja-bhavani/kiro-cka) 
-
 Welcome to Day 1 of the 10 Days of CKA Challenge 🚀 Today, you'll start by understanding what Kubernetes is, why it's the leading container orchestration platform, and how it revolutionized modern application deployment.
 
 ## 🎯 Tasks for Day 1
