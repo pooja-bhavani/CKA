@@ -1,5 +1,6 @@
 ### Day 2: ☕ Services & Pod Communication Mastery
 
+---
 Welcome to Day 2 of the 10 Days of CKA Challenge 🚀 Today, you'll start by understanding Pods talk to each other within the cluster using a stable IP address.
 Different Service types (ClusterIP, NodePort, LoadBalancer)
 
