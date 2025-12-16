@@ -4,6 +4,7 @@ Welcome to Day 2 of the 10 Days of CKA Challenge 🚀 Today, you'll start by und
 Different Service types (ClusterIP, NodePort, LoadBalancer)
 
 ---
+
 **Learning Goal**: Master Kubernetes Services and inter-pod communication
 
 **Tasks**: 
