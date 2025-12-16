@@ -13,14 +13,16 @@ Internal Communication (ClusterIP)
 - Test: Use kubectl exec from a different Pod to curl the backend service name. Verify that DNS (CoreDNS) is resolving the service name correctly.
 - Write LinkedIn post comparing Kubernetes Services vs traditional load balancers
 
-💬 Engagement Activity (Build Your Visibility)
-✅ Post your Day 2 Learning on LinkedIn:
-Graphic/Screenshot: A simple diagram showing Pod A → Service → Pod B, or a screenshot of a successful curl to a service name.
-Key Insight: "What you learnt from day 2!"
-Hashtags: #10DaysCKAChallenge #KubernetesNetworking #DevOps #CKA2025
+## 💬 Engagement Activity (Build Your Visibility)
+
+- ✅ Post your Day 2 Learning on LinkedIn:
+- Graphic/Screenshot: A simple diagram showing Pod A → Service → Pod B, or a screenshot of a successful curl to a service name.
+- Key Insight: "What you learnt from day 2!"
+- Hashtags: #10DaysCKAChallenge #KubernetesNetworking #DevOps #CKA2025
 
 
 The more you engage, the more visibility you create for your profile 🌟
+
 ## 🧩 Finding it Difficult?
 
 Don't worry — share your doubt as a post or reach out on:
