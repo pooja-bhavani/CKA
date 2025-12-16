@@ -38,3 +38,10 @@ Don't worry — share your doubt as a post or reach out on:
 - 💬 **[Discord Community](https://discord.gg/yMDNaYEP)**
 - 💭 **[LinkedIn](https://www.linkedin.com/in/shubhamlondhe1996/)**
 - 💬 **[Official Website](https://www.trainwithshubham.com/)** 
+
+## Tip
+> The goal of this challenge is not just to learn — it’s to build your visibility and consistency online.
+> Each post you write helps recruiters, mentors, and peers recognize your growth in AWS.
+
+Happy Learning   
+*TrainWithShubham*
