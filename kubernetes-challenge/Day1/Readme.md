@@ -17,7 +17,8 @@ Learn about different ways to run Kubernetes:
 - **Managed Services**: EKS optional (GKE, AKS)
 - **Self-Managed**: kubeadm
 - **Local Development**: kind, minikube, k3s
-Set up your first local cluster using kind and deploy a simple application.
+Set up your first local cluster using kind and deploy a ollama application on Docker and kind.
+
 
 ## 💬 Engagement Activity
 
