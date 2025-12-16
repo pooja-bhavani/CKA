@@ -2,6 +2,7 @@
 
 Welcome to Day 1 of the 10 Days of CKA Challenge 🚀 Today, you'll start by understanding what Kubernetes is, why it's the leading container orchestration platform, and how it revolutionized modern application deployment.
 
+---
 ## 🎯 Tasks for Day 1
 
 ### Understand Kubernetes Architecture
@@ -20,6 +21,8 @@ Learn about different ways to run Kubernetes:
 
 Write a short summary post on LinkedIn or you can write linkedin Article in your own words explaining why Kubernetes became the #1 container orchestration platform.
 
+---
+
 ## 💬 Engagement Activity
 
 ✅ **Post your learnings on LinkedIn** using the hashtags:
@@ -32,6 +35,8 @@ Write a short summary post on LinkedIn or you can write linkedin Article in your
 - Share a screenshot of your first running pod
 
 The more you engage, the more visibility you create for your profile 🌟
+
+---
 ## 🧩 Finding it Difficult?
 
 Don't worry — share your doubt as a post or reach out on:
@@ -40,6 +45,7 @@ Don't worry — share your doubt as a post or reach out on:
 - 💬 **[Official Website](https://www.trainwithshubham.com/)** 
 
 ## Tip
+---
 > The goal of this challenge is not just to learn — it’s to build your visibility and consistency online.
 > Each post you write helps recruiters, mentors, and peers recognize your growth as DevOps Engineer.
 
