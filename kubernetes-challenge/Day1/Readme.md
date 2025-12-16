@@ -41,7 +41,7 @@ Don't worry — share your doubt as a post or reach out on:
 
 ## Tip
 > The goal of this challenge is not just to learn — it’s to build your visibility and consistency online.
-> Each post you write helps recruiters, mentors, and peers recognize your growth in AWS.
+> Each post you write helps recruiters, mentors, and peers recognize your growth as DevOps Engineer.
 
 Happy Learning   
 *TrainWithShubham*
