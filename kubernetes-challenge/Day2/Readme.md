@@ -22,8 +22,8 @@ Internal Communication (ClusterIP)
 - Key Insight: "What you learnt from day 2!"
 - Hashtags: #10DaysCKAChallenge #KubernetesNetworking #DevOps #CKA2026
 
-
 The more you engage, the more visibility you create for your profile 🌟
+
 ---
 ## 🧩 Finding it Difficult?
 
