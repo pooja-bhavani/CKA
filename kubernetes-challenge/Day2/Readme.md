@@ -20,7 +20,7 @@ Internal Communication (ClusterIP)
 - ✅ Post your Day 2 Learning on LinkedIn:
 - Graphic/Screenshot: A simple diagram showing Pod A → Service → Pod B, or a screenshot of a successful curl to a service name.
 - Key Insight: "What you learnt from day 2!"
-- Hashtags: #10DaysCKAChallenge #KubernetesNetworking #DevOps #CKA2025
+- Hashtags: #10DaysCKAChallenge #KubernetesNetworking #DevOps #CKA2026
 
 
 The more you engage, the more visibility you create for your profile 🌟
