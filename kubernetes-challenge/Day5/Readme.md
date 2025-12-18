@@ -10,6 +10,7 @@
   - `/admin/` → management dashboard
 - Add traffic splitting (90% stable, 10% beta)
 - Show your café running on the custom domain
+- Create a migration guide
 
 ---
 
