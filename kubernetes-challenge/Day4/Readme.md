@@ -1,4 +1,4 @@
-### Day 4: 🔍 "DNS Detective Mystery"
+# Day 4: 🔍 "DNS Detective Mystery"
 
 **Learning Goal**: Master CoreDNS and troubleshoot DNS issues
 
@@ -20,6 +20,7 @@
 
 
 The more you engage, the more visibility you create for your profile 🌟
+
 ---
 ## 🧩 Finding it Difficult?
 
