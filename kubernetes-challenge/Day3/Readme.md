@@ -1,4 +1,4 @@
-### Day 3: 🛡️ Network Security & Policies
+# Day 3: 🛡️ Network Security & Policies
 
 **Learning Goal**: Implement Network Policies for zero-trust security
 
