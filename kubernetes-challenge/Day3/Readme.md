@@ -6,6 +6,7 @@
 - Learn about Kubernetes Network Policies and CNI requirements
 - Understand default allow vs default deny networking models
 - Implement multi-tier security (customer/staff/management zones)
+- Write LinkedIn post about zero-trust networking in Kubernetes
 
 ---
 ## 💬 Engagement Activity (Build Your Visibility)
