@@ -5,7 +5,7 @@ Different Service types (ClusterIP, NodePort, LoadBalancer)
 
 ---
 
-**Learning Goal**: Master Kubernetes Services and inter-pod communication
+**Learning Goal**: Master Kubernetes Services and inter-pod communication 
 
 **Tasks**: 
 Internal Communication (ClusterIP)
