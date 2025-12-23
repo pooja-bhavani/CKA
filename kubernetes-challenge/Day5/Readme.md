@@ -1,4 +1,4 @@
-### Day 5: 🚪 "Gateway to Success"
+# Day 5: 🚪 "Gateway to Success"
 **Learning Goal**: Master Gateway API and modern ingress
 
 **🎮 Challenge**: 
