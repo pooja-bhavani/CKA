@@ -12,11 +12,11 @@
 - Deploy and demo end-to-end functionality
 
 **📱 Social Share**:
-```
+
 🏗️ Day 7 #10DayCKAChallenge: Built my own startup on Kubernetes!
 3-tier architecture, production-ready, fully functional 🚀
 #Kubernetes #Startup #Architecture
-```
+
 ---
 
 
