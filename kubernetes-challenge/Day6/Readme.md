@@ -36,7 +36,7 @@ Don't worry — share your doubt as a post or reach out on:
 
 ---
 
-> Each post you write your just learning a tool; your building a career. Every YAML error you fix today makes me a more valuable engineer tomorrow.
+> Each post you write your just learning a tool; your building a career. Every YAML error you fix today makes you a more valuable engineer tomorrow.
 
 Happy Learning   
 *TrainWithShubham*
