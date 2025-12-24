@@ -1,7 +1,7 @@
 # Introduction to Kubernetes  
 
 ## What is Kubernetes?  
-Kubernetes is an open-source container orchestration platform. It is the vital technology that handles the scaling, automates deployment and management of containerized applications across a cluster of machines.  
+Kubernetes is an open-source container orchestration platform. Kubernetes workloads represent applications running in your cluster. It is the vital technology that handles the scaling, automates deployment and management of containerized applications across a cluster of machines.  
 
 ## Kubernetes and Microservices: A Practical Example  
 Let's say you're running a retail store app with three main microservices:
