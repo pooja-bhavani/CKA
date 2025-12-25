@@ -476,8 +476,6 @@ kubectl rollout restart daemonset kube-proxy -n kube-system
 
 ## References
 
-## References
-
 - [Kubernetes v1.35 Release Notes](https://kubernetes.io/releases/notes/)
 - [Upgrading kubeadm clusters to v1.35](https://kubernetes.io/docs/tasks/administer-cluster/kubeadm/kubeadm-upgrade/)
 - [v1.35 Feature Gates](https://kubernetes.io/docs/reference/command-line-tools-reference/feature-gates/)
