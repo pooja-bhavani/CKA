@@ -1,4 +1,4 @@
-# Cluster Lifecycle Management
+# Cluster Lifecycle Management 
 
 ## Overview
 
@@ -14,9 +14,9 @@ Cluster lifecycle management involves maintaining, upgrading, backing up, and re
 
 ## Cluster Upgrades
 
-### Upgrade Strategy
+### Upgrade Strategy for v1.35
 
-Kubernetes follows a version skew policy:
+**Version Skew Policy (Updated for v1.35):**
 - Control plane components can be at most one minor version apart
 - kubelet can be up to two minor versions behind API server
 - kubectl can be ±1 minor version from API server
@@ -32,18 +32,28 @@ Kubernetes follows a version skew policy:
 kubectl version
 kubectl get nodes
 
-# 2. Review release notes
-# https://kubernetes.io/releases/
+# 2. Run v1.35 compatibility check
+./v135-pre-upgrade-check.sh
 
-# 3. Backup etcd
-ETCDCTL_API=3 etcdctl snapshot save /backup/etcd-snapshot-$(date +%Y%m%d-%H%M%S).db
+# 3. Review v1.35 release notes
+# https://kubernetes.io/releases/notes/
 
-# 4. Check cluster health
+# 4. Backup etcd
+ETCDCTL_API=3 etcdctl snapshot save /backup/etcd-snapshot-pre-v135-$(date +%Y%m%d-%H%M%S).db \
+  --endpoints=https://127.0.0.1:2379 \
+  --cacert=/etc/kubernetes/pki/etcd/ca.crt \
+  --cert=/etc/kubernetes/pki/etcd/server.crt \
+  --key=/etc/kubernetes/pki/etcd/server.key
+
+# 5. Check cluster health
 kubectl get nodes
 kubectl get pods -A
-kubectl get componentstatuses  # Deprecated but useful
+kubectl get --raw /healthz
 
-# 5. Drain control plane node (if HA)
+# 6. Document current feature gates
+kubectl get pods -n kube-system kube-apiserver-$(hostname) -o yaml | grep feature-gates
+
+# 7. Drain control plane node (if HA)
 kubectl drain <control-plane-node> --ignore-daemonsets
 ```
 
@@ -52,13 +62,13 @@ kubectl drain <control-plane-node> --ignore-daemonsets
 #### Step 1: Upgrade kubeadm
 
 ```bash
-# Find available versions
-apt-cache madison kubeadm
+# Find available v1.35 versions
+apt-cache madison kubeadm | grep 1.35
 
-# Upgrade to specific version (e.g., v1.34.1)
+# Upgrade to v1.35.0
 sudo apt-mark unhold kubeadm
 sudo apt-get update
-sudo apt-get install -y kubeadm=1.34.1-00
+sudo apt-get install -y kubeadm=1.35.0-1.1
 sudo apt-mark hold kubeadm
 
 # Verify version
@@ -68,21 +78,22 @@ kubeadm version
 #### Step 2: Plan the Upgrade
 
 ```bash
-# Check what will be upgraded
-sudo kubeadm upgrade plan
+# Check what will be upgraded to v1.35
+sudo kubeadm upgrade plan v1.35.0
 
 # Output shows:
-# - Current version
-# - Target version
+# - Current version (v1.34.x)
+# - Target version (v1.35.0)
 # - Component versions
-# - Upgrade path
+# - New feature gates available
+# - Breaking changes warnings
 ```
 
 #### Step 3: Apply the Upgrade
 
 ```bash
 # For first control plane node
-sudo kubeadm upgrade apply v1.34.1
+sudo kubeadm upgrade apply v1.35.0 --feature-gates="GangScheduling=true,UserNamespacesSupport=true"
 
 # For additional control plane nodes (if HA)
 sudo kubeadm upgrade node
@@ -90,7 +101,7 @@ sudo kubeadm upgrade node
 
 **Expected Output:**
 ```
-[upgrade/successful] SUCCESS! Your cluster was upgraded to "v1.34.1". Enjoy!
+[upgrade/successful] SUCCESS! Your cluster was upgraded to "v1.35.0". Enjoy!
 
 [upgrade/kubelet] Now that your control plane is upgraded, please proceed with upgrading your kubelets if you haven't already done so.
 ```
@@ -98,17 +109,17 @@ sudo kubeadm upgrade node
 #### Step 4: Upgrade kubelet and kubectl
 
 ```bash
-# Upgrade kubelet and kubectl
+# Ubuntu/Debian
 sudo apt-mark unhold kubelet kubectl
 sudo apt-get update
-sudo apt-get install -y kubelet=1.34.1-00 kubectl=1.34.1-00
+sudo apt-get install -y kubelet=1.35.0-1.1 kubectl=1.35.0-1.1
 sudo apt-mark hold kubelet kubectl
 
 # Restart kubelet
 sudo systemctl daemon-reload
 sudo systemctl restart kubelet
 
-# Verify
+# Verify versions
 kubectl version
 kubelet --version
 ```
@@ -120,6 +131,12 @@ kubectl uncordon <control-plane-node>
 
 # Verify node is Ready
 kubectl get nodes
+```
+
+#### Test v1.35 in-place resource updates
+```
+kubectl run test-v135 --image=nginx --requests='cpu=100m,memory=128Mi'
+kubectl patch pod test-v135 --type='merge' -p='{"spec":{"containers":[{"name":"test-v135","resources":{"limits":{"cpu":"200m","memory":"256Mi"}}}]}}'
 ```
 
 ### Upgrade Worker Nodes
@@ -145,7 +162,7 @@ ssh <worker-node>
 # Upgrade kubeadm
 sudo apt-mark unhold kubeadm
 sudo apt-get update
-sudo apt-get install -y kubeadm=1.34.1-00
+sudo apt-get install -y kubeadm=1.35.0-1.1
 sudo apt-mark hold kubeadm
 ```
 
@@ -154,20 +171,6 @@ sudo apt-mark hold kubeadm
 ```bash
 # On worker node
 sudo kubeadm upgrade node
-```
-
-#### Step 4: Upgrade kubelet and kubectl
-
-```bash
-# On worker node
-sudo apt-mark unhold kubelet kubectl
-sudo apt-get update
-sudo apt-get install -y kubelet=1.34.1-00 kubectl=1.34.1-00
-sudo apt-mark hold kubelet kubectl
-
-# Restart kubelet
-sudo systemctl daemon-reload
-sudo systemctl restart kubelet
 ```
 
 #### Step 5: Uncordon the Node
@@ -179,26 +182,6 @@ kubectl uncordon <worker-node>
 # Verify
 kubectl get nodes
 ```
-
-### Upgrade Verification
-
-```bash
-# Check all nodes are upgraded
-kubectl get nodes
-
-# Expected output:
-NAME              STATUS   ROLES           AGE   VERSION
-control-plane-1   Ready    control-plane   30d   v1.34.1
-worker-1          Ready    <none>          30d   v1.34.1
-worker-2          Ready    <none>          30d   v1.34.1
-
-# Check system pods
-kubectl get pods -n kube-system
-
-# Check cluster info
-kubectl cluster-info
-```
-
 ---
 
 ## etcd Backup and Restore
@@ -218,22 +201,100 @@ etcd stores all cluster data:
 #### Method 1: Using etcdctl (Recommended)
 
 ```bash
-# Install etcdctl if not present
-ETCD_VER=v3.5.9
-wget https://github.com/etcd-io/etcd/releases/download/${ETCD_VER}/etcd-${ETCD_VER}-linux-amd64.tar.gz
-tar xzf etcd-${ETCD_VER}-linux-amd64.tar.gz
-sudo mv etcd-${ETCD_VER}-linux-amd64/etcdctl /usr/local/bin/
-rm -rf etcd-${ETCD_VER}-linux-amd64*
+#!/bin/bash
+# v135-etcd-backup.sh - Enhanced backup script for v1.35
 
-# Create backup
-ETCDCTL_API=3 etcdctl snapshot save /backup/etcd-snapshot.db \
+BACKUP_DIR="/backup/etcd"
+TIMESTAMP=$(date +%Y%m%d-%H%M%S)
+BACKUP_FILE="${BACKUP_DIR}/etcd-snapshot-v135-${TIMESTAMP}.db"
+
+# Create backup directory
+mkdir -p ${BACKUP_DIR}
+
+# Create snapshot with v1.35 metadata
+ETCDCTL_API=3 etcdctl snapshot save ${BACKUP_FILE} \
   --endpoints=https://127.0.0.1:2379 \
   --cacert=/etc/kubernetes/pki/etcd/ca.crt \
   --cert=/etc/kubernetes/pki/etcd/server.crt \
   --key=/etc/kubernetes/pki/etcd/server.key
 
-# Verify backup
-ETCDCTL_API=3 etcdctl snapshot status /backup/etcd-snapshot.db --write-out=table
+# Verify snapshot
+ETCDCTL_API=3 etcdctl snapshot status ${BACKUP_FILE} --write-out=table
+
+# Create metadata file for v1.35
+cat > ${BACKUP_FILE}.metadata << EOF
+Kubernetes Version: $(kubectl version --short --client | grep Client)
+Server Version: $(kubectl version --short | grep Server)
+Backup Date: $(date)
+Cluster Name: $(kubectl config current-context)
+Node Count: $(kubectl get nodes --no-headers | wc -l)
+v1.35 Features: In-place updates, Generation tracking, Gang scheduling
+EOF
+
+# Backup v1.35 specific configurations
+kubectl get configmaps -n kube-system -o yaml > ${BACKUP_DIR}/configmaps-v135-${TIMESTAMP}.yaml
+kubectl get secrets -n kube-system -o yaml > ${BACKUP_DIR}/secrets-v135-${TIMESTAMP}.yaml
+
+# Keep only last 7 days of backups
+find ${BACKUP_DIR} -name "etcd-snapshot-v135-*.db" -mtime +7 -delete
+find ${BACKUP_DIR} -name "*.metadata" -mtime +7 -delete
+find ${BACKUP_DIR} -name "*-v135-*.yaml" -mtime +7 -delete
+
+echo "v1.35 backup completed: ${BACKUP_FILE}"
+```
+
+### etcd Restore for v1.35
+
+```bash
+#!/bin/bash
+# v135-etcd-restore.sh
+
+BACKUP_FILE="/backup/etcd/etcd-snapshot-v135-20241225-120000.db"
+NODE_NAME=$(hostname)
+NODE_IP=$(hostname -I | awk '{print $1}')
+
+echo "⚠️ WARNING: This will restore cluster to backup state"
+echo "Backup file: $BACKUP_FILE"
+echo "Press Enter to continue or Ctrl+C to abort"
+read
+
+# Step 1: Stop API server and etcd
+echo "Stopping API server and etcd..."
+sudo mv /etc/kubernetes/manifests/kube-apiserver.yaml /tmp/
+sudo mv /etc/kubernetes/manifests/etcd.yaml /tmp/
+
+# Wait for pods to stop
+sleep 30
+
+# Step 2: Backup current etcd data
+sudo mv /var/lib/etcd /var/lib/etcd-backup-$(date +%Y%m%d-%H%M%S)
+
+# Step 3: Restore from snapshot
+echo "Restoring from snapshot..."
+ETCDCTL_API=3 etcdctl snapshot restore $BACKUP_FILE \
+  --data-dir=/var/lib/etcd \
+  --name=$NODE_NAME \
+  --initial-cluster=$NODE_NAME=https://$NODE_IP:2380 \
+  --initial-advertise-peer-urls=https://$NODE_IP:2380
+
+# Step 4: Fix ownership
+sudo chown -R etcd:etcd /var/lib/etcd
+
+# Step 5: Restart etcd and API server
+echo "Restarting etcd and API server..."
+sudo mv /tmp/etcd.yaml /etc/kubernetes/manifests/
+sleep 20
+sudo mv /tmp/kube-apiserver.yaml /etc/kubernetes/manifests/
+
+# Step 6: Wait for cluster to be ready
+echo "Waiting for cluster to be ready..."
+sleep 60
+
+# Step 7: Verify restore
+kubectl get nodes
+kubectl get pods -A
+
+echo "✅ Restore completed. Verify your v1.35 cluster is working correctly."
 ```
 
 **Output:**
