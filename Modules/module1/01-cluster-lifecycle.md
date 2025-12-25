@@ -154,7 +154,7 @@ Understanding how components interact is crucial for troubleshooting.
 
 ## Kubeadm Installation
 
-## Specifically for kubeadm installation
+#### Specifically for kubeadm installation
 
 **Step1: Update System**
 ```
