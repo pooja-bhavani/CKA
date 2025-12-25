@@ -152,7 +152,7 @@ Understanding how components interact is crucial for troubleshooting.
 
 # Installation for Kubernetes v1.35
 
-### Kubeadm
+## Kubeadm Installation
 
 ## Specifically for kubeadm installation
 
@@ -283,7 +283,7 @@ kubectl apply -f https://raw.githubusercontent.com/projectcalico/calico/v3.27.0/
 ```
 ---
 
-### Kind Installation 
+## Kind Installation 
 
 **Step 1: Install Docker**
 ```
