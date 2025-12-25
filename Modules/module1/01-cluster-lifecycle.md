@@ -150,39 +150,171 @@ Understanding how components interact is crucial for troubleshooting.
 
 ---
 
-# Installation for Kubernetes v1.34
+# Installation for Kubernetes v1.35
 
-**kubectl v1.34**
-```
-curl -LO "https://dl.k8s.io/release/v1.34.0/bin/linux/amd64/kubectl"
-chmod +x kubectl
-sudo mv kubectl /usr/local/bin/
-```
+### Kubeadm
 
-**kind (supports v1.34)**
-```
-curl -Lo ./kind https://kind.sigs.k8s.io/dl/v0.23.0/kind-linux-amd64
-chmod +x ./kind
-sudo mv ./kind /usr/local/bin/kind
+## Specifically for kubeadm installation
 
+**Step1: Update System**
+```
+sudo apt update && sudo apt upgrade -y
+sudo reboot
 ```
 
-**Helm 3 (compatible with v1.34)**
+**Disable Swap (MANDATORY)**
 ```
-curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
+sudo swapoff -a
+sudo sed -i '/ swap / s/^\(.*\)$/#\1/g' /etc/fstab
+
+# Check current cgroup version
+stat -fc %T /sys/fs/cgroup/
+
 ```
-# Verify installations
+
+**If not cgroup2fs, enable cgroup v2**
 ```
+sudo grubby --update-kernel=ALL --args="systemd.unified_cgroup_hierarchy=1"
+# OR for Ubuntu (if grubby not available)
+sudo sed -i 's/GRUB_CMDLINE_LINUX=""/GRUB_CMDLINE_LINUX="systemd.unified_cgroup_hierarchy=1"/' /etc/default/grub
+sudo update-grub
+sudo reboot
+
+# Verify after reboot
+stat -fc %T /sys/fs/cgroup/  # Should show: cgroup2fs
+```
+
+**Load Kernel Modules**
+```
+cat <<EOF | sudo tee /etc/modules-load.d/k8s.conf
+overlay
+br_netfilter
+EOF
+
+sudo modprobe overlay
+sudo modprobe br_netfilter
+```
+
+**Set sysctl parameters**
+
+```
+cat <<EOF | sudo tee /etc/sysctl.d/k8s.conf
+net.bridge.bridge-nf-call-iptables  = 1
+net.bridge.bridge-nf-call-ip6tables = 1
+net.ipv4.ip_forward                 = 1
+EOF
+
+sudo sysctl --system
+
+```
+
+**step2: Install Container Runtime**
+
+```
+sudo apt-get update
+sudo apt-get install -y ca-certificates curl gnupg lsb-release
+
+sudo mkdir -p /etc/apt/keyrings
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+
+echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+
+sudo apt-get update
+sudo apt-get install -y containerd.io
+
+sudo systemctl restart containerd
+sudo systemctl enable containerd
+systemctl status containerd
+```
+
+> Note: If we skip these, kubeadm will fail, nodes stay NotReady, or networking (Pods <-> Pods) breaks.
+
+**Step 3: Install Kubernetes v1.35 Components**
+
+```
+# Add GPG Key & Repo
+curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.35/deb/Release.key | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
+
+echo 'deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.35/deb/ /' | sudo tee /etc/apt/sources.list.d/kubernetes.list
+
+sudo apt-get update
+
+# Install exact versions
+sudo apt-get install -y kubelet=1.35.0-1.1 kubeadm=1.35.0-1.1 kubectl=1.35.0-1.1
+
+# Hold packages
+sudo apt-mark hold kubelet kubeadm kubectl
+
+sudo systemctl enable kubelet
+```
+
+**Verify Installation**
+```
+kubeadm version
+kubelet --version
 kubectl version --client
+
+```
+
+**Initialize Control Plane Node**
+```
+sudo kubeadm init \
+  --kubernetes-version=v1.35.0 \
+  --pod-network-cidr=10.244.0.0/16
+```
+
+**Configure kubectl for your user**
+```
+mkdir -p $HOME/.kube
+sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+sudo chown $(id -u):$(id -g) $HOME/.kube/config
+```
+
+Install a CNI Plugin
+```
+Option 1: Flannel (simplest, CKA-friendly)
+kubectl apply -f https://github.com/flannel-io/flannel/releases/latest/download/kube-flannel.yml
+```
+or
+
+```
+Option 2: Calico (more features)
+kubectl apply -f https://raw.githubusercontent.com/projectcalico/calico/v3.27.0/manifests/calico.yaml
+```
+---
+
+### Kind Installation 
+
+**Step 1: Install Docker**
+```
+sudo apt update
+sudo apt install -y docker.io
+
+# Add user to docker group
+sudo usermod -aG docker $USER
+newgrp docker
+```
+
+**step2:Install kind v1.35**
+```
+curl -Lo kind https://kind.sigs.k8s.io/dl/v0.24.0/kind-linux-amd64
+chmod +x kind
+sudo mv kind /usr/local/bin/
 kind version
-helm version
+
 ```
 
-**Create v1.34 cluster**
+**Step 3: Install kubectl for v1.35**
 ```
-kind create cluster --name k8s-v134 --image kindest/node:v1.34.0
-```
+# Download kubectl v1.35
+curl -LO "https://dl.k8s.io/release/v1.35.0/bin/linux/amd64/kubectl"
+chmod +x kubectl
+sudo mv kubectl /usr/local/bin/kubectl
 
+# Verify kubectl
+kubectl version --client
+```
+--- 
 
 ### Check Cluster Components
 
