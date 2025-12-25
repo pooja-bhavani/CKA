@@ -5,7 +5,7 @@ This module covers 25% of the CKA exam and focuses on understanding, installing,
 ## Learnings
 By completing this module, you will be able to:
 
-- Understand Kubernetes cluster architecture and components
+- Understand Kubernetes cluster architecture and components 
 - Install and configure clusters using kind and kubeadm
 - Set up highly available (HA) cluster configurations
 - Implement Pod Security standards and troubleshoot admission errors
