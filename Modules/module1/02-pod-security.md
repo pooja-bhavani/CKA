@@ -60,15 +60,15 @@ metadata:
   labels:
     # Enforce restricted standard
     pod-security.kubernetes.io/enforce: restricted
-    pod-security.kubernetes.io/enforce-version: v1.34
+    pod-security.kubernetes.io/enforce-version: v1.35
     
     # Audit baseline standard
     pod-security.kubernetes.io/audit: baseline
-    pod-security.kubernetes.io/audit-version: v1.34
+    pod-security.kubernetes.io/audit-version: v1.35
     
     # Warn on privileged violations
     pod-security.kubernetes.io/warn: baseline
-    pod-security.kubernetes.io/warn-version: v1.34
+    pod-security.kubernetes.io/warn-version: v1.35
 ```
 
 Namespaces are labeled to select profile + mode, for example:
