@@ -59,28 +59,31 @@ Configure Pod Security using namespace labels:
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: my-namespace
+  name: production-namespace
   labels:
     # Enforce restricted standard
     pod-security.kubernetes.io/enforce: restricted
     pod-security.kubernetes.io/enforce-version: v1.35
     
-    # Audit baseline standard
+    # Audit baseline violations
     pod-security.kubernetes.io/audit: baseline
     pod-security.kubernetes.io/audit-version: v1.35
     
-    # Warn on privileged violations
+    # Warn on baseline violations
     pod-security.kubernetes.io/warn: baseline
     pod-security.kubernetes.io/warn-version: v1.35
 ```
 
 Namespaces are labeled to select profile + mode, for example:
 ```
-kubectl label namespace team-a \
+kubectl label namespace production \
   pod-security.kubernetes.io/enforce=restricted \
   pod-security.kubernetes.io/audit=baseline \
   pod-security.kubernetes.io/warn=baseline
 ```
+
+<img width="1309" height="972" alt="image" src="https://github.com/user-attachments/assets/27d3e15a-ab16-4147-8e41-73851124e4a0" />
+
 
 ## Implementing Pod Security
 
