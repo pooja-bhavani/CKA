@@ -328,42 +328,35 @@ kubectl get pods -A
 # Check cluster info
 kubectl cluster-info
 ```
-## Kubernetes v1.34 support advanced features 
-- Provides **Dynamic Resource Allocation** for GPUs, TPUs, NICs, etc
-- **Delayed Job Pod Replacement** -  This policy only creates replacement pods when the original pod is completely terminated
-- **Security Tokens** - kubelet can use short-lived, audience-bound ServiceAccount tokens that are automatically rotated
-- **Pod-Level Resources** - enable containers to share CPU and memory from a common pod allocation
-- **Job Success Policy** - allows jobs to succeed when a subset of pods complete successfully
 
+**Create v1.35 cluster**
+```
+kind create cluster --name k8s-v135 --image kindest/node:v1.35.0
+
+# Verify cluster
+kubectl cluster-info
+kubectl get nodes
+```
 ---
+## Kubernetes v1.35 New Features
 
-## Cluster Lifecycle Management (kubeadm)
+### Major Stable Features (NEW in v1.35)
+- **In-Place Pod Resource Updates** - Update CPU/memory without pod restart
+- **Pod Generation Tracking** - Reliable update status verification
+- **Enhanced Service Traffic Distribution** - PreferSameZone, PreferSameNode options
 
-Initialize a Single Control Plane
-```
-sudo kubeadm init \
-  --pod-network-cidr=10.244.0.0/16 \
-  --apiserver-advertise-address=<CONTROL_PLANE_IP>
-```
-**Set up kubectl**
-```
-mkdir -p $HOME/.kube
-sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
-sudo chown $(id -u):$(id -g) $HOME/.kube/config
-```
-Install a CNI (e.g. Calico, Flannel, Cilium) so Pods can communicate
-#### Weave Net
-```
-kubectl apply -f https://github.com/weaveworks/weave/releases/download/v2.8.1/weave-daemonset-k8s.yaml
-```
-## Join Worker Nodes
-```
-sudo kubeadm join LOAD_BALANCER_DNS:6443 \
-  --token <token> \
-  --discovery-token-ca-cert-hash sha256:<hash> \
-  --control-plane \
-  --certificate-key <cert-key>
-```
+### Enhanced Features (Improved in v1.35)
+- **Dynamic Resource Allocation** - Enhanced GPU/TPU sharing and partitioning
+- **Native Storage Version Migration** - Built-in migration controller
+- **StatefulSet Parallel Updates** - Configure maxUnavailable for faster updates
+- **Gang Scheduling** - All-or-nothing pod scheduling for batch workloads
+- **User Namespaces** - Enhanced container security isolation
+- **Node Declared Features** - Automatic hardware capability detection
+- **cgroup v2 MANDATORY** - cgroup v1 no longer supported
+- **containerd 1.7+ required** - older versions not compatible
+- **ipvs mode deprecated** - shows warnings, migrate to nftables
+
+
 ---
 
 ## HA Configuration
@@ -430,4 +423,12 @@ A High Availability (HA) Kubernetes cluster eliminates single points of failure 
 - Can be hardware (F5, Citrix) or software (HAProxy, nginx)
 - Must support TCP load balancing
 - Health checks for API server
+
+### v1.35 HA Requirements 
+
+**Critical for v1.35:**
+- All nodes MUST support cgroup v2
+- containerd 1.7+ on all nodes
+- OS: Ubuntu 20.04+, RHEL 8+, Debian 10+
+
   
