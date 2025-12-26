@@ -49,6 +49,92 @@ spec:
     image: nginx
 ```
 
+#### ServiceAccount Token Changes
+
+**ServiceAccount with explicit token management**
+```
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: app-sa
+  namespace: dev
+automountServiceAccountToken: true  # Explicit control
+---
+# Optional: Create bound token (v1.35 best practice)
+apiVersion: v1
+kind: Secret
+metadata:
+  name: app-sa-token
+  namespace: dev
+  annotations:
+    kubernetes.io/service-account.name: app-sa
+type: kubernetes.io/service-account-token
+```
+
+#### Enhanced Security Context Integration
+
+```
+# v1.35: RBAC + Pod Security integration
+apiVersion: v1
+kind: Pod
+metadata:
+  name: secure-app
+  namespace: dev
+spec:
+  serviceAccountName: app-sa
+  securityContext:
+    runAsNonRoot: true
+    runAsUser: 1000
+    seccompProfile:
+      type: RuntimeDefault
+  hostUsers: false  # v1.35 user namespace isolation
+  containers:
+  - name: app
+    image: nginx:1.21
+    securityContext:
+      allowPrivilegeEscalation: false
+      capabilities:
+        drop: ["ALL"]
+```
+
+#### Integration with Pod Certificates 
+
+**how RBAC works with the new Pod Certificates feature**
+```
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: cert-manager
+  namespace: dev
+rules:
+- apiGroups: [""]
+  resources: ["pods"]
+  verbs: ["get", "list"]
+- apiGroups: ["certificates.k8s.io"]  # v1.35 certificate API
+  resources: ["certificaterequests"]
+  verbs: ["create", "get", "list"]
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: app-with-certs-rbac
+  namespace: dev
+spec:
+  serviceAccountName: app-sa  # Must have cert-manager role
+  containers:
+  - name: app
+    image: nginx
+    volumeMounts:
+    - name: certs
+      mountPath: /var/run/secrets/workload-identity
+  volumes:
+  - name: certs
+    projected:
+      sources:
+      - podCertificate:
+          commonName: "app.dev.svc.cluster.local"
+```
+
 
 ### Role and RoleBinding (namespace‑scoped)
 
