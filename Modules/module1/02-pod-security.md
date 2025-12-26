@@ -10,19 +10,20 @@ PSA evaluates Pod create/update requests at admission time and can enforce, warn
 Pod Security Standards (PSS) levels
 The three built‑in profiles:
 
-1. Privileged (Unrestricted)
+**1. Privileged (Unrestricted)**
 Purpose: No restrictions - allows known privilege escalations
 
 - Allows privileged Pods, host networking, hostPath volumes, Running as root and all other capabilities.
 
-2. Baseline
+**2. Baseline**
 
 Purpose: Prevents known privilege escalations while minimizing restrictions
 
 - Minimally restrictive prevents known privilege escalations while allowing most default Pod specs.
 - Disallows privileged containers, some host namespaces, and unsafe capabilities.​
 
-3. Restricted
+**3. Restricted**
+
 Purpose: Follows pod hardening best practices
 
 - Most secure, based on current Pod hardening best practices.
