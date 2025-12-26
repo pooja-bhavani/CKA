@@ -85,42 +85,96 @@ kubectl label namespace production \
 <img width="1309" height="972" alt="image" src="https://github.com/user-attachments/assets/27d3e15a-ab16-4147-8e41-73851124e4a0" />
 
 
-## Implementing Pod Security
+## v1.35 Security Enhancements
 
-### Step 1: Check Current Configuration
+### 1. User Namespaces (Beta)
 
-```bash
-# Check if Pod Security Admission is enabled
-kubectl api-resources | grep podsecurity
+**What's New**: Enhanced container isolation using Linux user namespaces.
 
-# Check existing namespace labels
-kubectl get namespaces --show-labels
+**Benefits**:
+- Root inside container maps to unprivileged user on host
+- Better isolation without sacrificing functionality
+- Reduces attack surface
 
-# Check specific namespace
-kubectl get namespace default -o yaml
+**Configuration**:
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: user-namespace-pod
+spec:
+  securityContext:
+    runAsUser: 0      # Root inside container
+  hostUsers: false    # NEW in v1.35: Enable user namespace isolation
+  containers:
+  - name: app
+    image: nginx
+    securityContext:
+      runAsUser: 0    # Maps to unprivileged user on host
 ```
+---
+
+### 2. Pod Certificates 
+
+**What's New**: Native certificate generation and rotation without external tools.
+
+**Benefits**:
+- No need for cert-manager or SPIFFE/SPIRE
+- Automatic certificate rotation
+- Built-in workload identity
+
+**Configuration**:
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod-with-certs
+spec:
+  containers:
+  - name: app
+    image: nginx
+    volumeMounts:
+    - name: workload-certs
+      mountPath: /var/run/secrets/workload-identity
+      readOnly: true
+  volumes:
+  - name: workload-certs
+    projected:
+      sources:
+      - podCertificate:  # NEW in v1.35
+          commonName: "app.default.svc.cluster.local"
+          duration: "24h"
+          renewBefore: "8h"
+          dnsNames:
+          - "app.default.svc.cluster.local"
+          - "app"
+```
+---
+
 
 ## Admission Controllers
 
 ### What are Admission Controllers?
 
-Admission controllers are plugins that intercept requests to the Kubernetes API server before object persistence. They can:
-- **Validate**: Check if request meets requirements
-- **Mutate**: Modify the request
-- **Reject**: Deny the request
 
-### Common Admission Controllers
+Admission controllers are plugins that intercept requests to the Kubernetes API server before object persistence. They operate in two phases:
+
+1. **Mutating Phase**: Can modify the request
+2. **Validating Phase**: Can accept or reject the request
+
+### Common Admission Controllers in v1.35
 
 #### 1. PodSecurity (Validating)
-- Enforces Pod Security Standards
+- **Purpose**: Enforces Pod Security Standards
+- **New in v1.35**: Enhanced user namespace support
+- **Configuration**: Namespace labels
 
 #### 2. NamespaceLifecycle (Validating)
-- Prevents creation of objects in terminating namespaces
-- Ensures system namespaces cannot be deleted
+- **Purpose**: Prevents operations on terminating namespaces
+- **Behavior**: Ensures system namespaces cannot be deleted
 
 #### 3. LimitRanger (Validating)
-- Enforces resource limits on pods and containers
-- Applies default limits if not specified
+- **Purpose**: Enforces resource limits and defaults
 
 #### 4. ResourceQuota (Validating)
 - Enforces resource quotas per namespace
@@ -141,6 +195,10 @@ Admission controllers are plugins that intercept requests to the Kubernetes API 
 #### 8. ValidatingAdmissionWebhook (Validating)
 - Calls external webhooks to validate objects
 - Used for custom policies
+
+#### 9. CertificateApproval (NEW in v1.35)
+- **Purpose**: Manages Pod certificate requests
+- **Behavior**: Approves/denies certificate requests
 
 ### Checking Enabled Admission Controllers
 ```
@@ -178,7 +236,7 @@ spec:
       mountPath: /logs
 ```
 
-Solution: Pod (using PVC instead of hostPath):
+**Solution:**
 ```yaml
 spec:
   volumes:
@@ -276,6 +334,52 @@ kubectl label namespace <namespace> \
   pod-security.kubernetes.io/enforce=baseline \
   --overwrite
 ```
+
+#### Example 4: Running as Root Blocked (In v1.35)
+**Error Message:**
+```
+Error from server (Forbidden): pods "app" is forbidden: violates PodSecurity "restricted:latest": runAsNonRoot != true
+```
+
+**Solution:**
+```yaml
+spec:
+  securityContext:
+    runAsNonRoot: true
+    runAsUser: 1000
+    runAsGroup: 1000
+    fsGroup: 1000
+    seccompProfile:
+      type: RuntimeDefault
+  hostUsers: false  # NEW in v1.35: Enable user namespace isolation
+  containers:
+  - name: app
+    image: nginx:1.21
+    securityContext:
+      allowPrivilegeEscalation: false
+      readOnlyRootFilesystem: true
+      capabilities:
+        drop: ["ALL"]
+      runAsNonRoot: true
+      runAsUser: 1000
+```
+
+#### Pod Certificate Issues (NEW in v1.35)
+**Error:** "podCertificate volume source not supported"
+
+**Diagnosis:**
+```bash
+# Check if feature is enabled
+kubectl api-resources | grep certificates
+kubectl get pods -n kube-system kube-apiserver-$(hostname) -o yaml | grep feature-gates
+```
+
+**Solution:**
+```bash
+# Enable Pod certificates feature gate
+sudo kubeadm upgrade apply v1.35.0 --feature-gates="PodCertificates=true"
+```
+
 ---
 
 ## Exam Tips
