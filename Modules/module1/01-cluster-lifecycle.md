@@ -1,6 +1,6 @@
 # Cluster Architecture, Installation & Configuration (25%) 
 
-This module covers 25% of the CKA exam and focuses on understanding, installing, and configuring Kubernetes clusters.
+**This module covers 25% of the CKA exam and focuses on understanding, installing, and configuring Kubernetes clusters.*
 
 ## Learnings
 By completing this module, you will be able to:
