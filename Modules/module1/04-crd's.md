@@ -80,6 +80,75 @@ Operator = CRD + Controller + Operational Knowledge
 └─────────────────────────────────────────┘
 ```
 
+### 1. Enhanced CRD Validation with CEL
+
+Kubernetes v1.35 introduces **Common Expression Language (CEL)** for advanced validation:
+
+```yaml
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  name: databases.example.com
+spec:
+  group: example.com
+  scope: Namespaced
+  names:
+    plural: databases
+    singular: database
+    kind: Database
+  versions:
+  - name: v1
+    served: true
+    storage: true
+    schema:
+      openAPIV3Schema:
+        type: object
+        properties:
+          spec:
+            type: object
+            properties:
+              replicas:
+                type: integer
+                minimum: 1
+                maximum: 10
+              engine:
+                type: string
+                enum: ["postgres", "mysql"]
+            # NEW in v1.35: CEL validation rules
+            x-kubernetes-validations:
+            - rule: "self.replicas <= 5 || self.engine == 'postgres'"
+              message: "Only PostgreSQL supports more than 5 replicas"
+            - rule: "self.engine == 'postgres' ? self.replicas >= 2 : true"
+              message: "PostgreSQL requires at least 2 replicas"
+```
+
+### 2. v1.35 Operator RBAC Enhancements
+
+```yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: database-operator
+rules:
+# Basic resources
+- apiGroups: [""]
+  resources: ["pods", "services", "secrets"]
+  verbs: ["get", "list", "watch", "create", "update", "delete"]
+- apiGroups: ["apps"]
+  resources: ["statefulsets"]
+  verbs: ["get", "list", "watch", "create", "update", "delete"]
+# Custom resources
+- apiGroups: ["example.com"]
+  resources: ["databases"]
+  verbs: ["get", "list", "watch", "create", "update", "delete"]
+# NEW in v1.35: Status and finalizers
+- apiGroups: ["example.com"]
+  resources: ["databases/status", "databases/finalizers"]
+  verbs: ["update"]
+```
+
+---
+
 ## Common Operators
 
 ### 1. Prometheus Operator
@@ -109,12 +178,21 @@ spec:
   resources:
     requests:
       memory: 400Mi
+  # v1.35: Enhanced security context
+  securityContext:
+    runAsNonRoot: true
+    runAsUser: 1000
+    fsGroup: 2000
+  # v1.35: Pod security compliance
+  podSecurityContext:
+    seccompProfile:
+      type: RuntimeDefault
 ```
 **Installation:**
 
 ```bash
 # Install Prometheus Operator
-kubectl apply -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/main/bundle.yaml
+kubectl apply -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/v0.68.0/bundle.yaml
 
 # Verify CRDs
 kubectl get crds | grep monitoring.coreos.com
@@ -145,12 +223,22 @@ spec:
   dnsNames:
   - example.com
   - www.example.com
+  # v1.35: Enhanced certificate options
+  duration: 2160h # 90 days
+  renewBefore: 360h # 15 days
+  privateKey:
+    algorithm: RSA
+    size: 2048
+  usages:
+  - digital signature
+  - key encipherment
 ```
+
 **Installation:**
 
 ```bash
 # Install cert-manager
-kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.13.0/cert-manager.yaml
+kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.13.2/cert-manager.yaml
 
 # Verify CRDs
 kubectl get crds | grep cert-manager.io
@@ -185,6 +273,17 @@ spec:
     automated:
       prune: true
       selfHeal: true
+    # v1.35: Enhanced sync options
+    syncOptions:
+    - CreateNamespace=true
+    - PrunePropagationPolicy=foreground
+    - PruneLast=true
+```
+**Installation (v1.35)**:
+```bash
+# Install ArgoCD (v1.35 compatible)
+kubectl create namespace argocd
+kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/v2.8.4/manifests/install.yaml
 ```
 ### 4. Istio Operator
 
@@ -199,7 +298,7 @@ spec:
 **Example:**
 
 ```yaml
-apiVersion: networking.istio.io/v1
+apiVersion: networking.istio.io/v1beta1
 kind: VirtualService
 metadata:
   name: reviews
@@ -219,7 +318,28 @@ spec:
     - destination:
         host: reviews
         subset: v1
+---
+apiVersion: networking.istio.io/v1beta1
+kind: DestinationRule
+metadata:
+  name: reviews
+spec:
+  host: reviews
+  subsets:
+  - name: v1
+    labels:
+      version: v1
+  - name: v2
+    labels:
+      version: v2
 ```
+**Installation (v1.35)**:
+```bash
+# Install ArgoCD (v1.35 compatible)
+kubectl create namespace argocd
+kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/v2.8.4/manifests/install.yaml
+```
+
 
 ## Troubleshooting
 
@@ -276,9 +396,10 @@ kubectl get events --sort-by='.lastTimestamp'
 # 8. Check RBAC
 kubectl auth can-i --list --as=system:serviceaccount:<namespace>:<sa>
 ```
+
 ---
 
-## Few Examples for CRD's and how to resolve
+## Real-World Examples
 
 ### Example 1: Type Mismatch
 
@@ -407,5 +528,15 @@ spec:
 ### Why?
 Kubernetes allows only one storage version because the version is used to store objects in etcd.
 If two versions are marked as storage, Kubernetes does not know which format to use.
+
+## Summary
+
+CRDs and Operators in Kubernetes v1.35 provide powerful ways to extend Kubernetes functionality:
+
+- **CRDs** define custom resources with enhanced validation using CEL
+- **Operators** automate complex application management using the operator pattern
+- **v1.35 enhancements** include better validation, conversion webhooks, and status management
+- **Common operators** like Prometheus, Cert-Manager, and ArgoCD are essential tools
+- **Troubleshooting** requires systematic approach using kubectl commands and events
 
 
