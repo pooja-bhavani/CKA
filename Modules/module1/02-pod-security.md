@@ -364,14 +364,46 @@ spec:
       runAsUser: 1000
 ```
 
+**What are Pod Certificates?**
+Pod Certificates is a beta feature in v1.35 that allows Kubernetes to automatically generate and manage TLS certificates for individual Pods without requiring external tools like cert-manager or SPIFFE/SPIRE.
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: app-with-certs
+spec:
+  containers:
+  - name: app
+    image: nginx
+    volumeMounts:
+    - name: workload-certs
+      mountPath: /var/run/secrets/workload-identity
+      readOnly: true
+  volumes:
+  - name: workload-certs
+    projected:
+      sources:
+      - podCertificate:  # NEW in v1.35
+          commonName: "app.default.svc.cluster.local"
+          duration: "24h"
+          renewBefore: "8h"
+          dnsNames:
+          - "app.default.svc.cluster.local"
+          - "app"
+```
+
+
 #### Pod Certificate Issues (NEW in v1.35)
 **Error:** "podCertificate volume source not supported"
 
 **Diagnosis:**
 ```bash
-# Check if feature is enabled
+# Check if certificate APIs are available:
 kubectl api-resources | grep certificates
+
+# Check feature gates on API server
 kubectl get pods -n kube-system kube-apiserver-$(hostname) -o yaml | grep feature-gates
+
 ```
 
 **Solution:**
@@ -380,6 +412,20 @@ kubectl get pods -n kube-system kube-apiserver-$(hostname) -o yaml | grep featur
 sudo kubeadm upgrade apply v1.35.0 --feature-gates="PodCertificates=true"
 ```
 
+- This enables the Pod Certificates feature gate during cluster upgrade
+- After this, Pods can use podCertificate volume sources
+
+**Real-World Use Cases:**
+1. Service Mesh: Pods get automatic mTLS certificates
+2. Microservices: Secure service-to-service communication
+3. API Authentication: Pods authenticate to external APIs using certificates
+4. Compliance: Meet requirements for certificate-based workload identity
+
+**Benefits Over External Tools:**
+1. Simpler: No need to install cert-manager or SPIFFE
+2. Native: Built into Kubernetes core
+3. Automatic: Handles certificate lifecycle automatically
+4. Secure: Certificates are Pod-specific and short-lived
 ---
 
 ## Exam Tips
