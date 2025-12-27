@@ -1,4 +1,4 @@
-# Kubernetes Services and Endpoints
+a# Kubernetes Services and Endpoints
 
 ## Overview
 
@@ -10,7 +10,7 @@ Services in Kubernetes provide stable networking endpoints for accessing pods. T
 - **Load Balancing**: Distribute traffic across multiple pod replicas
 - **Service Discovery**: Enable pods to find and communicate with each other
 - **External Access**: Expose applications outside the cluster
-
+- **Traffic Management**: Control how traffic flows to backend pods
 ---
 
 ## Service Types
@@ -134,6 +134,134 @@ Endpoints are the actual IP addresses and ports of pods that match a service's s
 kubectl get endpoints
 kubectl describe endpoints <service-name>
 ```
+### EndpointSlices
+
+EndpointSlices provide a more scalable and extensible alternative to Endpoints:
+
+```bash
+# View EndpointSlices (v1.35 preferred method)
+kubectl get endpointslices
+kubectl describe endpointslice <service-name>-<hash>
+
+# View traditional Endpoints (still supported)
+kubectl get endpoints
+kubectl describe endpoints <service-name>
+```
+
+**EndpointSlice Example**:
+```yaml
+apiVersion: discovery.k8s.io/v1
+kind: EndpointSlice
+metadata:
+  name: web-service-abc123
+  labels:
+    kubernetes.io/service-name: web-service
+addressType: IPv4
+endpoints:
+- addresses:
+  - "10.244.1.5"
+  conditions:
+    ready: true
+  targetRef:
+    kind: Pod
+    name: web-pod-1
+    namespace: default
+ports:
+- name: http
+  port: 8080
+  protocol: TCP
+```
+
+## v1.35 Enhancements
+
+### 1. Enhanced Traffic Distribution
+
+v1.35 introduces improved traffic distribution options:
+
+```yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: web-service
+spec:
+  type: ClusterIP
+  selector:
+    app: web
+  ports:
+  - port: 80
+    targetPort: 8080
+  # NEW in v1.35: Traffic distribution options
+  trafficDistribution: PreferClose  # Route to closest endpoints
+  internalTrafficPolicy: Local      # Keep traffic on same node when possible
+```
+
+**Traffic Distribution Options**:
+- `PreferClose`: Routes traffic to topologically closer endpoints
+- `Cluster` (default): Distributes traffic across all endpoints
+
+**Internal Traffic Policy Options**:
+- `Cluster` (default): Routes to all endpoints cluster-wide
+- `Local`: Routes only to endpoints on the same node
+
+### 3. Service with Pod Security Standards
+
+```yaml
+# v1.35 Service targeting secure pods
+apiVersion: v1
+kind: Service
+metadata:
+  name: secure-service
+spec:
+  selector:
+    app: secure-app
+  ports:
+  - name: http
+    port: 80
+    targetPort: 8080
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: secure-app
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: secure-app
+  template:
+    metadata:
+      labels:
+        app: secure-app
+    spec:
+      # v1.35 Pod Security compliance
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+        seccompProfile:
+          type: RuntimeDefault
+      hostUsers: false  # v1.35 user namespace isolation
+      containers:
+      - name: app
+        image: nginx:1.21
+        ports:
+        - name: http
+          containerPort: 8080
+        securityContext:
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
+          capabilities:
+            drop: ["ALL"]
+        resources:
+          requests:
+            cpu: 100m
+            memory: 128Mi
+          limits:
+            cpu: 500m
+            memory: 512Mi
+```
+---
 
 ## Common Scenarios and Use Cases
 
@@ -145,14 +273,17 @@ apiVersion: v1
 kind: Service
 metadata:
   name: frontend
+  annotations:
+    service.kubernetes.io/topology-aware-hints: auto
 spec:
   type: LoadBalancer
   selector:
     tier: frontend
   ports:
-    - port: 80
-      targetPort: 3000
-
+  - name: http
+    port: 80
+    targetPort: 3000
+  trafficDistribution: PreferClose
 ---
 # Backend - ClusterIP (internal only)
 apiVersion: v1
@@ -164,9 +295,10 @@ spec:
   selector:
     tier: backend
   ports:
-    - port: 8080
-      targetPort: 8080
-
+  - name: api
+    port: 8080
+    targetPort: 8080
+  internalTrafficPolicy: Local
 ---
 # Database - ClusterIP (internal only)
 apiVersion: v1
@@ -178,8 +310,10 @@ spec:
   selector:
     tier: database
   ports:
-    - port: 5432
-      targetPort: 5432
+  - name: postgres
+    port: 5432
+    targetPort: 5432
+  internalTrafficPolicy: Local
 ```
 
 ### Scenario 2: Headless Service (StatefulSets)
