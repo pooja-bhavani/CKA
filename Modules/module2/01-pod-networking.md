@@ -1,3 +1,10 @@
+# Pod Networking and CNI 
+
+## Table of Contents
+
+1. [Overview](#overview)
+
+
 ## Overview
 
 Pod networking is the foundation of Kubernetes networking. Every pod gets its own IP address, and pods can communicate with each other across nodes without NAT. 
@@ -125,7 +132,7 @@ cat /etc/cni/net.d/10-calico.conflist
 ```json
 {
   "name": "k8s-pod-network",
-  "cniVersion": "0.3.1",
+  "cniVersion": "1.0.0",
   "plugins": [
     {
       "type": "calico",
@@ -133,13 +140,24 @@ cat /etc/cni/net.d/10-calico.conflist
       "datastore_type": "kubernetes",
       "nodename": "node1",
       "ipam": {
-        "type": "calico-ipam"
+        "type": "calico-ipam",
+        "assign_ipv4": "true",
+        "assign_ipv6": "false"
       },
       "policy": {
         "type": "k8s"
       },
       "kubernetes": {
         "kubeconfig": "/etc/cni/net.d/calico-kubeconfig"
+      },
+      "container_settings": {
+        "allow_ip_forwarding": false
+      }
+    },
+    {
+      "type": "bandwidth",
+      "capabilities": {
+        "bandwidth": true
       }
     }
   ]
@@ -185,7 +203,7 @@ ls /opt/cni/bin/
 **Installation**:
 ```bash
 # Install Calico
-kubectl apply -f https://raw.githubusercontent.com/projectcalico/calico/v3.26.1/manifests/calico.yaml
+kubectl apply -f https://raw.githubusercontent.com/projectcalico/calico/v3.27.0/manifests/calico.yaml
 
 # Verify installation
 kubectl get pods -n kube-system | grep calico
@@ -242,7 +260,7 @@ kubectl get pods -n kube-system | grep calico
 **Installation**:
 ```bash
 # Install Flannel
-kubectl apply -f https://raw.githubusercontent.com/flannel-io/flannel/master/Documentation/kube-flannel.yml
+kubectl apply -f https://github.com/flannel-io/flannel/releases/latest/download/kube-flannel.yml
 
 # Verify installation
 kubectl get pods -n kube-system | grep flannel
@@ -307,6 +325,103 @@ cilium status
 ```
 
 ---
+
+## v1.35 Networking Enhancements
+
+### 1. Enhanced Traffic Distribution
+
+v1.35 introduces improved traffic distribution for Services:
+
+```yaml
+# v1.35 Enhanced Service with traffic distribution
+apiVersion: v1
+kind: Service
+metadata:
+  name: web-service
+spec:
+  selector:
+    app: web
+  ports:
+  - port: 80
+    targetPort: 8080
+  # NEW in v1.35: Enhanced traffic distribution
+  trafficDistribution: PreferClose  # Routes to closest endpoints first
+  internalTrafficPolicy: Local      # Keep traffic on same node when possible
+```
+**Benefits**:
+- Reduced latency by routing to closest endpoints
+- Better resource utilization
+- Improved performance for latency-sensitive applications
+
+### 2. User Namespaces Integration
+
+Pod networking now works with user namespaces for enhanced security:
+
+```yaml
+# v1.35 Pod with user namespace isolation
+apiVersion: v1
+kind: Pod
+metadata:
+  name: isolated-pod
+spec:
+  hostUsers: false  # Enable user namespace isolation
+  securityContext:
+    runAsNonRoot: true
+    runAsUser: 1000
+    runAsGroup: 1000
+    seccompProfile:
+      type: RuntimeDefault
+  containers:
+  - name: app
+    image: nginx:1.21
+    securityContext:
+      allowPrivilegeEscalation: false
+      readOnlyRootFilesystem: true
+      capabilities:
+        drop: ["ALL"]
+```
+
+**Benefits**:
+- Enhanced container isolation
+- Root inside container maps to unprivileged user on host
+- Better security without sacrificing functionality
+
+### 3. In-Place Pod Resource Updates
+
+v1.35 allows updating Pod resources without restart:
+
+```bash
+# Update Pod resources without restart (NEW in v1.35)
+kubectl patch pod my-pod --type='merge' -p='{
+  "spec": {
+    "containers": [{
+      "name": "app",
+      "resources": {
+        "limits": {"cpu": "500m", "memory": "1Gi"}
+      }
+    }]
+  }
+}'
+
+# Verify Pod didn't restart (check AGE and RESTARTS)
+kubectl get pod my-pod -o wide
+```
+
+### 4. Enhanced Network Observability
+
+```bash
+# v1.35 Network Performance Monitoring
+
+# Check network performance metrics
+kubectl top pods --containers
+kubectl top nodes
+
+# Monitor CNI plugin performance
+kubectl logs -n kube-system -l k8s-app=calico-node --tail=100 | grep -i performance
+
+# Check for network bottlenecks
+kubectl get events --field-selector reason=NetworkNotReady
+```
 
 ---
 
