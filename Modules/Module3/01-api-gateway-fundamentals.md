@@ -11,29 +11,52 @@ Gateway API is the next-generation Kubernetes API for managing ingress traffic. 
 - **Extensible**: Custom resources and vendor-specific features
 - **Portable**: Works across different implementations (Envoy, Istio, NGINX, etc.)
 - **Type-Safe**: Strongly typed API with better validation
+- Enhanced integration with Service Mesh and improved performance
 
 ## Importance
 
 Gateway API is increasingly important for modern Kubernetes:
 - **Emerging topic** in CKA exam (5-10% weight expected)
-- Replaces traditional Ingress in many scenarios
-- Understanding migration from Ingress to Gateway API is critical
-- Must know core objects: Gateway, HTTPRoute, GatewayClass
+- **Stable API**: Gateway API v1.1+ is production-ready
+- **Service Mesh Integration**: Better integration with Istio, Linkerd, and other service meshes
+- **Enhanced Traffic Management**: Advanced traffic splitting and routing capabilities
+- **Multi-cluster Support**: Cross-cluster traffic management
 
 ---
 
-## Gateway API vs Ingress
+## Gateway API vs Ingress (Updated for v1.35)
 
-| Feature | Ingress | Gateway API |
-|---------|---------|-------------|
-| **API Maturity** | Stable (v1) | Stable (v1) |
-| **Expressiveness** | Basic routing | Advanced routing |
+| Feature | Ingress | Gateway API v1.35 |
+|---------|---------|-------------------|
+| **API Maturity** | Stable (v1) | Stable (v1.1) |
+| **Expressiveness** | Basic routing | Advanced routing + Service Mesh |
 | **Role Separation** | Single resource | Multiple resources |
-| **Protocol Support** | HTTP/HTTPS | HTTP, HTTPS, TCP, UDP, gRPC |
-| **Traffic Splitting** | Limited | Native support |
+| **Protocol Support** | HTTP/HTTPS | HTTP, HTTPS, TCP, UDP, gRPC, GRPC-Web |
+| **Traffic Splitting** | Limited | Native support with weights |
 | **Header Routing** | Via annotations | Native support |
-| **Extensibility** | Annotations | Custom resources |
-| **Multi-tenancy** | Limited | Built-in |
+| **Extensibility** | Annotations | Custom resources + Policy API |
+| **Multi-tenancy** | Limited | Built-in with namespace isolation |
+| **Service Mesh** | External | Native integration |
+| **Cross-cluster** | Not supported | Native support |
+
+---
+
+## NEW v1.35: Gateway API v1.1 Features
+
+### 1. Enhanced Service Mesh Integration
+- **Native Service Mesh Support**: Direct integration with Istio, Linkerd
+- **Mesh-wide Policies**: Traffic policies across service mesh
+- **Cross-cluster Routing**: Route traffic between clusters
+
+### 2. Policy API (Beta)
+- **Security Policies**: Authentication, authorization at the gateway level
+- **Traffic Policies**: Rate limiting, circuit breaking, retries
+- **Observability Policies**: Tracing, metrics collection
+
+### 3. Enhanced Protocol Support
+- **GRPC-Web**: Native support for GRPC-Web protocol
+- **WebSocket**: Better WebSocket handling
+- **HTTP/3**: Experimental HTTP/3 support
 
 ---
 
@@ -53,13 +76,19 @@ metadata:
   name: istio
 spec:
   controllerName: istio.io/gateway-controller
+  # NEW in v1.35: Enhanced parameters
+  parametersRef:
+    group: gateway.istio.io
+    kind: IstioGatewayClass
+    name: istio-config
 ```
 
 **Common GatewayClasses**:
-- `istio`: Istio Gateway Controller
-- `envoy`: Envoy Gateway
-- `nginx`: NGINX Gateway Controller
-- `traefik`: Traefik Gateway Controller
+- `istio`: Istio Gateway Controller (v1.20+)
+- `envoy`: Envoy Gateway (v1.0+)
+- `nginx`: NGINX Gateway Controller (v1.1+)
+- `traefik`: Traefik Gateway Controller (v3.0+)
+- `cilium`: Cilium Gateway Controller (v1.14+)
 
 ---
 
@@ -79,19 +108,33 @@ metadata:
 spec:
   gatewayClassName: istio
   listeners:
-    - name: http
-      protocol: HTTP
-      port: 80
-      allowedRoutes:
-        namespaces:
-          from: All
+  - name: http
+    protocol: HTTP
+    port: 80
+    allowedRoutes:
+      namespaces:
+        from: All
+  - name: https
+    protocol: HTTPS
+    port: 443
+    tls:
+      mode: Terminate
+      certificateRefs:
+      - name: example-com-tls
+    allowedRoutes:
+      namespaces:
+        from: All
+  # NEW in v1.35: Enhanced address configuration
+  addresses:
+  - type: IPAddress
+    value: "192.168.1.100"
 ```
 
 **Key Fields**:
 - `gatewayClassName`: Which GatewayClass to use
 - `listeners`: Ports and protocols to listen on
 - `allowedRoutes`: Which namespaces can attach routes
-
+- `addresses`: Specific IP addresses to bind
 ---
 
 ### 3. HTTPRoute
@@ -109,26 +152,77 @@ metadata:
   namespace: default
 spec:
   parentRefs:
-    - name: example-gateway
+  - name: example-gateway
   hostnames:
-    - "example.com"
+  - "example.com"
   rules:
-    - matches:
-        - path:
-            type: PathPrefix
-            value: /api
-      backendRefs:
-        - name: api-service
-          port: 8080
-    - matches:
-        - path:
-            type: PathPrefix
-            value: /
-      backendRefs:
-        - name: web-service
-          port: 80
+  - matches:
+    - path:
+        type: PathPrefix
+        value: /api
+    # NEW in v1.35: Enhanced backend references
+    backendRefs:
+    - name: api-service
+      port: 8080
+      weight: 90
+    - name: api-service-canary
+      port: 8080
+      weight: 10
+    # NEW in v1.35: Request/Response filters
+    filters:
+    - type: RequestHeaderModifier
+      requestHeaderModifier:
+        add:
+        - name: X-Custom-Header
+          value: "gateway-api"
+  - matches:
+    - path:
+        type: PathPrefix
+        value: /
+    backendRefs:
+    - name: web-service
+      port: 80
 ```
 
+
+### 4. NEW v1.35: Enhanced Route Types
+
+**GRPCRoute** (Stable):
+```yaml
+apiVersion: gateway.networking.k8s.io/v1
+kind: GRPCRoute
+metadata:
+  name: grpc-route
+spec:
+  parentRefs:
+  - name: example-gateway
+  hostnames:
+  - "grpc.example.com"
+  rules:
+  - matches:
+    - method:
+        service: "user.UserService"
+        method: "GetUser"
+    backendRefs:
+    - name: user-service
+      port: 9090
+```
+
+**TCPRoute** (Beta):
+```yaml
+apiVersion: gateway.networking.k8s.io/v1beta1
+kind: TCPRoute
+metadata:
+  name: tcp-route
+spec:
+  parentRefs:
+  - name: example-gateway
+    sectionName: tcp
+  rules:
+  - backendRefs:
+    - name: database-service
+      port: 5432
+```
 ---
 
 ### 4. Other Route Types
@@ -140,39 +234,102 @@ spec:
 
 ---
 
+## NEW: Policy API Integration
+
+### Security Policy Example
+```yaml
+apiVersion: gateway.networking.k8s.io/v1alpha2
+kind: SecurityPolicy
+metadata:
+  name: api-security
+  namespace: default
+spec:
+  targetRef:
+    group: gateway.networking.k8s.io
+    kind: HTTPRoute
+    name: api-route
+  authentication:
+    jwt:
+      providers:
+      - name: auth0
+        issuer: "https://example.auth0.com/"
+        audiences:
+        - "api.example.com"
+  authorization:
+    rules:
+    - action: ALLOW
+      from:
+      - source:
+          principals:
+          - "user@example.com"
+```
+
+### Traffic Policy Example
+```yaml
+apiVersion: gateway.networking.k8s.io/v1alpha2
+kind: TrafficPolicy
+metadata:
+  name: api-traffic-policy
+spec:
+  targetRef:
+    group: gateway.networking.k8s.io
+    kind: HTTPRoute
+    name: api-route
+  rateLimit:
+    requests: 100
+    unit: minute
+  retry:
+    attempts: 3
+    backoff: exponential
+  timeout: 30s
+```
+
+---
+
+
 ## Role-Oriented Design
 
 Gateway API separates responsibilities:
-
 ```
 ┌─────────────────────────────────────────────────┐
 │ Infrastructure Provider                         │
 │ - Installs Gateway Controller                   │
 │ - Creates GatewayClass                          │
+│ - Manages Policy APIs (NEW)                     │
 └─────────────────────────────────────────────────┘
-                    ↓
+                        ↓
+┌─────────────────────────────────────────────────┐
+│ Platform Operator (NEW in v1.35)                │
+│ - Creates shared Gateways                       │
+│ - Manages cross-cutting policies                │
+│ - Configures service mesh integration           │
+└─────────────────────────────────────────────────┘
+                        ↓
 ┌─────────────────────────────────────────────────┐
 │ Cluster Operator                                │
 │ - Creates Gateway instances                     │
 │ - Configures listeners and policies             │
+│ - Manages certificates and TLS                  │
 └─────────────────────────────────────────────────┘
-                    ↓
+                        ↓
 ┌─────────────────────────────────────────────────┐
 │ Application Developer                           │
-│ - Creates HTTPRoute/TCPRoute                    │
+│ - Creates HTTPRoute/GRPCRoute/TCPRoute          │
 │ - Defines routing rules                         │
+│ - Configures application-specific policies      │
 └─────────────────────────────────────────────────┘
 ```
 
 ---
 
-## Basic Setup Example
+## Setup 
 
 ### Step 1: Install Gateway API CRDs
 
 ```bash
 # Install Gateway API CRDs 
-kubectl apply --server-side -f https://github.com/kubernetes-sigs/gateway-api/releases/download/v1.4.1/standard-install.yaml
+kubectl apply --server-side -f https://github.com/kubernetes-sigs/gateway-api/releases/download/v1.1.0/standard-install.yaml
+
 
 # Verify installation (should show v1 and v1beta1 as available versions for backward compatibility)
 kubectl get crd | grep gateway
@@ -182,7 +339,7 @@ kubectl get crd | grep gateway
 
 ```bash
 # Install Envoy Gateway
-kubectl apply --server-side -f https://github.com/envoyproxy/gateway/releases/download/v1.6.1/install.yaml
+kubectl apply --server-side -f https://github.com/envoyproxy/gateway/releases/download/v1.0.0/install.yaml
 
 
 # Verify installation
@@ -195,9 +352,31 @@ kubectl get pods -n envoy-gateway-system
 apiVersion: gateway.networking.k8s.io/v1
 kind: GatewayClass
 metadata:
-  name: envoy
+  name: envoy-v135
 spec:
   controllerName: gateway.envoyproxy.io/gatewayclass-controller
+  # NEW in v1.35: Enhanced configuration
+  parametersRef:
+    group: gateway.envoyproxy.io
+    kind: EnvoyProxy
+    name: envoy-config
+  description: "Envoy Gateway optimized for Kubernetes v1.35"
+---
+# Enhanced Envoy configuration
+apiVersion: gateway.envoyproxy.io/v1alpha1
+kind: EnvoyProxy
+metadata:
+  name: envoy-config
+spec:
+  # NEW: Performance optimizations
+  concurrency: 4
+  logging:
+    level:
+      default: info
+  telemetry:
+    metrics:
+      prometheus:
+        disable: false
 ```
 
 ### Step 4: Create Gateway
@@ -206,14 +385,45 @@ spec:
 apiVersion: gateway.networking.k8s.io/v1
 kind: Gateway
 metadata:
-  name: my-gateway
-  namespace: default
+  name: production-gateway
+  namespace: gateway-system
+  annotations:
+    # NEW in v1.35: Enhanced annotations
+    gateway.networking.k8s.io/bundle-version: "v1.35"
 spec:
-  gatewayClassName: envoy
+  gatewayClassName: envoy-v135
   listeners:
-    - name: http
-      protocol: HTTP
-      port: 80
+  - name: http
+    protocol: HTTP
+    port: 80
+    allowedRoutes:
+      namespaces:
+        from: All
+  - name: https
+    protocol: HTTPS
+    port: 443
+    tls:
+      mode: Terminate
+      certificateRefs:
+      - name: wildcard-tls
+        namespace: gateway-system
+    allowedRoutes:
+      namespaces:
+        from: All
+  # NEW in v1.35: gRPC support
+  - name: grpc
+    protocol: HTTP
+    port: 9090
+    allowedRoutes:
+      kinds:
+      - kind: GRPCRoute
+  # NEW in v1.35: TCP support
+  - name: tcp
+    protocol: TCP
+    port: 5432
+    allowedRoutes:
+      kinds:
+      - kind: TCPRoute
 ```
 
 ### Step 5: Create HTTPRoute
@@ -243,106 +453,76 @@ spec:
 
 ## Advanced Routing Scenarios
 
-### Scenario 1: Path-Based Routing
+### Scenario 1: Service Mesh Integration
 
 ```yaml
+# Gateway with service mesh integration
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
+metadata:
+  name: mesh-gateway
+  namespace: istio-system
+  annotations:
+    # Enable Istio service mesh integration
+    gateway.istio.io/service-mesh: "enabled"
+spec:
+  gatewayClassName: istio
+  listeners:
+  - name: https
+    protocol: HTTPS
+    port: 443
+    tls:
+      mode: Terminate
+      certificateRefs:
+      - name: mesh-tls
+    allowedRoutes:
+      namespaces:
+        from: All
+---
+# HTTPRoute with mesh policies
 apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
 metadata:
-  name: path-routing
+  name: mesh-route
+  namespace: production
 spec:
   parentRefs:
-    - name: my-gateway
+  - name: mesh-gateway
+    namespace: istio-system
   hostnames:
-    - "api.example.com"
+  - "secure.example.com"
   rules:
-    - matches:
-        - path:
-            type: PathPrefix
-            value: /v1
-      backendRefs:
-        - name: api-v1
-          port: 8080
-    - matches:
-        - path:
-            type: PathPrefix
-            value: /v2
-      backendRefs:
-        - name: api-v2
-          port: 8080
-    - matches:
-        - path:
-            type: Exact
-            value: /health
-      backendRefs:
-        - name: health-service
-          port: 8080
-```
-
+  - matches:
+    - path:
+        type: PathPrefix
+        value: /api
+    backendRefs:
+    - name: secure-api
+      port: 8080
 ---
-
-### Scenario 2: Header-Based Routing
-
-```yaml
-apiVersion: gateway.networking.k8s.io/v1
-kind: HTTPRoute
+# NEW v1.35: Security Policy for mesh
+apiVersion: gateway.networking.k8s.io/v1alpha2
+kind: SecurityPolicy
 metadata:
-  name: header-routing
+  name: mesh-security
+  namespace: production
 spec:
-  parentRefs:
-    - name: my-gateway
-  rules:
-    - matches:
-        - headers:
-            - name: X-Version
-              value: beta
-      backendRefs:
-        - name: beta-service
-          port: 8080
-    - matches:
-        - headers:
-            - name: X-Version
-              value: stable
-      backendRefs:
-        - name: stable-service
-          port: 8080
+  targetRef:
+    group: gateway.networking.k8s.io
+    kind: HTTPRoute
+    name: mesh-route
+  authentication:
+    mtls:
+      mode: STRICT
+  authorization:
+    rules:
+    - action: ALLOW
+      from:
+      - source:
+          namespaces:
+          - "production"
+          - "staging"
 ```
-
----
-
-### Scenario 3: Host-Based Routing
-
-```yaml
-apiVersion: gateway.networking.k8s.io/v1
-kind: HTTPRoute
-metadata:
-  name: host-routing
-spec:
-  parentRefs:
-    - name: my-gateway
-  hostnames:
-    - "api.example.com"
-  rules:
-    - backendRefs:
-        - name: api-service
-          port: 8080
----
-apiVersion: gateway.networking.k8s.io/v1beta1
-kind: HTTPRoute
-metadata:
-  name: web-routing
-spec:
-  parentRefs:
-    - name: my-gateway
-  hostnames:
-    - "www.example.com"
-  rules:
-    - backendRefs:
-        - name: web-service
-          port: 80
-```
-
-
 ---
 
 ## Real-World Use Cases
@@ -352,58 +532,65 @@ spec:
 **Scenario**: SaaS platform with multiple customers, each with their own subdomain
 
 ```yaml
-# Shared Gateway
+Multi-Tenant SaaS Platform
+```yaml
+# Shared Gateway with enhanced security
 apiVersion: gateway.networking.k8s.io/v1
 kind: Gateway
 metadata:
   name: saas-gateway
   namespace: platform
 spec:
-  gatewayClassName: envoy
+  gatewayClassName: envoy-v135
   listeners:
-    - name: http
-      protocol: HTTP
-      port: 80
-      allowedRoutes:
-        namespaces:
-          from: Selector
-          selector:
-            matchLabels:
-              tenant: "true"
+  - name: https
+    protocol: HTTPS
+    port: 443
+    tls:
+      mode: Terminate
+      certificateRefs:
+      - name: wildcard-saas-tls
+    allowedRoutes:
+      namespaces:
+        from: Selector
+        selector:
+          matchLabels:
+            tenant: "true"
 ---
-# Customer 1 Route (in customer1 namespace)
-apiVersion: gateway.networking.k8s.io/v1beta1
-kind: HTTPRoute
-metadata:
-  name: customer1-route
-  namespace: customer1
-spec:
-  parentRefs:
-    - name: saas-gateway
-      namespace: platform
-  hostnames:
-    - "customer1.saas.example.com"
-  rules:
-    - backendRefs:
-        - name: customer1-app
-          port: 80
----
-# Customer 2 Route (in customer2 namespace)
+# Tenant-specific route with policies
 apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
 metadata:
-  name: customer2-route
-  namespace: customer2
+  name: tenant-alpha-route
+  namespace: tenant-alpha
 spec:
   parentRefs:
-    - name: saas-gateway
-      namespace: platform
+  - name: saas-gateway
+    namespace: platform
   hostnames:
-    - "customer2.saas.example.com"
+  - "alpha.saas.example.com"
   rules:
-    - backendRefs:
-        - name: customer2-app
-          port: 80
+  - backendRefs:
+    - name: tenant-alpha-app
+      port: 80
+---
+# NEW v1.35: Tenant-specific traffic policy
+apiVersion: gateway.networking.k8s.io/v1alpha2
+kind: TrafficPolicy
+metadata:
+  name: tenant-alpha-policy
+  namespace: tenant-alpha
+spec:
+  targetRef:
+    group: gateway.networking.k8s.io
+    kind: HTTPRoute
+    name: tenant-alpha-route
+  rateLimit:
+    requests: 1000
+    unit: minute
+  circuitBreaker:
+    maxConnections: 100
+    maxRequests: 200
 ```
 
 ---
@@ -440,45 +627,50 @@ spec:
 
 ---
 
-### Use Case 3: API Versioning
-
-**Scenario**: Route API requests based on version in path or header
-
+### Use Case 3. Performance Optimization
 ```yaml
+# NEW v1.35: Performance-optimized gateway
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
+metadata:
+  name: high-performance-gateway
+  annotations:
+    # Performance annotations
+    gateway.envoyproxy.io/concurrency: "4"
+    gateway.envoyproxy.io/buffer-limit: "32KB"
+spec:
+  gatewayClassName: envoy-v135
+  listeners:
+  - name: https
+    protocol: HTTPS
+    port: 443
+    tls:
+      mode: Terminate
+      certificateRefs:
+      - name: performance-tls
+    allowedRoutes:
+      namespaces:
+        from: All
+---
+# Performance-optimized route
 apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
 metadata:
-  name: api-versioning
+  name: high-performance-route
 spec:
   parentRefs:
-    - name: api-gateway
-  hostnames:
-    - "api.example.com"
+  - name: high-performance-gateway
   rules:
-    # Version in path: /v1/users
-    - matches:
-        - path:
-            type: PathPrefix
-            value: /v1
-      backendRefs:
-        - name: api-v1
-          port: 8080
-    # Version in path: /v2/users
-    - matches:
-        - path:
-            type: PathPrefix
-            value: /v2
-      backendRefs:
-        - name: api-v2
-          port: 8080
-    # Version in header: X-API-Version: v3
-    - matches:
-        - headers:
-            - name: X-API-Version
-              value: v3
-      backendRefs:
-        - name: api-v3
-          port: 8080
+  - backendRefs:
+    - name: high-performance-service
+      port: 8080
+    filters:
+    # Enable compression
+    - type: ResponseHeaderModifier
+      responseHeaderModifier:
+        add:
+        - name: Content-Encoding
+          value: gzip
 ```
 
 ---
@@ -502,24 +694,122 @@ kubectl describe httproute my-route
 
 ---
 
-## Best Practices
-
+### Traditional Best Practices 
 1. **Separate Concerns**: Use different namespaces for infrastructure (Gateway) and applications (HTTPRoute)
-2. **Use GatewayClass**: Define clear GatewayClasses for different environments (dev, staging, prod)
-3. **Limit Route Attachment**: Use `allowedRoutes` to control which namespaces can attach routes
-4. **Monitor Status**: Check Gateway and HTTPRoute status conditions regularly
+2. **Use GatewayClass**: Define clear GatewayClasses for different environments
+3. **Limit Route Attachment**: Use `allowedRoutes` to control access
+4. **Monitor Status**: Check Gateway and Route status conditions regularly
 5. **Use Weights for Rollouts**: Gradually shift traffic using weight-based routing
-6. **Validate Before Production**: Test routes in staging with same Gateway configuration
-7. **Document Hostnames**: Maintain a registry of hostnames and their owners
+6. **Validate Before Production**: Test routes in staging environments
+7. **Document Hostnames**: Maintain a registry of hostnames and ownership
 8. **Use TLS**: Always use HTTPS in production with proper certificates
+
+### 5. NEW v1.35 Best Practices
+9. **Policy-Driven Security**: Use SecurityPolicy for authentication and authorization
+10. **Traffic Management**: Implement TrafficPolicy for rate limiting and circuit breaking
+11. **Observability**: Use ObservabilityPolicy for comprehensive monitoring
+12. **Cross-Protocol Support**: Leverage gRPC, TCP, and UDP routes appropriately
+13. **Service Mesh Integration**: Use native service mesh features when available
+14. **Progressive Delivery**: Implement canary deployments with proper observability
 
 ---
 
+### Practice Scenarios
+1. **Basic Setup**: Install Gateway API, create GatewayClass, Gateway, HTTPRoute
+2. **Path-Based Routing**: Route `/api` to one service, `/web` to another
+3. **Host-Based Routing**: Different hostnames to different services
+4. **Traffic Splitting**: 90/10 split between stable and canary
+5. **Cross-Namespace**: Gateway in `gateway-system`, routes in `default`
+6. **TLS Termination**: HTTPS gateway with certificate references
+7. **NEW**: gRPC service routing
+8. **NEW**: Basic security policy application
+---
 
+## Migration from Ingress to Gateway API
 
+### Ingress Example
+```yaml
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: example-ingress
+spec:
+  rules:
+  - host: example.com
+    http:
+      paths:
+      - path: /api
+        pathType: Prefix
+        backend:
+          service:
+            name: api-service
+            port:
+              number: 8080
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: web-service
+            port:
+              number: 80
+```
 
+### Equivalent Gateway API
+```yaml
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
+metadata:
+  name: example-gateway
+spec:
+  gatewayClassName: envoy-v135
+  listeners:
+  - name: http
+    protocol: HTTP
+    port: 80
+    allowedRoutes:
+      namespaces:
+        from: Same
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: example-route
+spec:
+  parentRefs:
+  - name: example-gateway
+  hostnames:
+  - "example.com"
+  rules:
+  - matches:
+    - path:
+        type: PathPrefix
+        value: /api
+    backendRefs:
+    - name: api-service
+      port: 8080
+  - matches:
+    - path:
+        type: PathPrefix
+        value: /
+    backendRefs:
+    - name: web-service
+      port: 80
+```
 
+---
 
+## Summary
+
+Gateway API in Kubernetes v1.35 provides next-generation traffic management:
+
+- **Enhanced API**: Stable v1.1 with Policy API support
+- **Multi-Protocol**: HTTP, HTTPS, gRPC, TCP, UDP support
+- **Role-Oriented**: Clear separation of concerns
+- **Service Mesh**: Native integration with Istio, Linkerd
+- **Advanced Features**: Traffic policies, security policies, observability
+- **Production Ready**: Stable API with extensive controller ecosystem
+
+---
 
 
 
