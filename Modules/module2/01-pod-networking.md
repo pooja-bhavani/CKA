@@ -3,6 +3,12 @@
 ## Table of Contents
 
 1. [Overview](#overview)
+2. [Kubernetes Network Model](#kubernetes-network-model)
+3. [CNI (Container Network Interface)](#cni-container-network-interface)
+4. [Popular CNI Plugins](#popular-cni-plugins)
+5. [v1.35 Networking Enhancements](#v135-networking-enhancements)
+6. [Pod-to-Pod Communication](#pod-to-pod-communication)
+7. [Troubleshooting](#troubleshooting)
 
 
 ## Overview
