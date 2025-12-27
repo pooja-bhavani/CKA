@@ -170,7 +170,10 @@ sudo sed -i '/ swap / s/^\(.*\)$/#\1/g' /etc/fstab
 # Check current cgroup version
 stat -fc %T /sys/fs/cgroup/
 
+cat <<EOF / sudo tee/etc/modules-load.d/k8s.conf
 ```
+<img width="1333" height="440" alt="image" src="https://github.com/user-attachments/assets/04f23eee-e1a6-4ffb-8b15-ea11ce6109e1" />
+
 
 **If not cgroup2fs, enable cgroup v2**
 ```
@@ -208,6 +211,9 @@ sudo sysctl --system
 
 ```
 
+<img width="2906" height="1783" alt="image" src="https://github.com/user-attachments/assets/91026636-fffc-41cd-871f-5e42a9158690" />
+
+
 **step2: Install Container Runtime**
 
 ```
@@ -226,6 +232,9 @@ sudo systemctl restart containerd
 sudo systemctl enable containerd
 systemctl status containerd
 ```
+
+<img width="2901" height="1060" alt="image" src="https://github.com/user-attachments/assets/04f43671-c1e5-4d40-b3d4-d53fe107a4d2" />
+
 
 > Note: If we skip these, kubeadm will fail, nodes stay NotReady, or networking (Pods <-> Pods) breaks.
 
@@ -247,6 +256,10 @@ sudo apt-mark hold kubelet kubeadm kubectl
 
 sudo systemctl enable kubelet
 ```
+<img width="1470" height="956" alt="Screenshot 2025-12-25 at 8 57 44 PM" src="https://github.com/user-attachments/assets/b3137876-190e-4edb-9534-854d7da2e4f0" />
+
+<img width="1989" height="180" alt="image" src="https://github.com/user-attachments/assets/71b3a85a-06c4-49a1-97b7-3b49b04e9fb0" />
+
 
 **Verify Installation**
 ```
@@ -255,6 +268,8 @@ kubelet --version
 kubectl version --client
 
 ```
+<img width="2933" height="306" alt="image" src="https://github.com/user-attachments/assets/5719a4d1-3106-4454-a5dc-21b2e868b959" />
+
 
 **Initialize Control Plane Node**
 ```
@@ -262,6 +277,7 @@ sudo kubeadm init \
   --kubernetes-version=v1.35.0 \
   --pod-network-cidr=10.244.0.0/16
 ```
+<img width="1470" height="956" alt="Screenshot 2025-12-25 at 9 00 05 PM" src="https://github.com/user-attachments/assets/7a2e8a55-e98d-49fd-860b-fbfc915dd3e7" />
 
 **Configure kubectl for your user**
 ```
@@ -275,12 +291,18 @@ Install a CNI Plugin
 Option 1: Flannel (simplest, CKA-friendly)
 kubectl apply -f https://github.com/flannel-io/flannel/releases/latest/download/kube-flannel.yml
 ```
+<img width="2637" height="1379" alt="image" src="https://github.com/user-attachments/assets/14d14f95-35f0-423a-999d-52dcf65c15b0" />
+
 or
 
 ```
 Option 2: Calico (more features)
 kubectl apply -f https://raw.githubusercontent.com/projectcalico/calico/v3.27.0/manifests/calico.yaml
 ```
+<img width="2221" height="1089" alt="image" src="https://github.com/user-attachments/assets/00b2f5eb-6b2d-4414-81db-bbc6b0ce4833" />
+
+<img width="2182" height="599" alt="image" src="https://github.com/user-attachments/assets/fe1d7a82-c739-4f69-afdb-de64aae4b4ad" />
+
 ---
 
 ## Kind Installation 
@@ -303,6 +325,7 @@ sudo mv kind /usr/local/bin/
 kind version
 
 ```
+<img width="1451" height="395" alt="image" src="https://github.com/user-attachments/assets/0ef86173-2879-42ef-adff-a928782447f9" />
 
 **Step 3: Install kubectl for v1.35**
 ```
