@@ -31,7 +31,7 @@ curl http://backend-service.production
 curl http://backend-service.production.svc.cluster.local
 
 # External domain
-curl http://google.com
+curl http://example.com
 ```
 
 ### DNS Resolution Flow
@@ -42,6 +42,47 @@ curl http://google.com
    - Is it a Kubernetes service? → Return ClusterIP
    - Is it external? → Forward to upstream DNS
 4. Response returned to pod
+
+
+### NEW in v1.35: Enhanced DNS Features
+- **Improved Query Performance**: Faster DNS resolution with optimized caching
+- **Better IPv6 Support**: Enhanced dual-stack DNS resolution
+- **Enhanced Debugging**: Better DNS query logging and metrics
+- **Memory Optimization**: Reduced memory footprint for large clusters
+
+
+## v1.35 CoreDNS Configuration
+
+### Default v1.35 Corefile
+```yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: coredns
+  namespace: kube-system
+data:
+  Corefile: |
+    .:53 {
+        errors
+        health {
+            lameduck 5s
+        }
+        ready
+        kubernetes cluster.local in-addr.arpa ip6.arpa {
+            pods insecure
+            fallthrough in-addr.arpa ip6.arpa
+            ttl 30
+        }
+        prometheus :9153
+        forward . /etc/resolv.conf {
+            max_concurrent 1000
+        }
+        cache 30
+        loop
+        reload
+        loadbalance
+    }
+```
 
 ---
 
@@ -80,16 +121,8 @@ data:
         loadbalance
     }
 ```
-**Apply changes**:
-```bash
-kubectl edit configmap coredns -n kube-system
-# CoreDNS will auto-reload
-```
----
-
-### Pattern 2: Increase Cache TTL
-
-**Use case**: Reduce DNS query load for stable services
+### Pattern 2: Enhanced Cache Configuration (v1.35)
+**Use case**: Optimize DNS performance for large clusters
 
 ```yaml
 data:
@@ -99,19 +132,67 @@ data:
         health
         ready
         kubernetes cluster.local in-addr.arpa ip6.arpa {
-           pods insecure
-           fallthrough in-addr.arpa ip6.arpa
-           ttl 300  # Increase from 30 to 300 seconds
+            pods insecure
+            fallthrough in-addr.arpa ip6.arpa
+            ttl 300  # Increase from 30 to 300 seconds
         }
         prometheus :9153
         forward . /etc/resolv.conf
-        cache 300  # Increase cache duration
+        # NEW v1.35: Advanced cache configuration
+        cache 300 {
+            success 9984 300    # Cache successful queries for 5 minutes
+            denial 9984 30      # Cache NXDOMAIN for 30 seconds
+            prefetch 10 60s 30% # Prefetch popular queries
+        }
         loop
         reload
         loadbalance
     }
 ```
 
+**Apply changes**:
+```bash
+kubectl edit configmap coredns -n kube-system
+# CoreDNS will auto-reload
+```
+---
+
+### Pattern 4: v1.35 - Enhanced Security Configuration
+**Use case**: Secure DNS with rate limiting and filtering
+
+```yaml
+data:
+  Corefile: |
+    .:53 {
+        errors
+        health
+        ready
+        kubernetes cluster.local in-addr.arpa ip6.arpa {
+            pods insecure
+            fallthrough in-addr.arpa ip6.arpa
+        }
+        # NEW v1.35: Rate limiting
+        ratelimit {
+            responses-per-sec 100
+            window 1s
+            ipv4-mask 24
+            ipv6-mask 56
+        }
+        prometheus :9153
+        forward . /etc/resolv.conf {
+            max_concurrent 1000
+            health_check 5s
+        }
+        cache 30
+        loop
+        reload
+        loadbalance
+        # Enhanced logging for security
+        log {
+            class denial error
+        }
+    }
+```
 ---
 
 ## Troubleshooting Guide
