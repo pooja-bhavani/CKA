@@ -39,6 +39,12 @@ kubectl describe networkpolicy test-netpolicy
 1. **Ingress**: Controls incoming traffic to pods
 2. **Egress**: Controls outgoing traffic from pods
 
+### v1.35: Enhanced Policy Features
+- **Improved Performance**: Better policy evaluation with optimized rule processing
+- **Enhanced Debugging**: Better visibility into policy decisions
+- **User Namespace Integration**: Policies work seamlessly with `hostUsers: false`
+
+
 ---
 
 ## Basic Network Policy Structure
@@ -54,24 +60,24 @@ spec:
     matchLabels:
       app: myapp
   policyTypes:          # Types of traffic to control
-    - Ingress
-    - Egress
+  - Ingress
+  - Egress
   ingress:              # Ingress rules
-    - from:
-        - podSelector:
-            matchLabels:
-              role: frontend
-      ports:
-        - protocol: TCP
-          port: 80
+  - from:
+    - podSelector:
+        matchLabels:
+          role: frontend
+    ports:
+    - protocol: TCP
+      port: 80
   egress:               # Egress rules
-    - to:
-        - podSelector:
-            matchLabels:
-              role: database
-      ports:
-        - protocol: TCP
-          port: 5432
+  - to:
+    - podSelector:
+        matchLabels:
+          role: database
+    ports:
+    - protocol: TCP
+      port: 5432
 ```
 
 ---
@@ -123,6 +129,40 @@ spec:
       ports:
         - protocol: TCP
           port: 8080
+```
+
+### Pattern 3: Enhanced Namespace Isolation
+**Use case**: Complete namespace isolation with improved performance
+
+```yaml
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: namespace-isolation-v135
+  namespace: secure-app
+spec:
+  podSelector: {}
+  policyTypes:
+  - Ingress
+  - Egress
+  ingress:
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          name: secure-app
+  egress:
+  - to:
+    - namespaceSelector:
+        matchLabels:
+          name: secure-app
+  # Always allow DNS (v1.35 optimized)
+  - to:
+    - namespaceSelector:
+        matchLabels:
+          name: kube-system
+    ports:
+    - protocol: UDP
+      port: 53
 ```
 
 ---
