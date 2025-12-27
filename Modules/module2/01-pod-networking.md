@@ -7,7 +7,7 @@
 3. [CNI (Container Network Interface)](#cni-container-network-interface)
 4. [Popular CNI Plugins](#popular-cni-plugins)
 5. [v1.35 Networking Enhancements](#v135-networking-enhancements)
-6. [Pod-to-Pod Communication](#pod-to-pod-communication)
+6. [Pod-to-Pod Communication](#pod-to-pod-communication-Scenarios)
 7. [Troubleshooting](#troubleshooting)
 
 
