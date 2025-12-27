@@ -505,5 +505,139 @@ kubectl rollout restart daemonset calico-node -n kube-system
 # Reinstall CNI plugin
 kubectl apply -f <cni-manifest-url>
 ```
+
+#### Issue 2: Traffic Distribution Problems (NEW in v1.35)
+
+**Error**:
+```bash
+# Pods not receiving traffic from closest endpoints
+kubectl get endpoints web-service
+# Shows endpoints from distant nodes being used
+```
+
+**Debug**:
+```bash
+# Check traffic distribution setting
+kubectl get svc web-service -o yaml | grep trafficDistribution
+
+# Check internal traffic policy
+kubectl get svc web-service -o yaml | grep internalTrafficPolicy
+
+# Check endpoint slices
+kubectl get endpointslices -l kubernetes.io/service-name=web-service
+```
+
+**Solution**:
+```yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: web-service
+spec:
+  selector:
+    app: web
+  ports:
+  - port: 80
+    targetPort: 8080
+  trafficDistribution: PreferClose  # Route to closest endpoints
+  internalTrafficPolicy: Local      # Keep traffic local when possible
+```
+
+#### Issue 3: User Namespace Networking (NEW in v1.35)
+
+**Error**:
+```bash
+# Pod with user namespaces cannot reach other pods
+kubectl exec -it isolated-pod -- ping 10.244.2.2
+# Network unreachable
+```
+
+**Debug**:
+```bash
+# Check user namespace setting
+kubectl get pod isolated-pod -o jsonpath='{.spec.hostUsers}'
+
+# Check CNI compatibility with user namespaces
+kubectl logs -n kube-system -l k8s-app=calico-node | grep "user.*namespace"
+
+# Check network namespace isolation
+kubectl exec -it isolated-pod -- ip netns list
+```
+
+**Solution**:
+```bash
+# Ensure CNI plugin supports user namespaces
+# Update to latest CNI plugin version
+kubectl apply -f https://raw.githubusercontent.com/projectcalico/calico/v3.27.0/manifests/calico.yaml
+```
+
 ---
+
+### Common Scenarios
+
+#### Scenario 1: Troubleshoot Pod Connectivity
+
+**Task**: Pod cannot reach other pods. Identify and fix the issue.
+
+**Approach**:
+```bash
+# 1. Check pod IP
+kubectl get pod <pod-name> -o wide
+
+# 2. Check CNI pods
+kubectl get pods -n kube-system | grep -E 'calico|flannel'
+
+# 3. Test connectivity
+kubectl exec -it <pod-name> -- ping <other-pod-ip>
+
+# 4. Check CNI logs if needed
+kubectl logs -n kube-system <cni-pod-name>
+
+# 5. Restart CNI if necessary
+kubectl rollout restart daemonset <cni-name> -n kube-system
+```
+#### Scenario 3: Configure Service Traffic Distribution (v1.35)
+
+**Task**: Configure a service to prefer local endpoints
+
+**Solution**:
+```yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: web-service
+spec:
+  selector:
+    app: web
+  ports:
+  - port: 80
+    targetPort: 8080
+  trafficDistribution: PreferClose
+  internalTrafficPolicy: Local
+```
+
+### Quick Reference Commands
+
+```bash
+# CNI Management
+kubectl get pods -n kube-system | grep -E 'calico|flannel|weave|cilium'
+kubectl logs -n kube-system <cni-pod-name>
+kubectl rollout restart daemonset <cni-name> -n kube-system
+
+# Pod Networking
+kubectl get pods -o wide
+kubectl exec -it <pod-name> -- ip addr
+kubectl exec -it <pod-name> -- ip route
+kubectl exec -it <pod-name> -- ping <ip>
+
+# Service Networking 
+kubectl get svc -o wide
+kubectl get endpoints <service-name>
+kubectl get endpointslices
+
+# Debugging
+kubectl run test-pod --image=busybox --rm -it -- /bin/sh
+kubectl get events --sort-by='.lastTimestamp'
+kubectl describe pod <pod-name>
+```
 
