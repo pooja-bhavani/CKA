@@ -84,7 +84,8 @@ This repository is **fully updated for Kubernetes v1.35** with cutting-edge feat
 5. Each file has specific topics and subtopics to master
 6. Practice after each module before moving to next
 
-**Made with ❤️ by TrainWithShubham**
+**Made with ❤️ for TWS community**
 
 **Happy Learning!**
+
 *TrainWithShubham*
