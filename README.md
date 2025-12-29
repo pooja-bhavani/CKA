@@ -3,7 +3,6 @@
 [![Kubernetes](https://img.shields.io/badge/Kubernetes-v1.35-326CE5?style=for-the-badge&logo=kubernetes&logoColor=white)](https://kubernetes.io/)
 [![AWS](https://img.shields.io/badge/AWS-FF9900?style=for-the-badge&logo=amazon-aws&logoColor=white)](https://aws.amazon.com/)
 [![License](https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge)](LICENSE)
-[![CKA](https://img.shields.io/badge/CKA-v1.35%20Ready-success?style=for-the-badge)](https://www.cncf.io/certification/cka/)
 
 > The most comprehensive, hands-on CKA exam preparation guide for Kubernetes v1.35 with real-world projects
 
