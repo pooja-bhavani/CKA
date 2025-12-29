@@ -7,6 +7,16 @@
 
 > The most comprehensive, hands-on CKA exam preparation guide for Kubernetes v1.35 with real-world projects
 
+## 🎯 What's New in Kubernetes v1.35
+
+This repository is **fully updated for Kubernetes v1.35** with cutting-edge features:
+
+- 🆕 **Gateway API v1.1** - Next-generation ingress with Policy API
+- 🆕 **In-Place Pod Updates** - Update resources without pod restart
+- 🆕 **User Namespaces** - Enhanced container security isolation
+- 🆕 **Gang Scheduling** - Coordinated pod scheduling for ML/AI workloads
+- 🆕 **Enhanced Debugging** - Improved troubleshooting capabilities
+- 🆕 **Pod Certificates** - Native certificate management for pods
 ---
 
 ### 📚 Learning Sequence - Module Files (Complete Path)
@@ -74,5 +84,7 @@
 5. Each file has specific topics and subtopics to master
 6. Practice after each module before moving to next
 
+**Made with ❤️ by TrainWithShubham**
 
 **Happy Learning!**
+*TrainWithShubham*
