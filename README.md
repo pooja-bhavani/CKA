@@ -97,8 +97,9 @@ Don't worry — share your doubt as a post or reach out on:
   
 **Made with ❤️ for TWS community**
 
+</div>
+
 **Happy Learning!**
 
 *TrainWithShubham*
 
-</div>
