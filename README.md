@@ -55,12 +55,6 @@ CKA Repository Structure
    - [`module2/`](./Modules/module2/) – Workloads & Scheduling
    - [`Module3/`](./Modules/Module3/) – Networking & Storage Solutions
 
-**Phase 3: Hands-On Practice**  
-4. Practice → [`kubernetes-challenge/`](./kubernetes-challenge/) labs:
-   - Start with [`Day1/`](./kubernetes-challenge/Day1/) and progress through Day10
-   - Each day focuses on specific CKA exam domains
-   - Complete tasks under realistic time constraints
-
 ---
 
 ## 📁 Detailed Directory Navigation
