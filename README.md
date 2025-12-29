@@ -93,11 +93,10 @@ Don't worry — share your doubt as a post or reach out on:
 - 💭 **[LinkedIn](https://www.linkedin.com/in/shubhamlondhe1996/)**
 - 💬 **[Official Website](https://www.trainwithshubham.com/)** 
 
-<div align="center">
+
   
 **Made with ❤️ for TWS community**
 
-</div>
 
 **Happy Learning!**
 
