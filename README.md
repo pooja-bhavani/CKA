@@ -1,6 +1,11 @@
-# Certified Kubernetes Administrator (CKA) – Course Repo (v1.35)
+# 🚀 Complete CKA (Certified Kubernetes Administrator) Exam Preparation Guide
 
-**Master Kubernetes Administration through hands-on labs and challenges aligned to CKA v1.35 exam**
+[![Kubernetes](https://img.shields.io/badge/Kubernetes-v1.35-326CE5?style=for-the-badge&logo=kubernetes&logoColor=white)](https://kubernetes.io/)
+[![AWS](https://img.shields.io/badge/AWS-FF9900?style=for-the-badge&logo=amazon-aws&logoColor=white)](https://aws.amazon.com/)
+[![License](https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge)](LICENSE)
+[![CKA](https://img.shields.io/badge/CKA-v1.35%20Ready-success?style=for-the-badge)](https://www.cncf.io/certification/cka/)
+
+> **The most comprehensive, hands-on CKA exam preparation guide for Kubernetes v1.35 with real-world projects
 
 ---
 
@@ -36,7 +41,7 @@ CKA Repository Structure
 ### **Learning Path (Recommended Order)**
 
 **Phase 1: Foundations** 
-1. Read → [`Introduction-to-kubernetes.md`](./Introduction-to-kubernetes.md) 
+1. Read → [`Introduction-to-kubernetes.md`](Introduction-to-kubernetes .md) 
    - Core Kubernetes concepts, architecture, and components
    - Perfect for refreshing fundamentals
 
