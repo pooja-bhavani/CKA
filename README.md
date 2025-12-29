@@ -1,229 +1,63 @@
-# 🚀 Complete CKA (Certified Kubernetes Administrator) Exam Preparation Guide
+### 📚 Learning Sequence - Module Files (Complete Path)
 
-[![Kubernetes](https://img.shields.io/badge/Kubernetes-v1.35-326CE5?style=for-the-badge&logo=kubernetes&logoColor=white)](https://kubernetes.io/)
-[![AWS](https://img.shields.io/badge/AWS-FF9900?style=for-the-badge&logo=amazon-aws&logoColor=white)](https://aws.amazon.com/)
-[![License](https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge)](LICENSE)
-[![CKA](https://img.shields.io/badge/CKA-v1.35%20Ready-success?style=for-the-badge)](https://www.cncf.io/certification/cka/)
+#### **MODULE 1: Cluster Architecture & Administration**
 
-> The most comprehensive, hands-on CKA exam preparation guide for Kubernetes v1.35 with real-world projects
-
----
-
-## 📋 Quick Navigation Map
-
-```
-CKA Repository Structure
-├── 📄 Introduction-to-kubernetes.md      ← START HERE (Fundamentals)
-├── 📄 lifecycle-management.md             ← Cluster lifecycle & operations
-│
-├── 📁 Modules/                            ← Core Learning Path
-│   ├── 📁 module1/                        → Cluster Setup & Architecture
-│   ├── 📁 module2/                        → Workloads & Scheduling  
-│   └── 📁 Module3/                        → Networking & Storage
-│
-└── 📁 kubernetes-challenge/               ← Hands-On Practice Labs
-    ├── 📁 Day1/   - Pod creation & management
-    ├── 📁 Day2/   - Deployment & ReplicaSets
-    ├── 📁 Day3/   - Services & Networking
-    ├── 📁 Day4/   - Storage & Volumes
-    ├── 📁 Day5/   - RBAC & Security
-    ├── 📁 Day6/   - Troubleshooting
-    ├── 📁 Day7/   - Advanced Pod Scheduling
-    ├── 📁 Day8/   - Resource Management
-    ├── 📁 Day9/   - Cluster Administration
-    └── 📁 Day10/  - Mock Exam & Review
-```
+| # | File | Topic | Subtopics | Exam Weight |
+|---|------|-------|-----------|------------|
+| **1** | [`Modules/module1/01-cluster-lifecycle.md`](./Modules/module1/01-cluster-lifecycle.md) | **Cluster Lifecycle** | kubeadm init • cluster upgrades • etcd backup/restore • cluster scaling | 25% |
+| **2** | [`Modules/module1/02-pod-security.md`](./Modules/module1/02-pod-security.md) | **Pod Security** | Pod security policies • certificate management • security standards • network policies | 15% |
+| **3** | [`Modules/module1/03-rbac.md`](./Modules/module1/03-rbac.md) | **RBAC & Access Control** | Roles • ClusterRoles • RoleBindings • ServiceAccounts • permissions | 15% |
+| **4** | [`Modules/module1/04-crd's.md`](./Modules/module1/04-crd's.md) | **Custom Resources (CRDs)** | Custom resource definitions • APIgroups • custom objects • schemas | 25% |
+| **5** | [`Modules/module1/05-kustomize.md`](./Modules/module1/05-kustomize.md) | **Kustomize** | Configuration management • overlays • patches • templates • merging | 25% |
 
 ---
 
-## ✨ How to Use This Repository
+#### **MODULE 2: Networking & Services**
 
-### **Learning Path (Recommended Order)**
-
-**Phase 1: Foundations** 
-1. Read → [`Introduction-to-kubernetes.md`](./Introduction-to-kubernetes.md) 
-   - Core Kubernetes concepts, architecture, and components
-   - Perfect for refreshing fundamentals
-
-2. Read → [`lifecycle-management.md`](./lifecycle-management.md)
-   - Cluster installation, upgrades, backups, and restoration
-   - Critical for production environments
-
-**Phase 2: Module Learning**
-3. Study → [`Modules/`](./Modules/) folder sequentially:
-   - [`module1/`](./Modules/module1/) – Cluster Architecture & Setup
-   - [`module2/`](./Modules/module2/) – Workloads & Scheduling
-   - [`Module3/`](./Modules/Module3/) – Networking & Storage Solutions
+| # | File | Topic | Subtopics | Exam Weight |
+|---|------|-------|-----------|------------|
+| **6** | [`Modules/module2/01-pod-networking.md`](./Modules/module2/01-pod-networking.md) | **Pod Networking Fundamentals** | Pod-to-pod communication • DNS resolution • Service discovery • CoreDNS | 20% |
+| **7** | [`Modules/module2/02-service-endpoints.md`](./Modules/module2/02-service-endpoints.md) | **Services & Endpoints** | ClusterIP services • NodePort services • LoadBalancer services • endpoint management | 20% |
+| **8** | [`Modules/module2/03-networking-policies.md`](./Modules/module2/03-networking-policies.md) | **Network Policies** | Network segmentation • ingress rules • egress rules • traffic filtering | 20% |
+| **9** | [`Modules/module2/04-core-dns.md`](./Modules/module2/04-core-dns.md) | **CoreDNS Configuration** | DNS resolution • DNS troubleshooting • name resolution • CoreDNS setup | 20% |
 
 ---
 
-## 📁 Detailed Directory Navigation
+#### **MODULE 3: Advanced Topics & Ingress**
 
-### **Root Level Files**
-
-| File | Purpose | When to Use |
-|------|---------|-------------|
-| [**Introduction-to-kubernetes.md**](./Introduction-to-kubernetes.md) | Kubernetes fundamentals & concepts | Before starting modules |
-| [**lifecycle-management.md**](./lifecycle-management.md) | Cluster lifecycle, upgrades, backups | During module1 study |
+| # | File | Topic | Subtopics | Exam Weight |
+|---|------|-------|-----------|------------|
+| **10** | [`Modules/Module3/01-api-gateway-fundamentals.md`](./Modules/Module3/01-api-gateway-fundamentals.md) | **Ingress & API Gateway Basics** | Ingress controller • routing rules • host-based routing • path-based routing | 20% |
+| **11** | [`Modules/Module3/02-api-gateway-migration.md`](./Modules/Module3/02-api-gateway-migration.md) | **Advanced API Gateway Patterns** | Traffic management • blue-green deployments • canary deployments • advanced routing | 20% |
 
 ---
 
-### **📚 Modules/ - Core Learning Content**
+### ✅ Quick Module Navigation
 
-#### [`Modules/module1/`](./Modules/module1/) – **Cluster Architecture & Setup**
-- Cluster initialization and kubeadm workflow
-- Control plane components
-- Node management and scaling
-- **Exam Weight:** 25% (Cluster Installation & Config)
+**🔗 Module 1 Files:**
+- [01-cluster-lifecycle.md](./Modules/module1/01-cluster-lifecycle.md) - kubeadm, upgrades, backups
+- [02-pod-security.md](./Modules/module1/02-pod-security.md) - security policies, certificates
+- [03-rbac.md](./Modules/module1/03-rbac.md) - roles, bindings, permissions
+- [04-crd's.md](./Modules/module1/04-crd's.md) - custom resources, APIs
+- [05-kustomize.md](./Modules/module1/05-kustomize.md) - configuration management
 
-#### [`Modules/module2/`](./Modules/module2/) – **Workloads & Scheduling** 
-- Pod creation and lifecycle
-- Deployments, StatefulSets, DaemonSets
-- Resource requests and limits
-- Scheduling and taints/tolerations
-- **Exam Weight:** 15% (Workloads & Scheduling)
+**🔗 Module 2 Files:**
+- [01-pod-networking.md](./Modules/module2/01-pod-networking.md) - pod communication, DNS
+- [02-service-endpoints.md](./Modules/module2/02-service-endpoints.md) - services, endpoints
+- [03-networking-policies.md](./Modules/module2/03-networking-policies.md) - network segmentation
+- [04-core-dns.md](./Modules/module2/04-core-dns.md) - DNS troubleshooting
 
-#### [`Modules/Module3/`](./Modules/Module3) – **Networking & Storage**
-- Services (ClusterIP, NodePort, LoadBalancer)
-- Ingress and network policies
-- Storage classes, PersistentVolumes, PersistentVolumeClaims
-- ConfigMaps and Secrets
-- Exam Weight: 30% (Services & Storage combined)
+**🔗 Module 3 Files:**
+- [01-api-gateway-fundamentals.md](./Modules/Module3/01-api-gateway-fundamentals.md) - ingress basics
+- [02-api-gateway-migration.md](./Modules/Module3/02-api-gateway-migration.md) - advanced patterns
 
 ---
 
-### **🏋️ kubernetes-challenge/ - Exam-Style Labs**
+### 📖 How to Study These Modules
 
-Practical, hands-on scenarios matching real CKA exam style:
-
-| Day | Topic | Lab Tasks | Domain |
-|-----|-------|-----------|--------|
-| [**Day1**](./kubernetes-challenge/Day1/) | Pod Fundamentals | Create, edit, delete pods | Workloads (15%) |
-| [**Day2**](./kubernetes-challenge/Day2/) | Deployments | Scale, update, rollback deployments | Workloads (15%) |
-| [**Day3**](./kubernetes-challenge/Day3/) | Services & Networking | Expose pods, create services | Services (20%) |
-| [**Day4**](./kubernetes-challenge/Day4/) | Storage | Create PV, PVC, mount volumes | Storage (10%) |
-| [**Day5**](./kubernetes-challenge/Day5/) | Security & RBAC | Create roles, bindings, service accounts | Troubleshooting (15%) |
-| [**Day6**](./kubernetes-challenge/Day6/) | Troubleshooting | Debug failing pods and clusters | Troubleshooting (15%) |
-| [**Day7**](./kubernetes-challenge/Day7/) | Pod Scheduling | Use taints, tolerations, node selectors | Workloads (15%) |
-| [**Day8**](./kubernetes-challenge/Day8/) | Resource Management | Set quotas, limits, requests | Cluster (25%) |
-| [**Day9**](./kubernetes-challenge/Day9/) | Cluster Admin | Manage nodes, etcd, backups | Cluster (25%) |
-| [**Day10**](./kubernetes-challenge/Day10/) | Mock Exam | Full exam simulation | All Domains |
-
----
-
-## 🎯 CKA Exam Domains Mapping
-
-| Exam Domain | Weight | Modules | Challenges |
-|-------------|--------|---------|------------|
-| **Cluster Architecture, Installation & Config** | 25% | [module1](./Modules/module1/) | [Day8-Day9](./kubernetes-challenge/Day8/) |
-| **Workloads & Scheduling** | 15% | [module2](./Modules/module2/) | [Day1-Day2](./kubernetes-challenge/Day1/) |
-| **Services & Networking** | 20% | [Module3](./Modules/Module3/) | [Day3](./kubernetes-challenge/Day3/) |
-| **Storage** | 10% | [Module3](./Modules/Module3/) | [Day4](./kubernetes-challenge/Day4/) |
-| **Troubleshooting** | 15% | All modules | [Day6](./kubernetes-challenge/Day6/) |
-| **Other (Security, RBAC)** | 15% | All modules | [Day5](./kubernetes-challenge/Day5/) |
-
----
-
-## 🚀 Getting Started (Quick Setup)
-
-### **Prerequisites**
-- Docker or container runtime installed
-- 4GB+ RAM recommended for local clusters
-- kubectl CLI installed
-- Basic Linux command-line knowledge
-
-### **Set Up Your Practice Cluster**
-
-**Option 1: Using Kind (Kubernetes in Docker)**
-```bash
-# Install kind: https://kind.sigs.k8s.io/
-kind create cluster --name cka-practice
-kubectl get nodes  # Verify cluster is running
-```
-
-**Option 2: Using Minikube**
-```bash
-minikube start --cpus=4 --memory=4096
-kubectl get nodes
-```
-
-**Option 3: Using kubeadm (Multi-node)**
-- See individual module docs for detailed kubeadm setup instructions
-
----
-
-## 📖 Tips for Success
-
-✅ **Do's:**
-- Follow the learning path in order (fundamentals → modules → labs)
-- Practice each lab **multiple times** until muscle memory kicks in
-- Time yourself on challenges (CKA exam is time-limited)
-- Keep official Kubernetes docs open while practicing: https://kubernetes.io/docs/
-- Reset your cluster between labs for clean state
-- Take notes on commands you frequently use
-
-❌ **Don'ts:**
-- Skip the fundamentals section
-- Move to labs before understanding module concepts
-- Copy-paste without understanding what commands do
-- Cram the night before – spread practice over weeks
-- Only read material – hands-on practice is critical
-
----
-
-## 🤝 Contributing & Feedback
-
-**Found an issue or have suggestions?**
-
-- Open an **Issue** with:
-  - Which module/challenge has the problem
-  - What's incorrect or unclear
-  - Your Kubernetes version
-  
-- Submit a **Pull Request** with:
-  - Clear description of changes
-  - Why the change improves the course
-  - Test your changes locally first
-
-**Propose New Challenges:**
-- Create a new folder in `kubernetes-challenge/`
-- Include scenario description and tasks
-- Link to relevant exam domain
-
----
-
-## 📞 Support & Community
-
-- **Questions?** Open a GitHub Issue
-- **Want to contribute?** Fork and submit a PR
-- **Found value?** Star ⭐ this repo and share with others studying for CKA
-
----
-
-## 📅 Recommended Study Timeline
-
-**8-Week Study Plan:**
-- **Week 1-2:** Introduction + lifecycle-management.md
-- **Week 3-4:** module1 (Cluster Architecture)
-- **Week 5:** module2 (Workloads) + module3 (Networking/Storage)  
-- **Week 6-7:** kubernetes-challenge/ (Day1-Day8)
-- **Week 8:** Day9 + Day10 (Mock Exams)
-
-**Adjust based on your pace and experience level!**
-
----
-
-## ✅ Before Taking the Real CKA Exam
-
-- [ ] Completed all modules  
-- [ ] Scored 80%+ on Day10 mock exam
-- [ ] Can perform all tasks within time limits
-- [ ] Comfortable with kubectl and bash
-- [ ] Reviewed troubleshooting patterns
-- [ ] Registered for exam at Linux Foundation
-
----
-
-**Happy Learning! Good luck with your CKA certification! 🚀**
-
-**Last Updated:** December 2025 | **Kubernetes Version:** v1.35
+1. **Start with Module 1** (Cluster Architecture) - Foundation for everything
+2. **Then Module 2** (Networking) - Critical for service deployment
+3. **Finally Module 3** (Advanced Topics) - Build on networking concepts
+4. Click any file above to navigate directly to it
+5. Each file has specific topics and subtopics to master
+6. Practice after each module before moving to next
