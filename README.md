@@ -41,7 +41,7 @@ CKA Repository Structure
 ### **Learning Path (Recommended Order)**
 
 **Phase 1: Foundations** 
-1. Read → [`Introduction-to-kubernetes.md`](Introduction-to-kubernetes.md) 
+1. Read → [`Introduction-to-kubernetes.md`](CKA/Introduction-to-kubernetes.md) 
    - Core Kubernetes concepts, architecture, and components
    - Perfect for refreshing fundamentals
 
