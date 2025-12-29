@@ -94,9 +94,6 @@ Don't worry — share your doubt as a post or reach out on:
 - 💬 **[Official Website](https://www.trainwithshubham.com/)** 
 
 
-  
-**Made with ❤️ for TWS community**
-
 **Happy Learning!**
 **TrainWithShubham**
 
