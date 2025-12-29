@@ -5,7 +5,7 @@
 [![License](https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge)](LICENSE)
 [![CKA](https://img.shields.io/badge/CKA-v1.35%20Ready-success?style=for-the-badge)](https://www.cncf.io/certification/cka/)
 
-> **The most comprehensive, hands-on CKA exam preparation guide for Kubernetes v1.35 with real-world projects
+> The most comprehensive, hands-on CKA exam preparation guide for Kubernetes v1.35 with real-world projects
 
 ---
 
@@ -41,7 +41,7 @@ CKA Repository Structure
 ### **Learning Path (Recommended Order)**
 
 **Phase 1: Foundations** 
-1. Read → [`Introduction-to-kubernetes.md`](Introduction-to-kubernetes .md) 
+1. Read → [`Introduction-to-kubernetes.md`](Introduction-to-kubernetes.md) 
    - Core Kubernetes concepts, architecture, and components
    - Perfect for refreshing fundamentals
 
