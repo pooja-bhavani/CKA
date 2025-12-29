@@ -83,6 +83,17 @@ CKA Repository Structure
 - Scheduling and taints/tolerations
 - **Exam Weight:** 15% (Workloads & Scheduling)
 
+Modules/Module3/ – Networking & Storage
+Services (ClusterIP, NodePort, LoadBalancer)
+
+Ingress and network policies
+
+Storage classes, PersistentVolumes, PersistentVolumeClaims
+
+ConfigMaps and Secrets
+
+Exam Weight: 30% (Services & Storage combined)
+
 ---
 
 ### **🏋️ kubernetes-challenge/ - Exam-Style Labs**
