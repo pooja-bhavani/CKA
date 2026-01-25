@@ -61,3 +61,10 @@ kubectl patch deployment web-app-v135 -p '{
 kubectl rollout status deployment/web-app-v135 --watch=true
 # Auto-rollback on failure detection
 ```
+---
+
+## 🌍 Real-World Scenarios
+
+### Scenario 1: E-commerce Platform - Black Friday Traffic Surge
+
+Your e-commerce platform expects 10x traffic during Black Friday. You need to scale from 10 to 100 replicas without any downtime or customer impact.
