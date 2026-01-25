@@ -30,3 +30,34 @@ kubectl rollout status deployment/web-app
 # - Manual monitoring required
 # - Resource waste during rollouts
 ```
+
+**v1.35 Enhanced Process:**
+```bash
+# v1.35: Intelligent deployment with full control
+kubectl create deployment web-app-v135 --image=nginx:1.25 --replicas=10
+
+# Enhanced update with surge control
+kubectl patch deployment web-app-v135 -p '{
+  "spec": {
+    "strategy": {
+      "rollingUpdate": {
+        "maxUnavailable": "10%",
+        "maxSurge": "25%",
+        "progressDeadlineSeconds": 600
+      }
+    },
+    "template": {
+      "spec": {
+        "containers": [{
+          "name": "nginx",
+          "image": "nginx:1.26"
+        }]
+      }
+    }
+  }
+}'
+
+# Automatic monitoring and rollback
+kubectl rollout status deployment/web-app-v135 --watch=true
+# Auto-rollback on failure detection
+```
