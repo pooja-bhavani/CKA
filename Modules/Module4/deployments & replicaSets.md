@@ -139,3 +139,116 @@ spec:
 - **Better monitoring**: Enhanced status reporting prevents issues
 - **Cost optimization**: Right-sized resources prevent over-provisioning
 
+
+### Migration Complexity
+
+```yaml
+# BEFORE (v1.34): Basic deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web-app-v134
+spec:
+  replicas: 10
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 1
+  template:
+    spec:
+      containers:
+      - name: web
+        image: nginx:1.21
+        # v1.34: Basic resource allocation
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "100m"
+          limits:
+            memory: "256Mi"
+            cpu: "200m"
+        # v1.34: Simple health checks
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 80
+          periodSeconds: 30
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 80
+          periodSeconds: 10
+```
+
+```yaml
+# AFTER (v1.35): Enhanced deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web-app-v135
+  annotations:
+    deployment.kubernetes.io/strategy-version: "v1.35"
+spec:
+  replicas: 10
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 10%
+      maxSurge: 25%
+      # v1.35: Enhanced rollout control
+      progressDeadlineSeconds: 600
+      revisionHistoryLimit: 10
+  template:
+    metadata:
+      labels:
+        app: web-app
+        version: v1.35
+    spec:
+      containers:
+      - name: web
+        image: nginx:1.25
+        # v1.35: Optimized resource allocation
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "100m"
+            ephemeral-storage: "1Gi"
+          limits:
+            memory: "256Mi"
+            cpu: "200m"
+            ephemeral-storage: "2Gi"
+        # v1.35: Enhanced health checks
+        startupProbe:
+          httpGet:
+            path: /health
+            port: 80
+          failureThreshold: 30
+          periodSeconds: 10
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 80
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 3
+        readinessProbe:
+          httpGet:
+            path: /ready
+            port: 80
+          periodSeconds: 5
+          timeoutSeconds: 3
+          failureThreshold: 2
+        # v1.35: Resource-aware configuration
+        env:
+        - name: MEMORY_LIMIT
+          valueFrom:
+            resourceFieldRef:
+              resource: limits.memory
+              divisor: "1Mi"
+        - name: CPU_LIMIT
+          valueFrom:
+            resourceFieldRef:
+              resource: limits.cpu
+              divisor: "1m"
+```
