@@ -208,7 +208,7 @@ spec:
       containers:
       - name: web
         image: nginx:1.25
-        # v1.35: Optimized resource allocation
+        # Optimized resource allocation
         resources:
           requests:
             memory: "128Mi"
@@ -218,7 +218,7 @@ spec:
             memory: "256Mi"
             cpu: "200m"
             ephemeral-storage: "2Gi"
-        # v1.35: Enhanced health checks
+        # Enhanced health checks
         startupProbe:
           httpGet:
             path: /health
@@ -239,7 +239,7 @@ spec:
           periodSeconds: 5
           timeoutSeconds: 3
           failureThreshold: 2
-        # v1.35: Resource-aware configuration
+        # Resource-aware configuration
         env:
         - name: MEMORY_LIMIT
           valueFrom:
