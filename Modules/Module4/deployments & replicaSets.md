@@ -196,7 +196,7 @@ spec:
     rollingUpdate:
       maxUnavailable: 10%
       maxSurge: 25%
-      # v1.35: Enhanced rollout control
+      # Enhanced rollout control
       progressDeadlineSeconds: 600
       revisionHistoryLimit: 10
   template:
