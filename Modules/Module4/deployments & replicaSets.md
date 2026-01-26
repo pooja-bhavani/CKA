@@ -361,3 +361,14 @@ spec:
 ```
 
 ---
+
+### Common Exam Scenarios
+
+1. **Create and scale deployments**
+2. **Perform rolling updates**
+3. **Rollback deployments**
+4. **Troubleshoot failed deployments**
+5. **Configure resource limits**
+6. **Set up health checks**
+
+---
