@@ -252,3 +252,112 @@ spec:
               resource: limits.cpu
               divisor: "1m"
 ```
+
+## ReplicaSets
+
+### Basic ReplicaSet
+
+```yaml
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  name: nginx-replicaset-v135
+  labels:
+    app: nginx
+    tier: frontend
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: nginx
+      tier: frontend
+  template:
+    metadata:
+      labels:
+        app: nginx
+        tier: frontend
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:1.25
+        ports:
+        - containerPort: 80
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "250m"
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+```
+
+### Advanced ReplicaSet with v1.35 Features
+
+```yaml
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  name: advanced-replicaset-v135
+  annotations:
+    replicaset.kubernetes.io/version: "v1.35"
+spec:
+  replicas: 5
+  selector:
+    matchLabels:
+      app: web-server
+    matchExpressions:
+    - key: environment
+      operator: In
+      values: ["production", "staging"]
+  template:
+    metadata:
+      labels:
+        app: web-server
+        environment: production
+        version: v1.35
+    spec:
+      # Enhanced scheduling
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 100
+            podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                - key: app
+                  operator: In
+                  values: ["web-server"]
+              topologyKey: kubernetes.io/hostname
+      containers:
+      - name: web-server
+        image: nginx:1.25
+        ports:
+        - containerPort: 80
+        # Improved resource management
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "100m"
+          limits:
+            memory: "256Mi"
+            cpu: "200m"
+        # Enhanced probes
+        startupProbe:
+          httpGet:
+            path: /
+            port: 80
+          failureThreshold: 30
+          periodSeconds: 10
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 80
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 80
+          periodSeconds: 5
+```
+
+---
