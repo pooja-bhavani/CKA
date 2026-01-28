@@ -166,4 +166,26 @@ spec:
 ```
 
 ---
+
+
+
   
+## v1.35 Best Practices
+
+### DaemonSet Best Practices
+
+1. **Resource Limits**: Always set resource requests and limits
+2. **Tolerations**: Include appropriate tolerations for system pods
+3. **Security Context**: Use non-root users when possible
+4. **Health Checks**: Implement proper liveness and readiness probes
+5. **Update Strategy**: Use RollingUpdate for zero-downtime updates
+
+### StatefulSet Best Practices
+
+1. **Headless Service**: Always create a headless service
+2. **Storage Classes**: Use appropriate storage classes for performance
+3. **Pod Anti-Affinity**: Spread pods across nodes for HA
+4. **Graceful Shutdown**: Set appropriate terminationGracePeriodSeconds
+5. **Backup Strategy**: Implement regular backup procedures
+
+---
