@@ -27,7 +27,7 @@ kubectl run ml-training --image=tensorflow/tensorflow:2.8.0-gpu \
 
 **v1.35 Solution:**
 ```yaml
-# v1.35: Intelligent GPU scheduling with gang scheduling
+# v1.35: GPU scheduling with gang scheduling
 apiVersion: scheduling.sigs.k8s.io/v1alpha1
 kind: PodGroup
 metadata:
@@ -56,12 +56,12 @@ spec:
         gang: distributed-training-group-v135
         gpu-type: nvidia-a100
       annotations:
-        # v1.35: Gang scheduling annotations
+        # Gang scheduling annotations
         scheduler.kubernetes.io/gang-name: "distributed-training-group-v135"
         scheduler.kubernetes.io/gang-min-size: "8"
         scheduler.kubernetes.io/gang-scheduling-timeout: "300s"
     spec:
-      # v1.35: Enhanced scheduling for ML workloads
+      # Enhanced scheduling for ML workloads
       schedulerName: gang-scheduler
       affinity:
         nodeAffinity:
@@ -74,7 +74,7 @@ spec:
               - key: gpu-memory
                 operator: In
                 values: ["40gb", "80gb"]
-        # v1.35: Enhanced pod anti-affinity for distributed training
+        # Enhanced pod anti-affinity for distributed training
         podAntiAffinity:
           preferredDuringSchedulingIgnoredDuringExecution:
           - weight: 100
@@ -89,7 +89,7 @@ spec:
                 matchLabels:
                   app: ml-training
               topologyKey: topology.kubernetes.io/zone
-      # v1.35: Advanced topology spread for ML workloads
+      # Advanced topology spread for ML workloads
       topologySpreadConstraints:
       - maxSkew: 2
         topologyKey: topology.kubernetes.io/zone
