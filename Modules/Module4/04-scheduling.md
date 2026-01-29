@@ -434,3 +434,192 @@ spec:
 ```
 
 ---
+
+## Topology Spread Constraints in v1.35
+
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: advanced-topology-spread-v135
+spec:
+  replicas: 12
+  selector:
+    matchLabels:
+      app: microservice
+  template:
+    metadata:
+      labels:
+        app: microservice
+        component: api
+    spec:
+      topologySpreadConstraints:
+      # v1.35: Multi-level topology spreading
+      - maxSkew: 1
+        topologyKey: topology.kubernetes.io/zone
+        whenUnsatisfiable: DoNotSchedule
+        labelSelector:
+          matchLabels:
+            app: microservice
+        # v1.35: Minimum domains
+        minDomains: 3
+      - maxSkew: 2
+        topologyKey: kubernetes.io/hostname
+        whenUnsatisfiable: ScheduleAnyway
+        labelSelector:
+          matchLabels:
+            app: microservice
+        minDomains: 6
+      - maxSkew: 1
+        topologyKey: node.kubernetes.io/instance-type
+        whenUnsatisfiable: ScheduleAnyway
+        labelSelector:
+          matchLabels:
+            component: api
+      containers:
+      - name: api
+        image: nginx:1.25
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "100m"
+          limits:
+            memory: "256Mi"
+            cpu: "200m"
+```
+
+## Taints and Tolerations
+
+
+```bash
+# Enhanced taint management
+kubectl taint nodes node1 key1=value1:NoSchedule
+kubectl taint nodes node1 key1=value1:NoExecute
+kubectl taint nodes node1 key1=value1:PreferNoSchedule
+
+# Taint with effect time
+kubectl taint nodes node1 key1=value1:NoExecute --overwrite
+
+# Remove taint
+kubectl taint nodes node1 key1=value1:NoSchedule-
+
+# List node taints
+kubectl describe nodes node1 | grep Taints
+```
+
+### Pod Tolerations
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: tolerations-pod-v135
+spec:
+  tolerations:
+  # Enhanced toleration matching
+  - key: "key1"
+    operator: "Equal"
+    value: "value1"
+    effect: "NoSchedule"
+  - key: "key2"
+    operator: "Exists"
+    effect: "NoExecute"
+    # Toleration seconds for graceful eviction
+    tolerationSeconds: 300
+  - key: "gpu"
+    operator: "Equal"
+    value: "nvidia"
+    effect: "NoSchedule"
+  # Wildcard tolerations
+  - operator: "Exists"
+    effect: "PreferNoSchedule"
+  containers:
+  - name: app
+    image: nginx:1.25
+    resources:
+      requests:
+        memory: "128Mi"
+        cpu: "100m"
+        nvidia.com/gpu: 1
+      limits:
+        memory: "256Mi"
+        cpu: "200m"
+        nvidia.com/gpu: 1
+```
+
+## Gang Scheduling
+
+```yaml
+# v1.35: Gang scheduling for ML workloads
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ml-training-gang-v135
+  annotations:
+    scheduler.kubernetes.io/gang-scheduling: "enabled"
+spec:
+  replicas: 4
+  selector:
+    matchLabels:
+      app: ml-training
+  template:
+    metadata:
+      labels:
+        app: ml-training
+        gang: ml-training-group
+      annotations:
+        # Gang scheduling annotations
+        scheduler.kubernetes.io/gang-name: "ml-training-group"
+        scheduler.kubernetes.io/gang-min-size: "4"
+        scheduler.kubernetes.io/gang-scheduling-timeout: "300s"
+    spec:
+      # Enhanced scheduling constraints for gang
+      schedulerName: gang-scheduler
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 100
+            podAffinityTerm:
+              labelSelector:
+                matchLabels:
+                  gang: ml-training-group
+              topologyKey: kubernetes.io/hostname
+      containers:
+      - name: ml-worker
+        image: tensorflow/tensorflow:2.13.0-gpu
+        command: ["python", "-c", "import time; time.sleep(3600)"]
+        resources:
+          requests:
+            memory: "2Gi"
+            cpu: "1000m"
+            nvidia.com/gpu: 1
+          limits:
+            memory: "4Gi"
+            cpu: "2000m"
+            nvidia.com/gpu: 1
+        env:
+        - name: GANG_SIZE
+          value: "4"
+        - name: POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+```
+### Scheduling Best Practices
+
+1. **Use Node Affinity** for hardware-specific requirements
+2. **Implement Pod Anti-Affinity** for high availability
+3. **Apply Topology Spread Constraints** for even distribution
+4. **Set Resource Requests** for proper scheduling decisions
+5. **Use Priority Classes** for critical workloads
+
+## Summary
+
+Kubernetes v1.35 brings significant enhancements to pod scheduling:
+
+- **Gang Scheduling** for coordinated workload placement
+- **Enhanced Affinity Rules** with more flexible matching
+- **Improved Topology Spread Constraints** for better distribution
+- **Advanced Scheduler Profiles** for custom scheduling logic
+- **Better Performance** with optimized scheduling algorithms
+--- 
