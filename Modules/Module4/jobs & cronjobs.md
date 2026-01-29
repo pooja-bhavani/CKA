@@ -283,3 +283,17 @@ spec:
 - **v1.34**: Static resource allocation for entire job duration
 - **v1.35**: Dynamic resource scaling based on job phase and workload characteristics
 
+### CronJob Improvements
+
+**1. Enhanced Scheduling - Global Time Zone Support**
+- **v1.34**: UTC-only scheduling with manual timezone calculations
+- **v1.35**: Native timezone support with automatic DST handling and global scheduling
+
+**2. Better Concurrency Control - Zero Overlap Guarantee**
+- **v1.34**: Basic concurrency policies with potential race conditions
+- **v1.35**: Advanced concurrency control with distributed locking and automatic conflict resolution
+
+**3. Advanced History Management - Intelligent Cleanup**
+- **v1.34**: Simple job history limits with manual cleanup
+- **v1.35**: Smart history management with automatic archiving and compliance-aware retention
+
