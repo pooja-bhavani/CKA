@@ -297,3 +297,20 @@ spec:
 - **v1.34**: Simple job history limits with manual cleanup
 - **v1.35**: Smart history management with automatic archiving and compliance-aware retention
 
+### Job Best Practices
+
+1. **Resource Limits**: Always set resource requests and limits
+2. **Restart Policy**: Use `OnFailure` for retryable jobs, `Never` for one-shot jobs
+3. **Backoff Limit**: Set appropriate backoff limits for retry logic
+4. **TTL**: Use `ttlSecondsAfterFinished` for automatic cleanup
+5. **Monitoring**: Implement proper logging and monitoring
+
+### CronJob Best Practices
+
+1. **Concurrency Policy**: Choose appropriate concurrency policy
+2. **History Limits**: Set reasonable history limits to prevent resource buildup
+3. **Deadlines**: Set `startingDeadlineSeconds` to handle scheduling delays
+4. **Timezone**: Explicitly set timezone for clarity
+5. **Idempotency**: Ensure jobs are idempotent for safe retries
+
+---
