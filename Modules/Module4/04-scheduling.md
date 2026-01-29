@@ -220,3 +220,217 @@ spec:
           requests:
             nvidia.com/gpu: 1
 ```
+
+### Enhanced Scheduling Features
+- **Gang Scheduling** - Coordinated scheduling for related pods
+- **Improved Node Affinity** - More flexible node selection criteria
+- **Advanced Pod Affinity/Anti-Affinity** - Better workload distribution controls
+- **Enhanced Topology Spread Constraints** - More sophisticated spreading policies
+- **Better Resource-Aware Scheduling** - Improved resource allocation decisions
+
+### Performance Improvements
+- **Faster Scheduling Decisions** - Optimized scheduler performance
+- **Better Preemption Logic** - Smarter pod preemption strategies
+- **Enhanced Scheduling Profiles** - More flexible scheduler configurations
+
+---
+
+## Node Affinity in v1.35
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: node-affinity-pod-v135
+  labels:
+    app: web-server
+    version: v1.35
+spec:
+  affinity:
+    nodeAffinity:
+      # Enhanced required affinity
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+        - matchExpressions:
+          - key: kubernetes.io/arch
+            operator: In
+            values: ["amd64", "arm64"]
+          - key: node-type
+            operator: NotIn
+            values: ["spot", "preemptible"]
+      # Improved preferred affinity
+      preferredDuringSchedulingIgnoredDuringExecution:
+      - weight: 100
+        preference:
+          matchExpressions:
+          - key: instance-type
+            operator: In
+            values: ["c5.large", "c5.xlarge"]
+      - weight: 50
+        preference:
+          matchExpressions:
+          - key: zone
+            operator: In
+            values: ["us-west-2a", "us-west-2b"]
+  containers:
+  - name: web-server
+    image: nginx:1.25
+    resources:
+      requests:
+        memory: "128Mi"
+        cpu: "100m"
+      limits:
+        memory: "256Mi"
+        cpu: "200m"
+```
+
+### Advanced Node Affinity with v1.35 Features
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: advanced-node-affinity-v135
+  annotations:
+    scheduler.kubernetes.io/version: "v1.35"
+spec:
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+        # Multiple node selector terms (OR logic)
+        - matchExpressions:
+          - key: node.kubernetes.io/instance-type
+            operator: In
+            values: ["m5.large", "m5.xlarge"]
+          - key: topology.kubernetes.io/zone
+            operator: In
+            values: ["us-west-2a"]
+        - matchExpressions:
+          - key: node.kubernetes.io/instance-type
+            operator: In
+            values: ["c5.large", "c5.xlarge"]
+          - key: topology.kubernetes.io/zone
+            operator: In
+            values: ["us-west-2b"]
+      preferredDuringSchedulingIgnoredDuringExecution:
+      - weight: 80
+        preference:
+          matchExpressions:
+          - key: workload-optimized
+            operator: In
+            values: ["true"]
+      - weight: 60
+        preference:
+          matchFields:
+          - key: metadata.name
+            operator: In
+            values: ["node-1", "node-2"]
+  containers:
+  - name: app
+    image: busybox:1.36
+    command: ["sleep", "3600"]
+```
+
+---
+
+## Pod Affinity and Anti-Affinity in v1.35
+
+### Pod Affinity
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod-affinity-v135
+  labels:
+    app: cache
+    tier: backend
+spec:
+  affinity:
+    podAffinity:
+      # Enhanced required pod affinity
+      requiredDuringSchedulingIgnoredDuringExecution:
+      - labelSelector:
+          matchExpressions:
+          - key: app
+            operator: In
+            values: ["database"]
+          - key: tier
+            operator: In
+            values: ["backend"]
+        topologyKey: kubernetes.io/hostname
+        # Namespace selector for cross-namespace affinity
+        namespaceSelector:
+          matchLabels:
+            environment: production
+      # Improved preferred affinity
+      preferredDuringSchedulingIgnoredDuringExecution:
+      - weight: 100
+        podAffinityTerm:
+          labelSelector:
+            matchLabels:
+              app: web-server
+          topologyKey: topology.kubernetes.io/zone
+  containers:
+  - name: cache
+    image: redis:7.2
+    resources:
+      requests:
+        memory: "256Mi"
+        cpu: "100m"
+      limits:
+        memory: "512Mi"
+        cpu: "200m"
+```
+
+### Pod Anti-Affinity
+
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web-deployment-v135
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: web-server
+  template:
+    metadata:
+      labels:
+        app: web-server
+        version: v1.35
+    spec:
+      affinity:
+        podAntiAffinity:
+          # Enhanced anti-affinity for HA
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchExpressions:
+              - key: app
+                operator: In
+                values: ["web-server"]
+            topologyKey: kubernetes.io/hostname
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 100
+            podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                - key: app
+                  operator: In
+                  values: ["web-server"]
+              topologyKey: topology.kubernetes.io/zone
+      containers:
+      - name: web-server
+        image: nginx:1.25
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "100m"
+          limits:
+            memory: "256Mi"
+            cpu: "200m"
+```
+
+---
