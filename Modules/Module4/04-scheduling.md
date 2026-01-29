@@ -4,9 +4,9 @@
 
 Pod scheduling in Kubernetes v1.35 provides sophisticated mechanisms to control where pods are placed in your cluster, with enhanced features for better resource utilization, performance optimization, and workload distribution.
 
-## 🌍 Real-World Scenarios
+## 🌍 Real-World Scenario
 
-### Scenario 1: Machine Learning Platform - GPU Resource Optimization
+### Scenario: Machine Learning Platform - GPU Resource Optimization
 
 **Business Context**: Your AI/ML platform serves 500+ data scientists running training jobs that require specific GPU types. You need to optimize GPU utilization while ensuring fair resource allocation and preventing resource conflicts.
 
@@ -125,4 +125,98 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: metadata.labels['gpu-type']
+```
+### Migration Complexity
+
+**Scheduling Migration**
+
+```yaml
+# BEFORE (v1.34): Basic scheduling
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ml-training-v134
+spec:
+  replicas: 8
+  template:
+    spec:
+      # v1.34: Limited scheduling options
+      nodeSelector:
+        accelerator: nvidia-v100
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 100
+            podAffinityTerm:
+              labelSelector:
+                matchLabels:
+                  app: ml-training
+              topologyKey: kubernetes.io/hostname
+      # No gang scheduling - risk of partial deployment
+      containers:
+      - name: worker
+        image: tensorflow/tensorflow:2.8.0-gpu
+        resources:
+          requests:
+            nvidia.com/gpu: 1
+```
+
+```yaml
+# AFTER (v1.35): Enhanced scheduling
+apiVersion: scheduling.sigs.k8s.io/v1alpha1
+kind: PodGroup
+metadata:
+  name: ml-training-group-v135
+spec:
+  scheduleTimeoutSeconds: 300
+  minMember: 8  # Gang scheduling guarantee
+```
+
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ml-training-v135
+  annotations:
+    scheduler.kubernetes.io/gang-scheduling: "enabled"
+spec:
+  replicas: 8
+  template:
+    metadata:
+      annotations:
+        scheduler.kubernetes.io/gang-name: "ml-training-group-v135"
+        scheduler.kubernetes.io/gang-min-size: "8"
+    spec:
+      schedulerName: gang-scheduler
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: accelerator
+                operator: In
+                values: ["nvidia-a100", "nvidia-v100"]
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 100
+            podAffinityTerm:
+              labelSelector:
+                matchLabels:
+                  gang: ml-training-group-v135
+              topologyKey: kubernetes.io/hostname
+      # v1.35: Enhanced topology spread
+      topologySpreadConstraints:
+      - maxSkew: 2
+        topologyKey: topology.kubernetes.io/zone
+        whenUnsatisfiable: ScheduleAnyway
+        labelSelector:
+          matchLabels:
+            gang: ml-training-group-v135
+        minDomains: 2  # v1.35 feature
+      containers:
+      - name: worker
+        image: tensorflow/tensorflow:2.13.0-gpu-v135
+        resources:
+          requests:
+            nvidia.com/gpu: 1
 ```
