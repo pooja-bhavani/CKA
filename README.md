@@ -133,9 +133,9 @@ kubectl create namespace bankapp
 
 ```
 kubectl apply -f <filename>
-'''
+```
 
-<img width="698" height="96" alt="image" src="https://github.com/user-attachments/assets/9e3e9c51-27b2-4888-b93c-91620efe5001" />
+<img width="1015" height="321" alt="image" src="https://github.com/user-attachments/assets/ed51cf44-2682-43aa-819d-e4ee07d702e7" />
 
 
 
