@@ -124,7 +124,18 @@ kubectl get pod bankapp-test
 <img width="1016" height="271" alt="image" src="https://github.com/user-attachments/assets/0b7adc74-0a9a-4c9e-bf94-726941e792e7" />
 
 
+* Create a namespace
 
+```
+kubectl create namespace bankapp
+```
+* Apply all the yaml files
+
+```
+kubectl apply -f <filename>
+'''
+
+<img width="698" height="96" alt="image" src="https://github.com/user-attachments/assets/9e3e9c51-27b2-4888-b93c-91620efe5001" />
 
 
 
