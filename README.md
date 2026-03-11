@@ -100,12 +100,6 @@ kubectl get nodes
 
 <img width="679" height="292" alt="image" src="https://github.com/user-attachments/assets/bb31e371-d615-4815-8350-7b88787ed3b5" />
 
-
-* Switch to docker branch
-```
-git checkout docker
-```
-
 * Load image into kind
 ```
 kind load docker-image bankapp:docker --name bankapp
