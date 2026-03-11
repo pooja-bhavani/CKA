@@ -172,7 +172,7 @@ stat -fc %T /sys/fs/cgroup/
 
 cat <<EOF / sudo tee/etc/modules-load.d/k8s.conf
 ```
-<img width="1333" height="440" alt="image" src="https://github.com/user-attachments/assets/04f23eee-e1a6-4ffb-8b15-ea11ce6109e1" />
+<img width="930" height="469" alt="image" src="https://github.com/user-attachments/assets/6a4ea9c8-4215-4a71-9017-01c548be6022" />
 
 
 **If not cgroup2fs, enable cgroup v2**
