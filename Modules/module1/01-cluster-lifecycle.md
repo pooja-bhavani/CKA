@@ -379,7 +379,7 @@ kubectl scale deploy/bankapp -n bankapp --replicas=0
 kubectl get deploy bankapp -n bankapp -o yaml | grep -A5 status:
 ```
 
-<img width="850" height="463" alt="image" src="https://github.com/user-attachments/assets/b06fa1a5-c762-411c-b162-1a7315f6ff52" />
+<img width="930" height="466" alt="image" src="https://github.com/user-attachments/assets/c45ed2dc-77b8-424e-ac5e-0a0b20ac534a" />
 
 ### Major Stable Features (NEW in v1.35)
 - **In-Place Pod Resource Updates** - Update CPU/memory without pod restart
