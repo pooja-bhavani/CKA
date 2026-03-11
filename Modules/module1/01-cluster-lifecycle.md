@@ -367,9 +367,9 @@ kubectl get nodes
 
 **Deployment status improvements (terminatingReplicas)**
 
-New .status.terminatingReplicas on Deployments/ReplicaSets for counting Pods that are shutting down.
+• New .status.terminatingReplicas on Deployments/ReplicaSets for counting Pods that are shutting down.
 
-What it is
+**What it is**         
 When you scale or roll out a Deployment, some Pods are starting, some are already running, and some are in the middle of shutting down.
 
 Before v1.35, Kubernetes only told you about running ones (replicas, readyReplicas, updatedReplicas). With v1.35, Deployments also expose terminatingReplicas = ‘how many Pods are currently being deleted.
