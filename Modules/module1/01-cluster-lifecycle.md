@@ -317,7 +317,7 @@ sudo usermod -aG docker $USER
 newgrp docker
 ```
 
-**step2:Install kind v1.35**
+**step2:Install kind (for Kubernetes v1.35)**
 ```
 curl -Lo kind https://kind.sigs.k8s.io/dl/v0.24.0/kind-linux-amd64
 chmod +x kind
