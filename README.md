@@ -1,4 +1,4 @@
-# 🚀 Complete CKA (Certified Kubernetes Administrator) Exam Preparation Guide
+# 🚀 Complete CKA (Certified Kubernetes Administrator) Guide
 
 [![Kubernetes](https://img.shields.io/badge/Kubernetes-v1.35-326CE5?style=for-the-badge&logo=kubernetes&logoColor=white)](https://kubernetes.io/)
 [![AWS](https://img.shields.io/badge/AWS-FF9900?style=for-the-badge&logo=amazon-aws&logoColor=white)](https://aws.amazon.com/)
@@ -82,6 +82,60 @@ This repository is **fully updated for Kubernetes v1.35** with cutting-edge feat
 4. Click any file above to navigate directly to it
 5. Each file has specific topics and subtopics to master
 6. Practice after each module before moving to next
+
+
+## Get Started
+
+### Create a kind cluster 
+
+```
+kind create cluster --config kind-config.yaml
+```
+
+* Verify cluster creation 
+```
+kubectl get nodes
+```
+
+
+<img width="679" height="292" alt="image" src="https://github.com/user-attachments/assets/bb31e371-d615-4815-8350-7b88787ed3b5" />
+
+
+* Switch to docker branch
+```
+git checkout docker
+```
+
+* Load image into kind
+```
+kind load docker-image bankapp:docker --name bankapp
+```
+
+* Verify is the pod is visible
+```
+kubectl run bankapp-test \
+  --image=bankapp:docker \
+  --restart=Never \
+  --port=8080
+```
+```
+kubectl get pod bankapp-test
+```
+<img width="1016" height="271" alt="image" src="https://github.com/user-attachments/assets/0b7adc74-0a9a-4c9e-bf94-726941e792e7" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
