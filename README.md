@@ -137,8 +137,19 @@ kubectl apply -f <filename>
 
 <img width="1015" height="321" alt="image" src="https://github.com/user-attachments/assets/ed51cf44-2682-43aa-819d-e4ee07d702e7" />
 
+* Check the pod status
+```
+kubectl get pods -n bankapp
+```
+* Describe the pod for more information
+```
+kubectl describe pod <podname> -n namespace
+```
+<img width="803" height="86" alt="image" src="https://github.com/user-attachments/assets/39217fed-7271-4eda-8d21-a4de356889d0" />
 
+Wait until all pods are Running.
 
+<img width="1022" height="294" alt="image" src="https://github.com/user-attachments/assets/550c99d4-582d-4102-a124-4eee4de9e0a2" />
 
 
 
