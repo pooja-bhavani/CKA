@@ -363,6 +363,24 @@ kubectl get nodes
 ---
 ## Kubernetes v1.35 New Features
 
+### Deployment status & observability
+
+**Deployment status improvements (terminatingReplicas)**
+
+New .status.terminatingReplicas on Deployments/ReplicaSets for counting Pods that are shutting down.
+
+What it is
+When you scale or roll out a Deployment, some Pods are starting, some are already running, and some are in the middle of shutting down.
+
+Before v1.35, Kubernetes only told you about running ones (replicas, readyReplicas, updatedReplicas). With v1.35, Deployments also expose terminatingReplicas = ‘how many Pods are currently being deleted.
+
+```
+kubectl scale deploy/bankapp -n bankapp --replicas=0
+kubectl get deploy bankapp -n bankapp -o yaml | grep -A5 status:
+```
+
+<img width="850" height="463" alt="image" src="https://github.com/user-attachments/assets/b06fa1a5-c762-411c-b162-1a7315f6ff52" />
+
 ### Major Stable Features (NEW in v1.35)
 - **In-Place Pod Resource Updates** - Update CPU/memory without pod restart
 - **Pod Generation Tracking** - Reliable update status verification
