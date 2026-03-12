@@ -106,7 +106,9 @@ The bankapp-prod namespace, which enforces restricted:v1.35. When I try to run t
 **Pod-Secure-Baseline-Restricted (Secure Pod)**                    
 [03-pod-secure-baseline-restricted.yaml](../../k8s/security/03-pod-secure-baseline-restricted.yaml)
 
-add screenshots and theory
+<img width="909" height="144" alt="image" src="https://github.com/user-attachments/assets/a974ed59-d53c-41c1-bc45-a61b6172b8bf" />
+
+Using Pod Security Admission (PSA) with non‑root, seccomp‑hardened Pods in Kubernetes v1.35 significantly strengthens workload isolation and aligns clusters with modern security best practices. By enforcing policies like restricted:v1.35 at the namespace level, Kubernetes automatically blocks insecure Pod specs before they are admitted to the cluster.
 
 ---
 
