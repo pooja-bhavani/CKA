@@ -177,6 +177,8 @@ Run the app
 ```
 http://localhost:8080
 ```
+<img width="1463" height="915" alt="image" src="https://github.com/user-attachments/assets/6d0788dc-1e27-4fb0-bfaa-1a61d0c0f5bd" />
+
 <img width="1454" height="911" alt="image" src="https://github.com/user-attachments/assets/d6cb7b09-9bec-453e-a4b4-326b8538d918" />
 
 
