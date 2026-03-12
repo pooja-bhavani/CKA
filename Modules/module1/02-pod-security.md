@@ -76,6 +76,10 @@ metadata:
 **Namespace-Pod-security**              
 [namespace-pod-security.yaml](../../k8s/security/01-namespaces-pod-security.yaml)
 
+```
+kubectl apply -f 01-namespaces-pod-security.yaml
+kubectl get ns --show-labels
+```
 <img width="1318" height="242" alt="image" src="https://github.com/user-attachments/assets/7f26c46d-1c47-428b-9b0d-eaba30f43127" />
 
 **What this does:**
