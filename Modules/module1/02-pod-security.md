@@ -186,7 +186,7 @@ spec:
           - "app"
 ```
 **Pod Certificates**       
-[05-pod-cert.yamlyaml](../../k8s/security/05-pod-cert.yaml)
+[05-pod-cert.yaml](../../k8s/security/05-pod-cert.yaml)
 
 ```
 kubectl apply -f 05-pod-cert.yaml
