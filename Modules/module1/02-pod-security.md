@@ -183,6 +183,14 @@ spec:
           - "app.default.svc.cluster.local"
           - "app"
 ```
+**Pod Certificates**       
+[05-pod-cert.yamlyaml](../../k8s/security/05-pod-cert.yaml)
+
+```
+kubectl apply -f 05-pod-cert.yaml
+```
+
+
 ---
 
 
