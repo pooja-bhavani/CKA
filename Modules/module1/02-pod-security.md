@@ -88,7 +88,10 @@ kubectl get ns --show-labels
 * bankapp-prod fully enforces restricted:v1.35, so only hardened Pods are admitted.
 
 ### Pod Security – Bad vs Good Pod
-put yaml link
+
+**Pod-Privileged**              
+[02-pod-privileged.yaml](../../k8s/security/02-pod-privileged.yaml)
+
 <img width="1007" height="173" alt="image" src="https://github.com/user-attachments/assets/66d3bcdf-dab3-4912-b647-40cac182d3f5" />
 
 
