@@ -73,16 +73,24 @@ metadata:
     pod-security.kubernetes.io/warn: baseline
     pod-security.kubernetes.io/warn-version: v1.35
 ```
+put yaml link
+<img width="1173" height="640" alt="image" src="https://github.com/user-attachments/assets/83b18f99-093c-4d16-900e-ca8a9379636c" />
 
-Namespaces are labeled to select profile + mode, for example:
-```
-kubectl label namespace production \
-  pod-security.kubernetes.io/enforce=restricted \
-  pod-security.kubernetes.io/audit=baseline \
-  pod-security.kubernetes.io/warn=baseline
-```
+<img width="1318" height="242" alt="image" src="https://github.com/user-attachments/assets/7f26c46d-1c47-428b-9b0d-eaba30f43127" />
 
-<img width="1309" height="972" alt="image" src="https://github.com/user-attachments/assets/27d3e15a-ab16-4147-8e41-73851124e4a0" />
+**What this does:**
+* bankapp-dev is relaxed – good for experimentation.
+* bankapp-staging enforces baseline and monitors for restricted.
+* bankapp-prod fully enforces restricted:v1.35, so only hardened Pods are admitted.
+
+### Pod Security – Bad vs Good Pod
+put yaml link
+<img width="1007" height="173" alt="image" src="https://github.com/user-attachments/assets/66d3bcdf-dab3-4912-b647-40cac182d3f5" />
+
+
+violates PodSecurity "restricted:v1.35": privileged containers, hostPath volumes are not allowed 
+I’m in the bankapp-prod namespace, which enforces restricted:v1.35. When I try to run this privileged Pod with a hostPath to /var/log, the API server rejects it at admission time. It tells me why: the container is privileged, it uses hostPath, it can escalate privileges, it has all capabilities, and it doesn’t set runAsNonRoot. None of these Pods will ever start on my nodes.
+
 
 
 ## v1.35 Security Enhancements
