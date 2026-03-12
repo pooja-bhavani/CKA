@@ -8,6 +8,6 @@ subjects:
   name: bankapp-sa
   namespace: bankapp
 roleRef:
+  apiGroup: rbac.authorization.k8s.io
   kind: Role
   name: bankapp-role
-  apiGroup: rbac.authorization.k8s.io
