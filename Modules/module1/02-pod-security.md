@@ -100,9 +100,12 @@ kubectl get ns --show-labels
 * violates PodSecurity "restricted:v1.35": privileged containers, hostPath volumes are not allowed                   
 The bankapp-prod namespace, which enforces restricted:v1.35. When I try to run this privileged Pod with a hostPath to /var/log, the API server rejects it at admission time. It tells me why: the container is privileged, it uses hostPath, it can escalate privileges, it has all capabilities, and it doesn’t set runAsNonRoot. None of these Pods will ever start on my nodes.
 
-**Pod-Secure-Baseline-Restricted (Secure Pod)**
+**Pod-Secure-Baseline-Restricted (Secure Pod)**                    
 [03-pod-secure-baseline-restricted.yaml](../../k8s/security/03-pod-secure-baseline-restricted.yaml)
 
+add screenshots and theory
+
+---
 
 ## v1.35 Security Enhancements
 
@@ -131,6 +134,11 @@ spec:
     securityContext:
       runAsUser: 0    # Maps to unprivileged user on host
 ```
+[04-pod-userns-demo.yaml](../../k8s/security/04-pod-user-namespace.yaml)
+
+
+
+
 ---
 
 ### 2. Pod Certificates 
