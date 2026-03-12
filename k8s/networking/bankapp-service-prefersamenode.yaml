@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: bankapp-service
+  namespace: bankapp
+spec:
+  selector:
+    app: bankapp
+  ports:
+  - name: http
+    port: 80
+    targetPort: 8080
+  # Kubernetes v1.35+: smarter, topology-aware routing
+  trafficDistribution: PreferSameNode   # Prefer same-node endpoints when possible
+  internalTrafficPolicy: Local          # Keep internal traffic on this node if local endpoints exist
