@@ -145,11 +145,39 @@ Wait until all pods are Running.
 
 <img width="1022" height="294" alt="image" src="https://github.com/user-attachments/assets/550c99d4-582d-4102-a124-4eee4de9e0a2" />
 
+## Ollama
+* Build or pull the image locally
+```
+docker build -t ollama/ollama:local .
+```
+* Load it into the kind cluster
+```
+kind load docker-image ollama/ollama:latest --name
+```
+* Apply ollama yaml files
+  
+```
+kubectl apply -f ollama/ollama-deployment.yaml
+```
+```
+kubectl apply -f ollama/ollama-service.yaml
+```
+* Once it’s Running, pull tinyllama
+```
+kubectl exec -it deploy/ollama -n bankapp -- bash
+ollama pull tinyllama
+ollama list
+exit
+```
+<img width="944" height="254" alt="image" src="https://github.com/user-attachments/assets/fa49c070-2965-4779-8aa2-6bcb5502d218" />
+<img width="692" height="115" alt="image" src="https://github.com/user-attachments/assets/a4799687-7260-49b0-9b73-90bb91f46c42" />
 
 
-
-
-
+Run the app
+```
+http://localhost:8080
+```
+<img width="1454" height="911" alt="image" src="https://github.com/user-attachments/assets/d6cb7b09-9bec-453e-a4b4-326b8538d918" />
 
 
 
