@@ -73,8 +73,8 @@ metadata:
     pod-security.kubernetes.io/warn: baseline
     pod-security.kubernetes.io/warn-version: v1.35
 ```
-**Namespace-Pod-security**
-[namespace-pod-security](../../k8s/security/01-namespaces-pod-security.yaml)
+**Namespace-Pod-security**              
+[namespace-pod-security.yaml](../../k8s/security/01-namespaces-pod-security.yaml)
 
 <img width="1318" height="242" alt="image" src="https://github.com/user-attachments/assets/7f26c46d-1c47-428b-9b0d-eaba30f43127" />
 
