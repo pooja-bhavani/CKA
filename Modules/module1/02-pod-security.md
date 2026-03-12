@@ -88,8 +88,8 @@ put yaml link
 <img width="1007" height="173" alt="image" src="https://github.com/user-attachments/assets/66d3bcdf-dab3-4912-b647-40cac182d3f5" />
 
 
-violates PodSecurity "restricted:v1.35": privileged containers, hostPath volumes are not allowed 
-I’m in the bankapp-prod namespace, which enforces restricted:v1.35. When I try to run this privileged Pod with a hostPath to /var/log, the API server rejects it at admission time. It tells me why: the container is privileged, it uses hostPath, it can escalate privileges, it has all capabilities, and it doesn’t set runAsNonRoot. None of these Pods will ever start on my nodes.
+* violates PodSecurity "restricted:v1.35": privileged containers, hostPath volumes are not allowed         
+The bankapp-prod namespace, which enforces restricted:v1.35. When I try to run this privileged Pod with a hostPath to /var/log, the API server rejects it at admission time. It tells me why: the container is privileged, it uses hostPath, it can escalate privileges, it has all capabilities, and it doesn’t set runAsNonRoot. None of these Pods will ever start on my nodes.
 
 
 
