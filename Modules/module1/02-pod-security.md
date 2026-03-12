@@ -94,6 +94,9 @@ kubectl get ns --show-labels
 **Pod-Privileged (insecure pod)**              
 [02-pod-privileged.yaml](../../k8s/security/02-pod-privileged.yaml)
 
+```
+kubectl apply -f 02-pod-privileged.yaml
+```
 <img width="1007" height="173" alt="image" src="https://github.com/user-attachments/assets/66d3bcdf-dab3-4912-b647-40cac182d3f5" />
 
 
@@ -136,6 +139,9 @@ spec:
 ```
 [04-pod-userns-demo.yaml](../../k8s/security/04-pod-user-namespace.yaml)
 
+```
+kubectl apply -f 04-pod-user-namespace.yaml
+```
 
 
 
