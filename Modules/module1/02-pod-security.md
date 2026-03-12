@@ -137,13 +137,14 @@ spec:
     securityContext:
       runAsUser: 0    # Maps to unprivileged user on host
 ```
-[04-pod-userns-demo.yaml](../../k8s/security/04-pod-user-namespace.yaml)
+**User Namespaces**
+[04-pod-user-namespace.yaml](../../k8s/security/04-pod-user-namespace.yaml)
 
 ```
 kubectl apply -f 04-pod-user-namespace.yaml
 ```
 
-
+Inside you’ll see uid=0(root), but on the host it’s mapped to an unprivileged UID thanks to user namespaces.
 
 ---
 
