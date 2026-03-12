@@ -137,7 +137,7 @@ spec:
     securityContext:
       runAsUser: 0    # Maps to unprivileged user on host
 ```
-**User Namespaces**
+**User Namespaces**           
 [04-pod-user-namespace.yaml](../../k8s/security/04-pod-user-namespace.yaml)
 
 ```
