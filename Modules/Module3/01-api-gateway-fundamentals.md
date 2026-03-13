@@ -80,8 +80,6 @@ kubectl apply -f https://github.com/envoyproxy/gateway/releases/download/v1.5.9/
 kubectl get pods -n envoy-gateway-system
 ```
 
-\
-
 ## Core Concepts
 
 ### 1. GatewayClass
@@ -115,11 +113,12 @@ spec:
 
 ### Hands‑on (bankapp)
 
-Apply the Envoy GatewayClass 
+- Apply the Envoy GatewayClass 
 
 **gatewayclass-envoy**                
 [gatewayclass-envoy.yaml](../../k8s/gateway/01-gatewayclass-envoy.yaml)
 
+parametersRef: Shows how GatewayClass can reference implementation‑specific tuning (EnvoyProxy).
 
 ```
 kubectl apply -f k8s/gateway-api/01-gatewayclass-envoy.yaml
