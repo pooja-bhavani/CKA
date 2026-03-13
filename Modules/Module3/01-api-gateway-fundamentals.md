@@ -114,7 +114,7 @@ spec:
 Apply the Envoy GatewayClass 
 
 **gatewayclass-envoy**                
-[gatewayclass-envoy.yaml](../../k8s/security/01-gatewayclass-envoy.yaml)
+[gatewayclass-envoy.yaml](../../k8s/gateway/01-gatewayclass-envoy.yaml)
 
 
 ```
