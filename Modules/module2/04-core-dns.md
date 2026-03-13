@@ -165,7 +165,7 @@ kubectl edit configmap coredns -n kube-system
 **Use case**: Adds rate limiting, upstream health checks, and focused logging to demonstrate “security and observability” patterns.
 
 - ratelimit plugin: Protects CoreDNS and upstreams from query floods (per /24 and /56 CIDR).
-- health_check 5s: Actively probes upstream DNS servers and avoids bad ones.               
+- health_check 5s: Actively probes upstream DNS servers and avoids bad ones.             
 ​- log filtering: Only logs denial/error classes to reduce noise and focus troubleshooting.
 ​
 ```yaml
