@@ -60,26 +60,6 @@ Gateway API is increasingly important for modern Kubernetes:
 
 ---
 
-## Installations required
-
-These steps are required because you are installing Envoy Gateway, which uses the Kubernetes Gateway API instead of the traditional Kubernetes Ingress.
-
-**Install CRDs**
-
-```
-kubectl create namespace envoy-gateway-system
-kubectl apply --server-side -f https://github.com/kubernetes-sigs/gateway-api/releases/download/v1.1.0/standard-install.yaml
-kubectl get crd | grep gateway
-```
-
-
-**Install Envoy Gateway**
-
-```
-kubectl apply -f https://github.com/envoyproxy/gateway/releases/download/v1.5.9/install.yaml
-kubectl get pods -n envoy-gateway-system
-```
-
 ## Core Concepts
 
 ### 1. GatewayClass
@@ -109,20 +89,6 @@ spec:
 - `nginx`: NGINX Gateway Controller (v1.1+)
 - `traefik`: Traefik Gateway Controller (v3.0+)
 - `cilium`: Cilium Gateway Controller (v1.14+)
-
-
-### Hands‑on (bankapp)
-
-- Apply the Envoy GatewayClass 
-
-**gatewayclass-envoy**                
-[gatewayclass-envoy.yaml](../../k8s/gateway/01-gatewayclass-envoy.yaml)
-
-parametersRef: Shows how GatewayClass can reference implementation‑specific tuning (EnvoyProxy).
-
-```
-kubectl apply -f k8s/gateway-api/01-gatewayclass-envoy.yaml
-```
 
 ---
 
@@ -358,107 +324,74 @@ Gateway API separates responsibilities:
 
 ## Setup 
 
+These steps are required because you are installing Envoy Gateway, which uses the Kubernetes Gateway API instead of the traditional Kubernetes Ingress.
+
 ### Step 1: Install Gateway API CRDs
 
-```bash
-# Install Gateway API CRDs 
+
+* Install Gateway API CRDs 
+```
+kubectl create namespace envoy-gateway-system
 kubectl apply --server-side -f https://github.com/kubernetes-sigs/gateway-api/releases/download/v1.1.0/standard-install.yaml
+```
 
-
-# Verify installation (should show v1 and v1beta1 as available versions for backward compatibility)
+* Verify installation (should show v1 and v1beta1 as available versions for backward compatibility)
+```
 kubectl get crd | grep gateway
 ```
 
 ### Step 2: Install a Gateway Controller (Envoy Gateway Example)
 
-```bash
-# Install Envoy Gateway
-kubectl apply --server-side -f https://github.com/envoyproxy/gateway/releases/download/v1.0.0/install.yaml
 
+* Install Envoy Gateway
+```
+kubectl apply -f https://github.com/envoyproxy/gateway/releases/download/v1.5.9/install.yaml
+```
 
-# Verify installation
+* Verify installation
+```
 kubectl get pods -n envoy-gateway-system
 ```
 
-### Step 3: Create GatewayClass
+### Create GatewayClass
 
-```yaml
-apiVersion: gateway.networking.k8s.io/v1
-kind: GatewayClass
-metadata:
-  name: envoy-v135
-spec:
-  controllerName: gateway.envoyproxy.io/gatewayclass-controller
-  # NEW in v1.35: Enhanced configuration
-  parametersRef:
-    group: gateway.envoyproxy.io
-    kind: EnvoyProxy
-    name: envoy-config
-  description: "Envoy Gateway optimized for Kubernetes v1.35"
+**Hands‑on (bankapp)**
+
+- Apply the Envoy GatewayClass
+- 
+**gatewayclass-envoy**                
+[gatewayclass-envoy.yaml](../../01-gatewayclass-envoy.yaml)
+
+```
+kubectl apply -f 01-gatewayclass-envoy.yaml
+```
+parametersRef: Shows how GatewayClass can reference implementation‑specific tuning (EnvoyProxy).
+
 ---
-# Enhanced Envoy configuration
-apiVersion: gateway.envoyproxy.io/v1alpha1
-kind: EnvoyProxy
-metadata:
-  name: envoy-config
-spec:
-  # NEW: Performance optimizations
-  concurrency: 4
-  logging:
-    level:
-      default: info
-  telemetry:
-    metrics:
-      prometheus:
-        disable: false
-```
 
-### Step 4: Create Gateway
+###  Create Gateway
 
-```yaml
-apiVersion: gateway.networking.k8s.io/v1
-kind: Gateway
-metadata:
-  name: production-gateway
-  namespace: gateway-system
-  annotations:
-    # NEW in v1.35: Enhanced annotations
-    gateway.networking.k8s.io/bundle-version: "v1.35"
-spec:
-  gatewayClassName: envoy-v135
-  listeners:
-  - name: http
-    protocol: HTTP
-    port: 80
-    allowedRoutes:
-      namespaces:
-        from: All
-  - name: https
-    protocol: HTTPS
-    port: 443
-    tls:
-      mode: Terminate
-      certificateRefs:
-      - name: wildcard-tls
-        namespace: gateway-system
-    allowedRoutes:
-      namespaces:
-        from: All
-  # NEW in v1.35: gRPC support
-  - name: grpc
-    protocol: HTTP
-    port: 9090
-    allowedRoutes:
-      kinds:
-      - kind: GRPCRoute
-  # NEW in v1.35: TCP support
-  - name: tcp
-    protocol: TCP
-    port: 5432
-    allowedRoutes:
-      kinds:
-      - kind: TCPRoute
+Creates a shared Gateway instance for bankapp, listening on HTTP 80 and TCP 5432.
+
+**gateway-bankapp-http-tcp**
+[gateway-bankapp-http-tcp.yaml](../../02-gateway-bankapp-http-tcp.yaml)
+
+
 ```
+kubectl label namespace bankapp gateway-access=true --overwrite
+kubectl apply -f 02-gateway-bankapp-http-tcp.yaml
+kubectl get gateway -n gateway-system
+```
+- Gateway in infra namespace (gateway-system), routes in app namespace – role separation.
+- allowedRoutes.from: Selector: Only namespaces with gateway-access=true can attach.
+- Multi‑protocol: HTTP listener + TCP listener for DB traffic experiments.
+​
+---
+**httproute-bankapp.yaml**
+
+[gateway-bankapp-http-tcp.yaml](../../02-gateway-bankapp-http-tcp.yaml)
+
+
 
 ### Step 5: Create HTTPRoute
 
