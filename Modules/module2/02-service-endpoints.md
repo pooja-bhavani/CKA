@@ -196,8 +196,7 @@ spec:
 ```
 
 **bankapp-topology-aware-service**                
-[bankapp-topology-aware-svc.yaml](../../k8s/security/02-bankapp-topology-aware-svc.yaml)
-
+[bankapp-topology-aware-svc.yaml](../../k8s/networking/02-bankapp-topology-aware-svc.yaml)
 
 
 **Traffic Distribution Options**:
@@ -270,7 +269,7 @@ spec:
 ```
 
 **secure-app-with-service.yaml**            
-[secure-app-with-service.yaml](../../k8s/security/03-secure-app-with-service.yaml)
+[secure-app-with-service.yaml](../../k8s/networking/03-secure-app-with-service.yaml)
 
 What it does:
 - Service + secure pods: How Services work with hardened pods, not just default ones.
