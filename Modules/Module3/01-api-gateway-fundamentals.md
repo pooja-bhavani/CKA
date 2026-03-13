@@ -67,6 +67,7 @@ These steps are required because you are installing Envoy Gateway, which uses th
 **Install CRDs**
 
 ```
+kubectl create namespace envoy-gateway-system
 kubectl apply --server-side -f https://github.com/kubernetes-sigs/gateway-api/releases/download/v1.1.0/standard-install.yaml
 kubectl get crd | grep gateway
 ```
@@ -79,9 +80,7 @@ kubectl apply -f https://github.com/envoyproxy/gateway/releases/download/v1.5.9/
 kubectl get pods -n envoy-gateway-system
 ```
 
-```
-
-```
+\
 
 ## Core Concepts
 
