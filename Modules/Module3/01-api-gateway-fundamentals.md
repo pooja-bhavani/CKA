@@ -60,6 +60,24 @@ Gateway API is increasingly important for modern Kubernetes:
 
 ---
 
+## Installations required
+
+These steps are required because you are installing Envoy Gateway, which uses the Kubernetes Gateway API instead of the traditional Kubernetes Ingress.
+
+**Install CRDs**
+
+```
+kubectl apply --server-side -f https://github.com/kubernetes-sigs/gateway-api/releases/download/v1.1.0/standard-install.yaml
+kubectl get crd | grep gateway
+```
+
+**Install Envoy Gateway**
+
+```
+kubectl apply --server-side -f https://github.com/envoyproxy/gateway/releases/download/v1.5.9/install.yaml
+kubectl get pods -n envoy-gateway-system
+```
+
 ## Core Concepts
 
 ### 1. GatewayClass
