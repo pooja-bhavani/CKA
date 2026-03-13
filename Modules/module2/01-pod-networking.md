@@ -13,8 +13,7 @@
 
 ## Overview
 
-Pod networking is the foundation of Kubernetes networking. Every pod gets its own IP address, and pods can communicate with each other across nodes without NAT. 
-The Container Network Interface (CNI) is the plugin architecture that makes this possible.
+Pod networking is the foundation of Kubernetes networking. Every pod gets its own IP address, and pods can communicate with each other across nodes without NAT. The Container Network Interface (CNI) is the plugin architecture that implements this model.
 
 ## Why Pod Networking Matters
 
@@ -39,9 +38,9 @@ Pod networking and CNI are critical for the exam:
 
 Kubernetes imposes the following fundamental requirements on any networking implementation:
 
-1. **Pods can communicate with all other pods** on any node without NAT
-2. **Agents on a node** (e.g., kubelet) can communicate with all pods on that node
-3. **Pods in the host network** can communicate with all pods on all nodes without NAT
+1. **Pods can communicate with all other pods** on any node without NAT.
+2. **Agents on a node** (e.g., kubelet) can communicate with all pods on that node.
+3. **Pods in the host network** can communicate with all pods on all nodes without NAT.
 
 ### Network Model Diagram
 ```
