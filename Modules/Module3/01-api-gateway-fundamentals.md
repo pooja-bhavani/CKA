@@ -360,7 +360,7 @@ kubectl get pods -n envoy-gateway-system
 - Apply the Envoy GatewayClass
 - 
 **gatewayclass-envoy**                
-[gatewayclass-envoy.yaml](../../01-gatewayclass-envoy.yaml)
+[gatewayclass-envoy.yaml](../../k8s/gateway/01-gatewayclass-envoy.yaml)
 
 ```
 kubectl apply -f 01-gatewayclass-envoy.yaml
@@ -374,7 +374,7 @@ parametersRef: Shows how GatewayClass can reference implementation‑specific tu
 Creates a shared Gateway instance for bankapp, listening on HTTP 80 and TCP 5432.
 
 **gateway-bankapp-http-tcp**
-[gateway-bankapp-http-tcp.yaml](../../02-gateway-bankapp-http-tcp.yaml)
+[gateway-bankapp-http-tcp.yaml](../../k8s/gateway/02-gateway-bankapp-http-tcp.yaml)
 
 
 ```
@@ -389,7 +389,7 @@ kubectl get gateway -n gateway-system
 ---
 **httproute-bankapp.yaml**
 
-[gateway-bankapp-http-tcp.yaml](../../02-gateway-bankapp-http-tcp.yaml)
+[gateway-bankapp-http-tcp.yaml](../../k8s/gateway/03-httproute-bankapp.yaml)
 
 
 
