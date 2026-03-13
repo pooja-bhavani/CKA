@@ -394,7 +394,29 @@ Basic HTTPRoute that routes bankapp.example.com to the main bankapp Service. Thi
 **httproute-bankapp**  
 [gateway-bankapp-http-tcp.yaml](../../k8s/gateway/03-httproute-bankapp.yaml)
 
+```
+kubectl apply -f 03-httproute-bankapp-basic.yaml
+kubectl get httproute -n bankapp
+```
+```
+# After Envoy gets an external IP or LB:
+kubectl get svc -n envoy-gateway-system
+# Then:
+curl -H "Host: bankapp.example.com" http://<ENVOY_EXTERNAL_IP>/
+```
+
 ParentRef cross‑namespace: Gateway in gateway-system, route in bankapp.
+
+### Create Path-Based Routing
+
+Shows path‑based routing: /api to bankapp backend, / to a bankapp-web frontend. Mirrors your “path‑based Ingress” example but via Gateway API. This is the direct Ingress → Gateway API migration
+
+**httproute-bankapp-path-split**   
+[httproute-bankapp-path-split.yaml](../../k8s/gateway/04-httproute-bankapp-path-split.yaml)
+
+```
+kubectl apply -f 04-httproute-bankapp-path-split.yaml
+```
 
 ---
 
