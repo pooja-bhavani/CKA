@@ -108,6 +108,19 @@ spec:
 - `traefik`: Traefik Gateway Controller (v3.0+)
 - `cilium`: Cilium Gateway Controller (v1.14+)
 
+
+### Hands‑on (bankapp)
+
+Apply the Envoy GatewayClass 
+
+**gatewayclass-envoy**                
+[gatewayclass-envoy.yaml](../../k8s/security/01-gatewayclass-envoy.yaml)
+
+
+```
+kubectl apply -f k8s/gateway-api/01-gatewayclass-envoy-v135.yaml
+```
+
 ---
 
 ### 2. Gateway
