@@ -371,7 +371,6 @@ kubectl get svc -n bankapp bankapp-service -o yaml | grep -E 'trafficDistributio
 * Create one test pod per worker
 ```
 # On worker-1
-kubectl apply -f 
 apiVersion: v1
 kind: Pod
 metadata:
@@ -385,7 +384,6 @@ spec:
     command: ["sleep", "3600"]
 
 # On worker-2
-kubectl apply -f 
 apiVersion: v1
 kind: Pod
 metadata:
@@ -430,9 +428,9 @@ kubectl get pods -n bankapp -o wide
 
 This is visible effect of:
 
-- trafficDistribution: PreferSameNode → prefer endpoints that are on the same node as the client pod.
+- trafficDistribution: PreferSameNode → tells Kubernetes to prefer endpoints on the same node as the client Pod.
 
-- internalTrafficPolicy: Local → for in‑cluster traffic, try to keep it node‑local instead of forwarding to other nodes.
+- internalTrafficPolicy: Local → ensures that internal cluster traffic is sent only to node‑local endpoints when possible, reducing cross‑node hops.
 
 --- 
 
