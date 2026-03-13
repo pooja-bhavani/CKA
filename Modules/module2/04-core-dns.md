@@ -54,6 +54,10 @@ curl http://example.com
 ## v1.35 CoreDNS Configuration
 
 ### Default v1.35 Corefile
+
+**What it does**                 
+Represents a typical v1.35 CoreDNS ConfigMap as installed by kubeadm and most managed clusters: health checks, kubernetes plugin, forward, cache, metrics, loop detection, reload.
+
 ```yaml
 apiVersion: v1
 kind: ConfigMap
@@ -90,7 +94,7 @@ data:
 
 ### Pattern 1: Custom DNS Entries
 
-**Use case**: Add custom DNS records for external services
+**Use case**: Adds a hosts plugin section so CoreDNS answers queries for a custom external hostname, e.g. a legacy DB or external API, while still forwarding everything else upstream.
 
 ```yaml
 apiVersion: v1
@@ -121,8 +125,8 @@ data:
         loadbalance
     }
 ```
-### Pattern 2: Enhanced Cache Configuration (v1.35)
-**Use case**: Optimize DNS performance for large clusters
+### Pattern 2: Enhanced Cache Configuration (v1.35) 
+**Use case**: Optimize DNS performance for large clusters Shows an advanced cache configuration with per‑type TTLs.
 
 ```yaml
 data:
@@ -158,8 +162,12 @@ kubectl edit configmap coredns -n kube-system
 ---
 
 ### Pattern 4: v1.35 - Enhanced Security Configuration
-**Use case**: Secure DNS with rate limiting and filtering
+**Use case**: Adds rate limiting, upstream health checks, and focused logging to demonstrate “security and observability” patterns.
 
+- ratelimit plugin: Protects CoreDNS and upstreams from query floods (per /24 and /56 CIDR).
+- health_check 5s: Actively probes upstream DNS servers and avoids bad ones.
+​- log filtering: Only logs denial/error classes to reduce noise and focus troubleshooting.
+​
 ```yaml
 data:
   Corefile: |
