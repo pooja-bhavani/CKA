@@ -195,6 +195,11 @@ spec:
   internalTrafficPolicy: Local      # Keep traffic on same node when possible
 ```
 
+**bankapp-topology-aware-svc.yaml**              
+[bankapp-service-prefersamenode.yaml](../../k8s/security/02-bankapp-topology-aware-svc.yaml)
+
+
+
 **Traffic Distribution Options**:
 - `PreferClose`: Routes traffic to topologically closer endpoints
 - `Cluster` (default): Distributes traffic across all endpoints
