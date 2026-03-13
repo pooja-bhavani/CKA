@@ -358,6 +358,84 @@ spec:
 - Better resource utilization
 - Improved performance for latency-sensitive applications
 
+## Hands‑On with AI‑BankApp
+
+k8s/networking/bankapp-service-prefersamenode.yaml
+**Namespace-Pod-security**              
+[bankapp-service-prefersamenode.yaml](../../k8s/security/01-bankapp-service-prefersamenode.yaml)
+
+```
+kubectl apply -f 01-bankapp-service-prefersamenode.yaml
+kubectl get svc -n bankapp bankapp-service -o yaml | grep -E 'trafficDistribution|internalTrafficPolicy'
+```
+* Create one test pod per worker
+```
+# On worker-1
+kubectl apply -f 
+apiVersion: v1
+kind: Pod
+metadata:
+  name: net-test-worker1
+  namespace: bankapp
+spec:
+  nodeName: worker-1
+  containers:
+  - name: netshoot
+    image: nicolaka/netshoot:latest
+    command: ["sleep", "3600"]
+
+# On worker-2
+kubectl apply -f 
+apiVersion: v1
+kind: Pod
+metadata:
+  name: net-test-worker2
+  namespace: bankapp
+spec:
+  nodeName: worker-2
+  containers:
+  - name: netshoot
+    image: nicolaka/netshoot:latest
+    command: ["sleep", "3600"]
+```
+* Wait for both pods to be Running:
+
+```
+kubectl get pods -n bankapp -o wide | grep net-test
+```
+
+Worker 1
+```
+kubectl exec -it net-test-worker1 -n bankapp -- sh
+# inside
+for i in $(seq 1 10); do
+  curl -s -o /dev/null -w "%{remote_ip}\n" bankapp-service.bankapp.svc.cluster.local
+done
+```
+
+Worker 2
+```
+kubectl exec -it net-test-worker2 -n bankapp -- sh
+# inside
+for i in $(seq 1 10); do
+  curl -s -o /dev/null -w "%{remote_ip}\n" bankapp-service.bankapp.svc.cluster.local
+done
+```
+```
+kubectl get pods -n bankapp -o wide
+```
+* For net-test-worker1, most remote_ip values should belong to bankapp pods running on worker-1.
+
+* For net-test-worker2, most remote_ip values should belong to bankapp pods running on worker-2.
+
+This is visible effect of:
+
+- trafficDistribution: PreferSameNode → prefer endpoints that are on the same node as the client pod.
+
+- internalTrafficPolicy: Local → for in‑cluster traffic, try to keep it node‑local instead of forwarding to other nodes.
+
+--- 
+
 ### 2. User Namespaces Integration
 
 Pod networking now works with user namespaces for enhanced security:
