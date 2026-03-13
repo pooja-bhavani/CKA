@@ -358,7 +358,7 @@ kubectl get pods -n envoy-gateway-system
 **Hands‑on (bankapp)**
 
 - Apply the Envoy GatewayClass
-- 
+  
 **gatewayclass-envoy**                
 [gatewayclass-envoy.yaml](../../k8s/gateway/01-gatewayclass-envoy.yaml)
 
@@ -387,34 +387,15 @@ kubectl get gateway -n gateway-system
 - Multi‑protocol: HTTP listener + TCP listener for DB traffic experiments.
 ​
 ---
+
+### Create HTTPRoute
+Basic HTTPRoute that routes bankapp.example.com to the main bankapp Service. This is your “Ingress equivalent” example.
+
 **httproute-bankapp.yaml**
 
 [gateway-bankapp-http-tcp.yaml](../../k8s/gateway/03-httproute-bankapp.yaml)
 
-
-
-### Step 5: Create HTTPRoute
-
-```yaml
-apiVersion: gateway.networking.k8s.io/v1
-kind: HTTPRoute
-metadata:
-  name: my-route
-  namespace: default
-spec:
-  parentRefs:
-    - name: my-gateway
-  hostnames:
-    - "myapp.example.com"
-  rules:
-    - matches:
-        - path:
-            type: PathPrefix
-            value: /
-      backendRefs:
-        - name: my-service
-          port: 80
-```
+ParentRef cross‑namespace: Gateway in gateway-system, route in bankapp.
 
 ---
 
