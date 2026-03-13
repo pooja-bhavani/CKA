@@ -195,7 +195,7 @@ spec:
   internalTrafficPolicy: Local      # Keep traffic on same node when possible
 ```
 
-**bankapp-topology-aware-service**              
+**bankapp-topology-aware-service**                
 [bankapp-topology-aware-svc.yaml](../../k8s/security/02-bankapp-topology-aware-svc.yaml)
 
 
@@ -269,17 +269,13 @@ spec:
             memory: 512Mi
 ```
 
-**secure-app-with-service.yaml**
+**secure-app-with-service.yaml**            
 [secure-app-with-service.yaml](../../k8s/security/03-secure-app-with-service.yaml)
 
 What it does:
 - Service + secure pods: How Services work with hardened pods, not just default ones.
 - User namespaces: hostUsers: false demonstrates v1.35 user‑namespace integration.
 - PSS compliant: Good example for future Pod Security admission discussions.
-
-
-
-
 
 ---
 
