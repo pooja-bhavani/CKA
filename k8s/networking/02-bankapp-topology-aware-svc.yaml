@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: bankapp-topology
+  namespace: bankapp
+  labels:
+    app: bankapp
+spec:
+  type: ClusterIP
+  selector:
+    app: bankapp
+  ports:
+  - name: http
+    protocol: TCP
+    port: 80
+    targetPort: 8080
+  # v1.35+ topology-aware routing
+  trafficDistribution: PreferClose     # Prefer topologically closer endpoints
+  internalTrafficPolicy: Local         # Only route to local-node endpoints when possible
