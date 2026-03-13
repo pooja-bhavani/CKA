@@ -123,7 +123,7 @@ Apply the Envoy GatewayClass
 
 
 ```
-kubectl apply -f k8s/gateway-api/01-gatewayclass-envoy-v135.yaml
+kubectl apply -f k8s/gateway-api/01-gatewayclass-envoy.yaml
 ```
 
 ---
