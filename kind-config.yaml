@@ -18,11 +18,6 @@ nodes:
         feature-gates: "PodCertificateRequest=true"
         runtime-config: "certificates.k8s.io/v1beta1/podcertificaterequests=true"
 
-  - |
-    kind: KubeletConfiguration
-    featureGates:
-      PodCertificateRequest: true
-
 - role: worker
   image: kindest/node:v1.35.0
 
