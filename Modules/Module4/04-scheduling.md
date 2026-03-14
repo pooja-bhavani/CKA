@@ -4,6 +4,12 @@
 
 Pod scheduling in Kubernetes v1.35 provides sophisticated mechanisms to control where pods are placed in your cluster, with enhanced features for better resource utilization, performance optimization, and workload distribution.
 
+## v1.35 Features:
+
+- **Gang Scheduling (Alpha)** – native, workload‑aware gang scheduling via the **Workload API** (`scheduling.k8s.io/v1alpha1`), **disabled by default** and for experimental/advanced use only.
+- **Workload‑Aware / Opportunistic Batching (Alpha/Beta)** – scheduler performance optimizations for large, batchy workloads, behind feature gates.
+- **`minDomains` in `topologySpreadConstraints`** – now available to enforce a minimum number of failure domains (e.g., zones) used when spreading Pods.
+
 ## 🌍 Real-World Scenario
 
 ### Scenario: Machine Learning Platform - GPU Resource Optimization
