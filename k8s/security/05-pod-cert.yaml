@@ -2,7 +2,7 @@ apiVersion: v1
 kind: Pod
 metadata:
   name: podcertificate-pod
-  namespace: bankapp-staging
+  namespace: staging-ns
 spec:
   serviceAccountName: default
   containers:

@@ -130,126 +130,30 @@ This repository is **fully updated for Kubernetes v1.35** with cutting-edge feat
 7. Each file has specific topics and subtopics to master
 8. Practice after each module before moving to next
 
+---
 
-## Get Started
+## 🚀 Getting Started
 
-### Create a kind cluster 
+To get started with this Kubernetes guide, follow the sequence of modules listed above. Each module contains hands-on labs and theoretical explanations to help you master the CKA exam.
 
-```
+### Prerequisites
+
+- A running Kubernetes cluster (v1.35 recommended)
+- `kubectl` installed and configured
+- `kind` (optional, for local clusters)
+
+### Create a kind cluster
+
+```bash
 kind create cluster --config kind-config.yaml
 ```
 
-* Verify cluster creation 
-```
+*Verify cluster creation:*
+```bash
 kubectl get nodes
 ```
 
-
-<img width="679" height="292" alt="image" src="https://github.com/user-attachments/assets/bb31e371-d615-4815-8350-7b88787ed3b5" />
-
-* Load image into kind
-
-```
-kind load docker-image bankapp:docker --name bankapp
-```
-
-* Verify is the pod is visible
-
-```
-kubectl run bankapp-test \
-  --image=bankapp:docker \
-  --restart=Never \
-  --port=8080 \
-  -n bankapp
-```
-
-```
-kubectl get pod bankapp-test -n bankapp
-```
-
-<img width="1016" height="271" alt="image" src="https://github.com/user-attachments/assets/0b7adc74-0a9a-4c9e-bf94-726941e792e7" />
-
-
-* Create a namespace
-
-```
-kubectl create namespace bankapp
-```
-
-* Apply all the yaml files
-
-```
-kubectl apply -f <filename>
-```
-
-<img width="1015" height="321" alt="image" src="https://github.com/user-attachments/assets/ed51cf44-2682-43aa-819d-e4ee07d702e7" />
-
-* Check the pod status
-
-```
-kubectl get pods -n bankapp
-```
-
-* Describe the pod for more information
-
-```
-kubectl describe pod <podname> -n namespace
-```
-
-<img width="803" height="86" alt="image" src="https://github.com/user-attachments/assets/39217fed-7271-4eda-8d21-a4de356889d0" />
-
-Wait until all pods are Running.
-
-<img width="1022" height="294" alt="image" src="https://github.com/user-attachments/assets/550c99d4-582d-4102-a124-4eee4de9e0a2" />
-
-## Ollama
-* Build or pull the image locally
-
-```
-docker build -t ollama/ollama:local .
-```
-
-* Load it into the kind cluster
-
-```
-kind load docker-image ollama/ollama:local --name bankapp
-```
-
-* Apply ollama yaml files
-  
-```
-kubectl apply -f ollama/ollama-deployment.yaml
-```
-
-```
-kubectl apply -f ollama/ollama-service.yaml
-```
-
-* Once it’s Running, pull tinyllama
-
-```
-kubectl exec -it deploy/ollama -n bankapp -- bash
-ollama pull tinyllama
-ollama list
-exit
-```
-
-<img width="944" height="254" alt="image" src="https://github.com/user-attachments/assets/fa49c070-2965-4779-8aa2-6bcb5502d218" />
-<img width="692" height="115" alt="image" src="https://github.com/user-attachments/assets/a4799687-7260-49b0-9b73-90bb91f46c42" />
-
-
-Run the app
-
-```
-http://localhost:8080
-```
-
-<img width="1463" height="915" alt="image" src="https://github.com/user-attachments/assets/6d0788dc-1e27-4fb0-bfaa-1a61d0c0f5bd" />
-
-<img width="1454" height="911" alt="image" src="https://github.com/user-attachments/assets/d6cb7b09-9bec-453e-a4b4-326b8538d918" />
-
-
-
+---
 
 ## 🧩 Finding it Difficult?
 

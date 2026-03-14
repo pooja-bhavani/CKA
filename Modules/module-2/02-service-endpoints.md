@@ -195,10 +195,6 @@ spec:
   internalTrafficPolicy: Local      # Keep traffic on same node when possible
 ```
 
-**bankapp-topology-aware-service**                
-[bankapp-topology-aware-svc.yaml](../../k8s/networking/02-bankapp-topology-aware-svc.yaml)
-
-
 **Traffic Distribution Options**:
 - `PreferClose`: Routes traffic to topologically closer endpoints
 - `Cluster` (default): Distributes traffic across all endpoints
@@ -211,63 +207,6 @@ spec:
 
 Combines a Service and a secure Deployment to demonstrate “Service with Pod Security Standards” + hostUsers: false (user namespaces).
 
-```yaml
-# v1.35 Service targeting secure pods
-apiVersion: v1
-kind: Service
-metadata:
-  name: secure-service
-spec:
-  selector:
-    app: secure-app
-  ports:
-  - name: http
-    port: 80
-    targetPort: 8080
----
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: secure-app
-spec:
-  replicas: 3
-  selector:
-    matchLabels:
-      app: secure-app
-  template:
-    metadata:
-      labels:
-        app: secure-app
-    spec:
-      # v1.35 Pod Security compliance
-      securityContext:
-        runAsNonRoot: true
-        runAsUser: 1000
-        runAsGroup: 1000
-        fsGroup: 1000
-        seccompProfile:
-          type: RuntimeDefault
-      hostUsers: false  # v1.35 user namespace isolation
-      containers:
-      - name: app
-        image: nginx:1.21
-        ports:
-        - name: http
-          containerPort: 8080
-        securityContext:
-          allowPrivilegeEscalation: false
-          readOnlyRootFilesystem: true
-          capabilities:
-            drop: ["ALL"]
-        resources:
-          requests:
-            cpu: 100m
-            memory: 128Mi
-          limits:
-            cpu: 500m
-            memory: 512Mi
-```
-
 **secure-app-with-service.yaml**            
 [secure-app-with-service.yaml](../../k8s/networking/03-secure-app-with-service.yaml)
 
@@ -275,6 +214,12 @@ What it does:
 - Service + secure pods: How Services work with hardened pods, not just default ones.
 - User namespaces: hostUsers: false demonstrates v1.35 user‑namespace integration.
 - PSS compliant: Good example for future Pod Security admission discussions.
+
+### More Examples: Topology & Traffic Distribution
+
+Explore these manifests to see v1.35 networking features in action:
+- **[Same-Node Traffic Preference](../../k8s/networking/01-sample-service-prefersamenode.yaml)**: Prefer local endpoints.
+- **[Topology-Aware Routing](../../k8s/networking/02-sample-topology-aware-svc.yaml)**: Prefer zone-local endpoints.
 
 ---
 
@@ -339,11 +284,11 @@ Use case: For direct pod-to-pod communication, StatefulSets where each pod needs
 apiVersion: v1
 kind: Service
 metadata:
-  name: mysql-headless
+  name: db-headless
 spec:
   clusterIP: None  # Headless service
   selector:
-    app: mysql
+    app: database
   ports:
     - port: 3306
       targetPort: 3306
@@ -383,7 +328,7 @@ kubectl run test-pod --image=busybox --rm -it -- wget -O- http://<service-name>
 
 ---
 
-### Error 3: NodePort Not Accessible
+### Error 2: NodePort Not Accessible
 
 **Error**:
 ```bash
@@ -404,37 +349,6 @@ curl localhost:<nodeport>
 
 # 4. Check kube-proxy
 kubectl get pods -n kube-system 
-kubectl logs -n kube-system <kube-proxy-pod>
-```
-
-**Solution**:
-- Open firewall ports for NodePort range
-- Verify kube-proxy is running on all nodes
-- Check cloud security groups allow traffic
-
----
-
-### Error 3: NodePort Not Accessible
-
-**Symptoms**:
-```bash
-curl: (7) Failed to connect to <NODE_IP>:<NODE_PORT>
-```
-
-**Debug Steps**:
-```bash
-# 1. Verify NodePort service
-kubectl get svc <service-name>
-
-# 2. Check firewall rules
-# Ensure NodePort range (30000-32767) is open
-
-# 3. Test from node itself
-ssh <node>
-curl localhost:<nodeport>
-
-# 4. Check kube-proxy
-kubectl get pods -n kube-system | grep kube-proxy
 kubectl logs -n kube-system <kube-proxy-pod>
 ```
 

@@ -407,6 +407,7 @@ kubectl auth can-i --list --as=system:serviceaccount:<namespace>:<sa>
 
 You are working in a cloud platform team responsible for managing internal PostgreSQL databases using a custom Kubernetes Operator.
 Your organization has defined a custom resource called Database, which developers use to request new PostgreSQL instances for their applications. A junior DevOps engineer submits the following manifest to create a new database:
+
 ```bash
 spec:
   replicas: "three"
@@ -418,6 +419,7 @@ However, in your CRD definition, spec.replicas is strictly defined as an integer
 
 
 **Error Message:**
+
 ```
 The Database "my-db" is invalid: 
 spec.replicas: Invalid value: "three": spec.replicas in body must be of type integer: "string"
@@ -426,6 +428,7 @@ spec.replicas: Invalid value: "three": spec.replicas in body must be of type int
 **Cause:** Field value type doesn't match schema type
 
 **❌ Incorrect Custom Resource:**
+
 ```yaml
 apiVersion: example.com/v1
 kind: Database
@@ -438,6 +441,7 @@ spec:
 ```
 
 **✅ Correct Custom Resource:**
+
 ```yaml
 apiVersion: example.com/v1
 kind: Database
@@ -460,6 +464,7 @@ Your team wants to support two API versions of the Database CRD:
 - v1 → stable version
 
 **Error Message:**
+
 ```
 The CustomResourceDefinition "databases.example.com" is invalid: 
 spec.versions: Invalid value: ...: must have exactly one version marked as storage version
@@ -468,6 +473,7 @@ spec.versions: Invalid value: ...: must have exactly one version marked as stora
 **Cause:** More than one version has `storage: true`
 
 **❌ Incorrect CRD:**
+
 ```yaml
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
@@ -496,6 +502,7 @@ spec:
 ```
 
 **✅ Correct CRD:**
+
 ```yaml
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
@@ -538,5 +545,3 @@ CRDs and Operators in Kubernetes v1.35 provide powerful ways to extend Kubernete
 - **v1.35 enhancements** include better validation, conversion webhooks, and status management
 - **Common operators** like Prometheus, Cert-Manager, and ArgoCD are essential tools
 - **Troubleshooting** requires systematic approach using kubectl commands and events
-
-

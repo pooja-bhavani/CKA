@@ -358,79 +358,52 @@ spec:
 - Better resource utilization
 - Improved performance for latency-sensitive applications
 
-## Hands‑On with AI‑BankApp
+## Hands-on Lab: Verifying Pod Connectivity
 
-k8s/networking/bankapp-service-prefersamenode.yaml
-**Namespace-Pod-security**              
-[bankapp-service-prefersamenode.yaml](../../k8s/security/01-bankapp-service-prefersamenode.yaml)
+### 1. Create a Generic Service
 
-```
-kubectl apply -f 01-bankapp-service-prefersamenode.yaml
-kubectl get svc -n bankapp bankapp-service -o yaml | grep -E 'trafficDistribution|internalTrafficPolicy'
-```
-* Create one test pod per worker
-```
-# On worker-1
+Create a service that prefers local endpoints to test v1.35 traffic distribution:
+
+```yaml
+# generic-net-service.yaml
 apiVersion: v1
-kind: Pod
+kind: Service
 metadata:
-  name: net-test-worker1
-  namespace: bankapp
+  name: net-test-service
+  namespace: default
 spec:
-  nodeName: worker-1
-  containers:
-  - name: netshoot
-    image: nicolaka/netshoot:latest
-    command: ["sleep", "3600"]
+  selector:
+    app: net-test
+  ports:
+  - port: 80
+    targetPort: 80
+  trafficDistribution: PreferSameNode
+  internalTrafficPolicy: Local
+```
+
+### 2. Create Test Pods
+
+Deploy test pods across different nodes:
+
+```bash
+# On worker-1
+kubectl run net-test-worker1 --image=nicolaka/netshoot --labels="app=net-test" --overrides='{"spec": {"nodeName": "worker-1"}}' -- sleep 3600
 
 # On worker-2
-apiVersion: v1
-kind: Pod
-metadata:
-  name: net-test-worker2
-  namespace: bankapp
-spec:
-  nodeName: worker-2
-  containers:
-  - name: netshoot
-    image: nicolaka/netshoot:latest
-    command: ["sleep", "3600"]
-```
-* Wait for both pods to be Running:
-
-```
-kubectl get pods -n bankapp -o wide | grep net-test
+kubectl run net-test-worker2 --image=nicolaka/netshoot --labels="app=net-test" --overrides='{"spec": {"nodeName": "worker-2"}}' -- sleep 3600
 ```
 
-Worker 1
-```
-kubectl exec -it net-test-worker1 -n bankapp -- sh
-# inside
-for i in $(seq 1 10); do
-  curl -s -o /dev/null -w "%{remote_ip}\n" bankapp-service.bankapp.svc.cluster.local
-done
+### 3. Verify Traffic Distribution
+
+Test the connectivity relative to the nodes:
+
+```bash
+kubectl exec -it net-test-worker1 -- curl -s -o /dev/null -w "%{remote_ip}\n" net-test-service.default.svc.cluster.local
 ```
 
-Worker 2
-```
-kubectl exec -it net-test-worker2 -n bankapp -- sh
-# inside
-for i in $(seq 1 10); do
-  curl -s -o /dev/null -w "%{remote_ip}\n" bankapp-service.bankapp.svc.cluster.local
-done
-```
-```
-kubectl get pods -n bankapp -o wide
-```
-* For net-test-worker1, most remote_ip values should belong to bankapp pods running on worker-1.
-
-* For net-test-worker2, most remote_ip values should belong to bankapp pods running on worker-2.
-
-This is visible effect of:
-
-- trafficDistribution: PreferSameNode → tells Kubernetes to prefer endpoints on the same node as the client Pod.
-
-- internalTrafficPolicy: Local → ensures that internal cluster traffic is sent only to node‑local endpoints when possible, reducing cross‑node hops.
+This lab demonstrates:
+- **`trafficDistribution: PreferSameNode`**: Tells Kubernetes to prefer endpoints on the same node as the client.
+- **`internalTrafficPolicy: Local`**: Ensures internal traffic stays node-local where possible, reducing latency.
 
 --- 
 
@@ -533,7 +506,9 @@ Flow:
 3. Bridge forwards to Pod B's veth
 4. Pod B receives packet
 ```
+
 ## Troubleshooting Pod Networking
+
 ### Example 1: Pod Cannot Reach Other Pods
 
 **Error**:
@@ -677,7 +652,7 @@ kubectl logs -n kube-system <cni-pod-name>
 # 5. Restart CNI if necessary
 kubectl rollout restart daemonset <cni-name> -n kube-system
 ```
-#### Scenario 3: Configure Service Traffic Distribution (v1.35)
+#### Scenario 2: Configure Service Traffic Distribution (v1.35)
 
 **Task**: Configure a service to prefer local endpoints
 

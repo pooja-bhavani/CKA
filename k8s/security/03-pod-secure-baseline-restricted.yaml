@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: bankapp-psa-demo
+  name: psa-demo
   labels:
     pod-security.kubernetes.io/enforce: baseline
     pod-security.kubernetes.io/enforce-version: v1.35
@@ -9,8 +9,8 @@ metadata:
 apiVersion: v1
 kind: Pod
 metadata:
-  name: bankapp-psa-demo-pod
-  namespace: bankapp-psa-demo
+  name: psa-demo-pod
+  namespace: psa-demo
 spec:
   securityContext:
     runAsNonRoot: true

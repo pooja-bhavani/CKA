@@ -1,14 +1,14 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: bankapp-topology
-  namespace: bankapp
+  name: sample-service-topology
+  namespace: sample-ns
   labels:
-    app: bankapp
+    app: sample-app
 spec:
   type: ClusterIP
   selector:
-    app: bankapp
+    app: sample-app
   ports:
   - name: http
     protocol: TCP

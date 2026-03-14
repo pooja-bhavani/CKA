@@ -355,68 +355,69 @@ kubectl get pods -n envoy-gateway-system
 
 ### Create GatewayClass
 
-**Hands‑on (bankapp)**
-
-- Apply the Envoy GatewayClass
-  
-**gatewayclass-envoy**                
-[gatewayclass-envoy.yaml](../../k8s/gateway/01-gatewayclass-envoy.yaml)
-
-```
-kubectl apply -f 01-gatewayclass-envoy.yaml
-```
-parametersRef: Shows how GatewayClass can reference implementation‑specific tuning (EnvoyProxy).
-
 ---
 
-###  Create Gateway
+## Hands-on Lab: Deploying a Sample Gateway
 
-Creates a shared Gateway instance for bankapp, listening on HTTP 80 and TCP 5432.
+### Create GatewayClass
 
-**gateway-bankapp-http-tcp**     
-[gateway-bankapp-http-tcp.yaml](../../k8s/gateway/02-gateway-bankapp-http-tcp.yaml)
+Apply a standard GatewayClass (e.g., Envoy or Istio):
 
-
+```bash
+kubectl apply -f https://github.com/envoyproxy/gateway/releases/download/v1.7.1/quickstart.yaml
 ```
-kubectl label namespace bankapp gateway-access=true --overwrite
-kubectl apply -f 02-gateway-bankapp-http-tcp.yaml
-kubectl get gateway -n gateway-system
+
+### Create Gateway
+
+Define a Gateway to listen for incoming traffic:
+
+```yaml
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
+metadata:
+  name: sample-gateway
+  namespace: gateway-system
+spec:
+  gatewayClassName: envoy
+  listeners:
+  - name: http
+    protocol: HTTP
+    port: 80
+    allowedRoutes:
+      namespaces:
+        from: All
 ```
-- Gateway in infra namespace (gateway-system), routes in app namespace – role separation.
-- allowedRoutes.from: Selector: Only namespaces with gateway-access=true can attach.
-- Multi‑protocol: HTTP listener + TCP listener for DB traffic experiments.
-​
----
 
 ### Create HTTPRoute
-Basic HTTPRoute that routes bankapp.example.com to the main bankapp Service. This is your “Ingress equivalent” example.
 
-**httproute-bankapp**  
-[gateway-bankapp-http-tcp.yaml](../../k8s/gateway/03-httproute-bankapp.yaml)
+Route traffic to your backend service:
 
+```yaml
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: sample-route
+  namespace: default
+spec:
+  parentRefs:
+  - name: sample-gateway
+    namespace: gateway-system
+  rules:
+  - matches:
+    - path:
+        type: PathPrefix
+        value: /
+    backendRefs:
+    - name: my-service
+      port: 80
 ```
-kubectl apply -f 03-httproute-bankapp-basic.yaml
-kubectl get httproute -n bankapp
-```
-```
-# After Envoy gets an external IP or LB:
-kubectl get svc -n envoy-gateway-system
-# Then:
-curl -H "Host: bankapp.example.com" http://<ENVOY_EXTERNAL_IP>/
-```
 
-ParentRef cross‑namespace: Gateway in gateway-system, route in bankapp.
+### More Routing Examples
 
-### Create Path-Based Routing
+For more advanced routing scenarios, refer to these sample manifests:
+- **[Basic HTTPRoute](../../k8s/gateway/03-httproute-demoapp.yaml)**: Simple path-based routing.
+- **[Path-Split Routing](../../k8s/gateway/04-httproute-demoapp-path-split.yaml)**: Routing different paths to different backend services.
 
-Shows path‑based routing: /api to bankapp backend, / to a bankapp-web frontend. Mirrors your “path‑based Ingress” example but via Gateway API. This is the direct Ingress → Gateway API migration
-
-**httproute-bankapp-path-split**   
-[httproute-bankapp-path-split.yaml](../../k8s/gateway/04-httproute-bankapp-path-split.yaml)
-
-```
-kubectl apply -f 04-httproute-bankapp-path-split.yaml
-```
 
 ---
 

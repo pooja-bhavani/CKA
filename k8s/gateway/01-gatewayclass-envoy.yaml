@@ -7,12 +7,12 @@ spec:
   parametersRef:
     group: gateway.envoyproxy.io
     kind: EnvoyProxy
-    name: bankapp-envoy-config
+    name: envoy-config
 ---
 apiVersion: gateway.envoyproxy.io/v1alpha1
 kind: EnvoyProxy
 metadata:
-  name: bankapp-envoy-config
+  name: envoy-config
   namespace: envoy-gateway-system
 spec:
   concurrency: 4

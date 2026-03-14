@@ -374,9 +374,10 @@ When you scale or roll out a Deployment, some Pods are starting, some are alread
 
 Before v1.35, Kubernetes only told you about running ones (replicas, readyReplicas, updatedReplicas). With v1.35, Deployments also expose terminatingReplicas = ‘how many Pods are currently being deleted.
 
-```
-kubectl scale deploy/bankapp -n bankapp --replicas=0
-kubectl get deploy bankapp -n bankapp -o yaml | grep -A5 status:
+```bash
+# Example: Scaling a deployment
+kubectl scale deploy/my-app -n my-namespace --replicas=0
+kubectl get deploy my-app -n my-namespace -o yaml | grep -A5 status:
 ```
 
 <img width="930" height="489" alt="image" src="https://github.com/user-attachments/assets/ef25d466-184c-41b8-ae36-0f5838282ad1" />
