@@ -2,271 +2,92 @@
 
 ## Overview
 
-Jobs and CronJobs in Kubernetes v1.35 provide powerful mechanisms for running batch workloads and scheduled tasks with enhanced reliability, 
-monitoring, and management capabilities.
+Jobs run finite batch tasks to completion; CronJobs schedule them. All core features (`completions`, `parallelism`, `ttlSecondsAfterFinished`, `completionMode: Indexed`) stable since v1.21+.
 
-### Migration Complexity
-
-**Job Migration**
+## Production Job Example
 ```yaml
-# BEFORE (v1.34): Basic Job
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: data-processing-v134
-spec:
-  completions: 1
-  parallelism: 1
-  backoffLimit: 3
-  template:
-    spec:
-      restartPolicy: OnFailure
-      containers:
-      - name: processor
-        image: data/processor:v1.0
-        # v1.34: Basic configuration
-        command: ["python", "process_data.py"]
-        resources:
-          requests:
-            memory: "1Gi"
-            cpu: "500m"
-          limits:
-            memory: "2Gi"
-            cpu: "1000m"
-        env:
-        - name: INPUT_PATH
-          value: "/data/input"
-        - name: OUTPUT_PATH
-          value: "/data/output"
-```
-
-```yaml
-# AFTER (v1.35): Enhanced Job
-apiVersion: batch/v1
-kind: Job
-metadata:
-  name: data-processing-v135
-  labels:
-    app: data-processor
-    version: v1.35
-  annotations:
-    job.kubernetes.io/version: "v1.35"
+  name: data-processing
 spec:
   completions: 10
   parallelism: 3
+  completionMode: Indexed  # Distributes work 0-9
   backoffLimit: 3
-  activeDeadlineSeconds: 3600
-  # v1.35: Enhanced cleanup
-  ttlSecondsAfterFinished: 86400
-  # v1.35: Indexed completion mode
-  completionMode: Indexed
+  ttlSecondsAfterFinished: 3600  # Auto-delete after 1hr
   template:
-    metadata:
-      labels:
-        app: data-processor
-        batch-type: analytics
     spec:
       restartPolicy: OnFailure
-      # v1.35: Enhanced security
-      securityContext:
-        runAsNonRoot: true
-        runAsUser: 10001
-        fsGroup: 10001
       containers:
       - name: processor
-        image: data/processor:v2.0-v135
-        # v1.35: Enhanced processing logic
-        command:
-        - /bin/bash
-        - -c
+        image: python:3.11
+        command: ["/bin/bash", "-c"]
+        args:
         - |
-          echo "Starting data processing job ${JOB_COMPLETION_INDEX}"
-          python process_data.py \
-            --index=${JOB_COMPLETION_INDEX} \
-            --total-jobs=${JOB_COMPLETIONS} \
-            --input-path=${INPUT_PATH} \
-            --output-path=${OUTPUT_PATH}
-        resources:
-          requests:
-            memory: "1Gi"
-            cpu: "500m"
-            ephemeral-storage: "5Gi"
-          limits:
-            memory: "2Gi"
-            cpu: "1000m"
-            ephemeral-storage: "10Gi"
+          echo "Processing chunk ${JOB_COMPLETION_INDEX}"
+          python process_data.py --index=$JOB_COMPLETION_INDEX
         env:
         - name: JOB_COMPLETION_INDEX
           valueFrom:
             fieldRef:
               fieldPath: metadata.annotations['batch.kubernetes.io/job-completion-index']
-        - name: JOB_COMPLETIONS
-          value: "10"
-        - name: INPUT_PATH
-          value: "/data/input"
-        - name: OUTPUT_PATH
-          value: "/data/output"
-        # v1.35: Enhanced health monitoring
-        livenessProbe:
-          exec:
-            command:
-            - /bin/sh
-            - -c
-            - pgrep -f process_data.py
-          periodSeconds: 30
-        # v1.35: Progress tracking
-        readinessProbe:
-          exec:
-            command:
-            - /bin/sh
-            - -c
-            - test -f /tmp/processing-started
-          periodSeconds: 10
-        volumeMounts:
-        - name: data-volume
-          mountPath: /data
-        - name: temp-volume
-          mountPath: /tmp
-      volumes:
-      - name: data-volume
-        persistentVolumeClaim:
-          claimName: data-processing-pvc
-      - name: temp-volume
-        emptyDir:
-          sizeLimit: 5Gi
+        resources:
+          requests:
+            cpu: "500m"
+            memory: "1Gi"
 ```
 
-**CronJob Migration**
 
-```yaml
-# BEFORE (v1.34): Basic CronJob
+## Production CronJob Example
+```
 apiVersion: batch/v1
 kind: CronJob
 metadata:
-  name: backup-cronjob-v134
+  name: backup-cronjob
 spec:
-  schedule: "0 2 * * *"
-  jobTemplate:
-    spec:
-      template:
-        spec:
-          restartPolicy: OnFailure
-          containers:
-          - name: backup
-            image: backup/tool:v1.0
-            # v1.34: Simple backup logic
-            command: ["backup.sh"]
-            resources:
-              requests:
-                memory: "256Mi"
-                cpu: "200m"
-              limits:
-                memory: "512Mi"
-                cpu: "400m"
-```
-
-```yaml
-# AFTER (v1.35): Enhanced CronJob
-apiVersion: batch/v1
-kind: CronJob
-metadata:
-  name: backup-cronjob-v135
-  labels:
-    app: backup-system
-    version: v1.35
-  annotations:
-    cronjob.kubernetes.io/version: "v1.35"
-spec:
-  schedule: "0 2 * * *"
-  # v1.35: Enhanced concurrency control
-  concurrencyPolicy: Forbid
-  # v1.35: Improved history management
+  schedule: "0 2 * * *"  # 2AM UTC daily
+  concurrencyPolicy: Forbid  # Skip if running (stable v1.20)
   successfulJobsHistoryLimit: 5
   failedJobsHistoryLimit: 3
-  # v1.35: Automatic cleanup
-  startingDeadlineSeconds: 300
+  startingDeadlineSeconds: 300  # Fail if >5min late (stable v1.23)
   jobTemplate:
-    metadata:
-      labels:
-        app: backup-system
-        job-type: scheduled-backup
     spec:
       backoffLimit: 2
-      activeDeadlineSeconds: 7200
-      # v1.35: Automatic cleanup
-      ttlSecondsAfterFinished: 86400
+      ttlSecondsAfterFinished: 86400  # Auto-delete after 24h (stable v1.23)
       template:
-        metadata:
-          labels:
-            app: backup-system
-            scheduled: "true"
         spec:
           restartPolicy: OnFailure
-          # v1.35: Enhanced security
-          securityContext:
+          securityContext:  # Best practice (stable v1.19+)
             runAsNonRoot: true
             runAsUser: 10001
-            fsGroup: 10001
           containers:
           - name: backup
-            image: backup/tool:v2.0-v135
-            # v1.35: Intelligent backup logic
-            command:
-            - /bin/bash
+            image: busybox:1.36  # Real image
+            command: ["/bin/sh"]
+            args:
             - -c
             - |
-              echo "Starting backup at $(date)"
-              
-              # v1.35: Enhanced error handling
-              set -euo pipefail
-              
-              # Perform backup with retry logic
-              for attempt in {1..3}; do
-                if backup.sh --date=$(date +%Y-%m-%d) --attempt=$attempt; then
-                  echo "Backup completed successfully"
-                  break
-                else
-                  echo "Backup attempt $attempt failed, retrying..."
-                  sleep 30
-                fi
-              done
+              echo "Backup at $(date)" > /backup/log.txt
+              # Real backup logic here
             resources:
               requests:
-                memory: "256Mi"
-                cpu: "200m"
-                ephemeral-storage: "2Gi"
-              limits:
-                memory: "512Mi"
-                cpu: "400m"
-                ephemeral-storage: "5Gi"
-            env:
-            - name: BACKUP_DATE
-              value: "$(date +%Y-%m-%d)"
-            - name: RETENTION_DAYS
-              value: "30"
-            # v1.35: Enhanced monitoring
-            livenessProbe:
-              exec:
-                command:
-                - /bin/sh
-                - -c
-                - pgrep -f backup.sh
-              periodSeconds: 60
+                memory: "128Mi"
+                cpu: "100m"
             volumeMounts:
-            - name: backup-storage
+            - name: backup-vol
               mountPath: /backup
-            - name: source-data
-              mountPath: /data
-              readOnly: true
           volumes:
-          - name: backup-storage
-            persistentVolumeClaim:
-              claimName: backup-pvc
-          - name: source-data
-            persistentVolumeClaim:
-              claimName: source-data-pvc
+          - name: backup-vol
+            emptyDir: {}  # Replace with PVC for prod
 ```
-
+```
+kubectl apply -f cronjob.yaml
+kubectl get cronjobs
+kubectl create job --from=cronjob/backup-cronjob test-backup
+kubectl get jobs -l job-name=backup-cronjob
+kubectl logs job/test-backup
+```
 ---
 
 ### Job Enhancements with v1.35
