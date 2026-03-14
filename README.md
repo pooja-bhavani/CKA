@@ -34,7 +34,7 @@ This repository is **fully updated for Kubernetes v1.35** with cutting-edge feat
 | **2** | [`Modules/module-1/02-pod-security.md`](./Modules/module-1/02-pod-security.md) | **Pod Security** | Pod security policies • certificate management • security standards • network policies | 15% |
 | **3** | [`Modules/module-1/03-rbac.md`](./Modules/module-1/03-rbac.md) | **RBAC & Access Control** | Roles • ClusterRoles • RoleBindings • ServiceAccounts • permissions | 15% |
 | **4** | [`Modules/module-1/04-crds.md`](./Modules/module-1/04-crds.md) | **Custom Resources (CRDs)** | Custom resource definitions • APIgroups • custom objects • schemas | 25% |
-| **5** | [`Modules/module-1/05-helm-and-kustomize.md`](./Modules/module-1/05-helm-and-kustomize.md) | **Kustomize** | Configuration management • overlays • patches • templates • merging | 25% |
+| **5** | [`Modules/module-1/05-helm-and-kustomize.md`](./Modules/module-1/05-helm-and-kustomize.md) | **Helm & Kustomize** | Configuration management • overlays • patches • templates • merging | 25% |
 
 ---
 
