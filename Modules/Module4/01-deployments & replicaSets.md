@@ -1,27 +1,20 @@
 ## Overview
 
-Deployments and ReplicaSets are core Kubernetes workload resources, managing declarative updates, scaling, and Pod lifecycles. In v1.35 (Timbernetes), key enhancement is the Beta promotion of status.terminatingReplicas for better rollout and scale-down observability.
+Deployments and ReplicaSets manage Pod replicas, scaling, and updates in Kubernetes. v1.35 (Timbernetes) promotes status.terminatingReplicas to Beta for precise tracking of Pods during deletion phases in rollouts and scale-down operations.
 
 ### Enhanced Deployment Features
 
-- **TerminatingReplicas Field** - Tracks Pods with deletion timestamps in Deployment/ReplicaSet status (Beta, enabled by default via -DeploymentReplicaSetTerminatingReplicas feature gate).
-- **Improved Observability** - New metrics like kube_deployment_status_replicas_terminating and kube_replicaset_status_terminating_replicas.​
-- **Foundation for Policies** - Enables future Pod replacement logic during terminations.
+- **TerminatingReplicas Field** - Beta feature (enabled by default via DeploymentReplicaSetTerminatingReplicas feature gate) that counts Pods with deletion timestamps in Deployment/ReplicaSet status.
+- **Better Rollout Visibility** - New metrics (kube_deployment_status_replicas_terminating, kube_replicaset_status_terminating_replicas) track termination progress.​
+- **Scale-Down Precision** - Prevents premature Pod creation by accounting for terminating replicas.
 
-### ReplicaSet Improvements
-- **Optimized Pod Management** - Faster pod creation and deletion
-- **Better Label Handling** - Improved selector management
-- **Enhanced Monitoring** - Better observability for ReplicaSet operations
+Core Behaviors 
+Rolling updates (maxSurge, maxUnavailable), health probes, resource limits, and affinity rules work identically to prior versions.
+
 
 ### ReplicaSet Role**
 ReplicaSets maintain Pod counts; Deployments manage them automatically. v1.35 adds terminatingReplicas tracking for precise replica counts during deletions.
 
-```bash
-kubectl get deployment web-app -o yaml | grep -A5 terminatingReplicas
-# Output example:
-# terminatingReplicas: 2  # Pods terminating but not yet removed
-kubectl get rs -o custom-columns=NAME:.metadata.name,REPLICAS:.status.replicas,TERMINATING:.status.terminatingReplicas
-```
 ---
 
 ## 🌍 Real-World Scenarios
@@ -48,20 +41,14 @@ spec:
     spec:
       containers:
       - name: frontend
-        image: ecommerce/frontend:v2.1
+        image: ecommerce/frontend:v2
         resources:
           requests:
-            memory: "256Mi"
             cpu: "200m"
+            memory: "256Mi"
           limits:
-            memory: "512Mi"
             cpu: "400m"
-        startupProbe:
-          httpGet:
-            path: /health
-            port: 8080
-          failureThreshold: 30
-          periodSeconds: 10
+            memory: "512Mi"
         livenessProbe:
           httpGet:
             path: /health
@@ -75,14 +62,16 @@ spec:
 - v1.35 Monitoring
 ```
 kubectl rollout status deployment/ecommerce-frontend --watch
-kubectl get deployment ecommerce-frontend -o jsonpath='{.status.terminatingReplicas}'  # Track shutdown progress
+kubectl scale deployment ecommerce-frontend --replicas=10
+watch 'kubectl get rs -o custom-columns="RS:.metadata.name,Tot:.status.replicas,Term:.status.terminatingReplicas"'
+# Ensures controller waits for terminations before creating new replicas
 ```
 
 **Impact:**
 
-- Precise surge control prevents over-provisioning.
-- terminatingReplicas visibility during scale-down avoids premature new Pod creation.
-- Graceful shutdowns maintain availability.
+- Zero downtime during 10x surge
+- erminatingReplicas prevents resource spikes during scale-down
+- Graceful shutdowns maintain service availability.
 
 ### Migration Complexity
 
@@ -218,11 +207,13 @@ spec:
     spec:
       containers:
       - name: nginx
-        image: nginx:1.25
+        image: nginx:1.27
+        ports:
+        - containerPort: 80
         resources:
           requests:
+            cpu: "100m"
             memory: "64Mi"
-            cpu: "250m"
 ```
 
 ### Advanced ReplicaSet with v1.35 Features
