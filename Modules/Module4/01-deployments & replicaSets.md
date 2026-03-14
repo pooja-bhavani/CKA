@@ -12,7 +12,7 @@ Core Behaviors
 Rolling updates (maxSurge, maxUnavailable), health probes, resource limits, and affinity rules work identically to prior versions.
 
 
-### ReplicaSet Role**
+### ReplicaSet Role
 ReplicaSets maintain Pod counts; Deployments manage them automatically. v1.35 adds terminatingReplicas tracking for precise replica counts during deletions.
 
 ---
@@ -23,7 +23,7 @@ ReplicaSets maintain Pod counts; Deployments manage them automatically. v1.35 ad
 
 Your e-commerce platform expects 10x traffic during Black Friday. You need to scale from 10 to 100 replicas without any downtime or customer impact.
 
-**v1.35 Challenges:**
+**v1.35 Deployment YAML:**
 ```bash
 apiVersion: apps/v1
 kind: Deployment
@@ -64,13 +64,13 @@ spec:
 kubectl rollout status deployment/ecommerce-frontend --watch
 kubectl scale deployment ecommerce-frontend --replicas=10
 watch 'kubectl get rs -o custom-columns="RS:.metadata.name,Tot:.status.replicas,Term:.status.terminatingReplicas"'
-# Ensures controller waits for terminations before creating new replicas
+# terminatingReplicas field shows exact termination progress for better debugging
 ```
 
 **Impact:**
 
 - Zero downtime during 10x surge
-- erminatingReplicas prevents resource spikes during scale-down
+- terminatingReplicas visibility tracks shutdown progress, preventing resource miscalculations
 - Graceful shutdowns maintain service availability.
 
 ### Migration Complexity
@@ -121,7 +121,7 @@ kind: Deployment
 metadata:
   name: web-app-v135
   annotations:
-    deployment.kubernetes.io/strategy-version: "v1.35"
+    kubernetes.io/change-cause: "v1.35 monitoring upgrade"
 spec:
   replicas: 10
   strategy:
@@ -216,7 +216,7 @@ spec:
             memory: "64Mi"
 ```
 
-### Advanced ReplicaSet with v1.35 Features
+### Advanced ReplicaSet 
 
 ```yaml
 apiVersion: apps/v1
