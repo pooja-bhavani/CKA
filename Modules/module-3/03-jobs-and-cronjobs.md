@@ -49,8 +49,6 @@ metadata:
   labels:
     app: data-processor
     version: v1.35
-  annotations:
-    job.kubernetes.io/version: "v1.35"
 spec:
   completions: 10
   parallelism: 3
@@ -174,8 +172,6 @@ metadata:
   labels:
     app: backup-system
     version: v1.35
-  annotations:
-    cronjob.kubernetes.io/version: "v1.35"
 spec:
   schedule: "0 2 * * *"
   # v1.35: Enhanced concurrency control

@@ -8,8 +8,6 @@ kind: Gateway
 metadata:
   name: bankapp-gateway
   namespace: gateway-system
-  annotations:
-    gateway.networking.k8s.io/bundle-version: "v1.35"
 spec:
   gatewayClassName: envoy-v135
   listeners:

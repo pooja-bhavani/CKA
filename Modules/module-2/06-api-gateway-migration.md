@@ -107,10 +107,10 @@ spec:
 apiVersion: gateway.networking.k8s.io/v1
 kind: GatewayClass
 metadata:
-  name: nginx-v135
+  name: nginx-v1.4
 spec:
   controllerName: k8s-gateway.nginx.org/nginx-gateway-controller
-  # NEW in v1.35: Enhanced parameters
+  # NEW: Enhanced parameters
   parametersRef:
     group: gateway.nginx.org
     kind: NginxGateway
@@ -143,7 +143,7 @@ metadata:
   name: basic-route
   namespace: default
   annotations:
-    # NEW in v1.35: Migration tracking
+    # NEW: Migration tracking
     gateway.networking.k8s.io/migrated-from: "basic-ingress"
 spec:
   parentRefs:
@@ -236,7 +236,7 @@ metadata:
   name: blue-green-route
   namespace: default
   annotations:
-    # NEW in v1.35: Deployment strategy tracking
+    # NEW: Deployment strategy tracking
     gateway.networking.k8s.io/deployment-strategy: "blue-green"
 spec:
   parentRefs:
@@ -396,7 +396,7 @@ Migrating from Ingress to Gateway API in Kubernetes v1.35 provides:
 - **Enhanced Functionality**: Advanced routing, traffic management, and policies
 - **Better Architecture**: Role-oriented design with clear separation of concerns
 - **Future-Proofing**: Active development and growing ecosystem support
-- **v1.35 Benefits**: Policy API, service mesh integration, multi-protocol support
+- **Gateway API v1.4 Benefits**: Policy API, service mesh integration, multi-protocol support
 - **Improved Operations**: Better observability, debugging, and management
 - **Standardization**: Portable configurations across different implementations
 

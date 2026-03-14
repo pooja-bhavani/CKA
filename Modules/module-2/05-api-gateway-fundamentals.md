@@ -24,9 +24,9 @@ Gateway API is increasingly important for modern Kubernetes:
 
 ---
 
-## Gateway API vs Ingress (Updated for v1.35)
+## Gateway API vs Ingress (Updated for Gateway v1.4)
 
-| Feature | Ingress | Gateway API v1.35 |
+| Feature | Ingress | Gateway API v1.4 |
 |---------|---------|-------------------|
 | **API Maturity** | Stable (v1) | Stable (v1.1) |
 | **Expressiveness** | Basic routing | Advanced routing + Service Mesh |
@@ -41,7 +41,7 @@ Gateway API is increasingly important for modern Kubernetes:
 
 ---
 
-## NEW v1.35: Gateway API v1.1 Features
+## NEW Gateway API v1.4 Features
 
 ### 1. Enhanced Service Mesh Integration
 - **Native Service Mesh Support**: Direct integration with Istio, Linkerd
@@ -76,7 +76,7 @@ metadata:
   name: istio
 spec:
   controllerName: istio.io/gateway-controller
-  # NEW in v1.35: Enhanced parameters
+  # NEW: Enhanced parameters
   parametersRef:
     group: gateway.istio.io
     kind: IstioGatewayClass
@@ -124,7 +124,7 @@ spec:
     allowedRoutes:
       namespaces:
         from: All
-  # NEW in v1.35: Enhanced address configuration
+  # NEW: Enhanced address configuration
   addresses:
   - type: IPAddress
     value: "192.168.1.100"
@@ -160,7 +160,7 @@ spec:
     - path:
         type: PathPrefix
         value: /api
-    # NEW in v1.35: Enhanced backend references
+    # NEW: Enhanced backend references
     backendRefs:
     - name: api-service
       port: 8080
@@ -168,7 +168,7 @@ spec:
     - name: api-service-canary
       port: 8080
       weight: 10
-    # NEW in v1.35: Request/Response filters
+    # NEW: Request/Response filters
     filters:
     - type: RequestHeaderModifier
       requestHeaderModifier:
@@ -185,7 +185,7 @@ spec:
 ```
 
 
-### 4. NEW v1.35: Enhanced Route Types
+### 4. NEW: Enhanced Route Types
 
 **GRPCRoute** (Stable):
 ```yaml
@@ -469,7 +469,7 @@ spec:
     - name: secure-api
       port: 8080
 ---
-# NEW v1.35: Security Policy for mesh
+# NEW: Security Policy for mesh
 apiVersion: gateway.networking.k8s.io/v1alpha2
 kind: SecurityPolicy
 metadata:
@@ -510,7 +510,7 @@ metadata:
   name: saas-gateway
   namespace: platform
 spec:
-  gatewayClassName: envoy-v135
+  gatewayClassName: envoy-v1.4
   listeners:
   - name: https
     protocol: HTTPS
@@ -543,7 +543,7 @@ spec:
     - name: tenant-alpha-app
       port: 80
 ---
-# NEW v1.35: Tenant-specific traffic policy
+# NEW: Tenant-specific traffic policy
 apiVersion: gateway.networking.k8s.io/v1alpha2
 kind: TrafficPolicy
 metadata:
@@ -598,7 +598,7 @@ spec:
 
 ### Use Case 3. Performance Optimization
 ```yaml
-# NEW v1.35: Performance-optimized gateway
+# NEW: Performance-optimized gateway
 apiVersion: gateway.networking.k8s.io/v1
 kind: Gateway
 metadata:
@@ -608,7 +608,7 @@ metadata:
     gateway.envoyproxy.io/concurrency: "4"
     gateway.envoyproxy.io/buffer-limit: "32KB"
 spec:
-  gatewayClassName: envoy-v135
+  gatewayClassName: envoy-v1.4
   listeners:
   - name: https
     protocol: HTTPS
@@ -730,7 +730,7 @@ kind: Gateway
 metadata:
   name: example-gateway
 spec:
-  gatewayClassName: envoy-v135
+  gatewayClassName: envoy-v1.4
   listeners:
   - name: http
     protocol: HTTP
@@ -769,7 +769,7 @@ spec:
 
 ## Summary
 
-Gateway API in Kubernetes v1.35 provides next-generation traffic management:
+Gateway API in Gateway API v1.4 provides next-generation traffic management:
 
 - **Enhanced API**: Stable v1.1 with Policy API support
 - **Multi-Protocol**: HTTP, HTTPS, gRPC, TCP, UDP support

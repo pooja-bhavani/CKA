@@ -27,23 +27,23 @@ kubectl run ml-training --image=tensorflow/tensorflow:2.8.0-gpu \
 
 **v1.35 Solution:**
 ```yaml
-# v1.35: GPU scheduling with gang scheduling
-apiVersion: scheduling.sigs.k8s.io/v1alpha1
-kind: PodGroup
+# v1.35: GPU scheduling with native Gang Scheduling (Alpha)
+# Note: Requires GenericWorkload feature gate and scheduling.k8s.io/v1alpha1 API group
+apiVersion: scheduling.k8s.io/v1alpha1
+kind: Workload
 metadata:
-  name: distributed-training-group-v135
+  name: distributed-training-workload
   namespace: ml-platform
 spec:
-  scheduleTimeoutSeconds: 300
-  minMember: 8  # All 8 GPU workers must be scheduled together
+  podGroupPolicies:
+  - name: train-group
+    minCount: 8
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: ml-training-v135
   namespace: ml-platform
-  annotations:
-    scheduler.kubernetes.io/gang-scheduling: "enabled"
 spec:
   replicas: 8
   selector:
@@ -53,16 +53,11 @@ spec:
     metadata:
       labels:
         app: ml-training
-        gang: distributed-training-group-v135
         gpu-type: nvidia-a100
-      annotations:
-        # Gang scheduling annotations
-        scheduler.kubernetes.io/gang-name: "distributed-training-group-v135"
-        scheduler.kubernetes.io/gang-min-size: "8"
-        scheduler.kubernetes.io/gang-scheduling-timeout: "300s"
+        # Reference the workload and pod group policy
+        scheduling.k8s.io/workload: distributed-training-workload
+        scheduling.k8s.io/pod-group: train-group
     spec:
-      # Enhanced scheduling for ML workloads
-      schedulerName: gang-scheduler
       affinity:
         nodeAffinity:
           requiredDuringSchedulingIgnoredDuringExecution:
@@ -71,61 +66,17 @@ spec:
               - key: accelerator
                 operator: In
                 values: ["nvidia-a100", "nvidia-v100"]
-              - key: gpu-memory
-                operator: In
-                values: ["40gb", "80gb"]
-        # Enhanced pod anti-affinity for distributed training
-        podAntiAffinity:
-          preferredDuringSchedulingIgnoredDuringExecution:
-          - weight: 100
-            podAffinityTerm:
-              labelSelector:
-                matchLabels:
-                  gang: distributed-training-group-v135
-              topologyKey: kubernetes.io/hostname
-          - weight: 50
-            podAffinityTerm:
-              labelSelector:
-                matchLabels:
-                  app: ml-training
-              topologyKey: topology.kubernetes.io/zone
-      # Advanced topology spread for ML workloads
-      topologySpreadConstraints:
-      - maxSkew: 2
-        topologyKey: topology.kubernetes.io/zone
-        whenUnsatisfiable: ScheduleAnyway
-        labelSelector:
-          matchLabels:
-            gang: distributed-training-group-v135
       containers:
       - name: ml-worker
-        image: tensorflow/tensorflow:2.13.0-gpu-v135
+        image: tensorflow/tensorflow:2.13.0-gpu
         command: ["python", "/app/distributed_training.py"]
         resources:
           requests:
-            memory: "16Gi"
-            cpu: "8000m"
             nvidia.com/gpu: 2
           limits:
-            memory: "32Gi"
-            cpu: "16000m"
             nvidia.com/gpu: 2
-        env:
-        - name: GANG_SIZE
-          value: "8"
-        - name: POD_NAME
-          valueFrom:
-            fieldRef:
-              fieldPath: metadata.name
-        - name: NODE_NAME
-          valueFrom:
-            fieldRef:
-              fieldPath: spec.nodeName
-        - name: GPU_TYPE
-          valueFrom:
-            fieldRef:
-              fieldPath: metadata.labels['gpu-type']
 ```
+
 ### Migration Complexity
 
 **Scheduling Migration**
@@ -162,32 +113,29 @@ spec:
 ```
 
 ```yaml
-# AFTER (v1.35): Enhanced scheduling
-apiVersion: scheduling.sigs.k8s.io/v1alpha1
-kind: PodGroup
+# AFTER (v1.35): Enhanced scheduling with native Gang Scheduling
+apiVersion: scheduling.k8s.io/v1alpha1
+kind: Workload
 metadata:
-  name: ml-training-group-v135
+  name: ml-training-workload
 spec:
-  scheduleTimeoutSeconds: 300
-  minMember: 8  # Gang scheduling guarantee
-```
-
-```yaml
+  podGroupPolicies:
+  - name: ml-training-group
+    minCount: 8
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: ml-training-v135
-  annotations:
-    scheduler.kubernetes.io/gang-scheduling: "enabled"
 spec:
   replicas: 8
   template:
     metadata:
-      annotations:
-        scheduler.kubernetes.io/gang-name: "ml-training-group-v135"
-        scheduler.kubernetes.io/gang-min-size: "8"
+      labels:
+        app: ml-training
+        scheduling.k8s.io/workload: ml-training-workload
+        scheduling.k8s.io/pod-group: ml-training-group
     spec:
-      schedulerName: gang-scheduler
       affinity:
         nodeAffinity:
           requiredDuringSchedulingIgnoredDuringExecution:
@@ -196,26 +144,9 @@ spec:
               - key: accelerator
                 operator: In
                 values: ["nvidia-a100", "nvidia-v100"]
-        podAntiAffinity:
-          preferredDuringSchedulingIgnoredDuringExecution:
-          - weight: 100
-            podAffinityTerm:
-              labelSelector:
-                matchLabels:
-                  gang: ml-training-group-v135
-              topologyKey: kubernetes.io/hostname
-      # v1.35: Enhanced topology spread
-      topologySpreadConstraints:
-      - maxSkew: 2
-        topologyKey: topology.kubernetes.io/zone
-        whenUnsatisfiable: ScheduleAnyway
-        labelSelector:
-          matchLabels:
-            gang: ml-training-group-v135
-        minDomains: 2  # v1.35 feature
       containers:
       - name: worker
-        image: tensorflow/tensorflow:2.13.0-gpu-v135
+        image: tensorflow/tensorflow:2.13.0-gpu
         resources:
           requests:
             nvidia.com/gpu: 1
@@ -291,8 +222,6 @@ apiVersion: v1
 kind: Pod
 metadata:
   name: advanced-node-affinity-v135
-  annotations:
-    scheduler.kubernetes.io/version: "v1.35"
 spec:
   affinity:
     nodeAffinity:
@@ -605,6 +534,7 @@ spec:
             fieldRef:
               fieldPath: metadata.name
 ```
+
 ### Scheduling Best Practices
 
 1. **Use Node Affinity** for hardware-specific requirements

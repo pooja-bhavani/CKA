@@ -15,5 +15,5 @@ spec:
     port: 80
     targetPort: 8080
   # v1.35+ topology-aware routing
-  trafficDistribution: PreferClose     # Prefer topologically closer endpoints
+  trafficDistribution: PreferSameZone     # Prefer topologically closer endpoints
   internalTrafficPolicy: Local         # Only route to local-node endpoints when possible

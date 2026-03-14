@@ -90,8 +90,6 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: ecommerce-frontend-v135
-  annotations:
-    deployment.kubernetes.io/strategy-version: "v1.35"
 spec:
   replicas: 100
   strategy:
@@ -189,8 +187,6 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: web-app-v135
-  annotations:
-    deployment.kubernetes.io/strategy-version: "v1.35"
 spec:
   replicas: 10
   strategy:
@@ -300,8 +296,6 @@ apiVersion: apps/v1
 kind: ReplicaSet
 metadata:
   name: advanced-replicaset-v135
-  annotations:
-    replicaset.kubernetes.io/version: "v1.35"
 spec:
   replicas: 5
   selector:
