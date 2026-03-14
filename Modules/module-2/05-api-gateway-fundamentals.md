@@ -17,7 +17,7 @@ Gateway API is the next-generation Kubernetes API for managing ingress traffic. 
 
 Gateway API is increasingly important for modern Kubernetes:
 - **Emerging topic** in CKA exam (5-10% weight expected)
-- **Stable API**: Gateway API v1.1+ is production-ready
+- **Stable API**: Gateway API v1.4+ is production-ready
 - **Service Mesh Integration**: Better integration with Istio, Linkerd, and other service meshes
 - **Enhanced Traffic Management**: Advanced traffic splitting and routing capabilities
 - **Multi-cluster Support**: Cross-cluster traffic management
@@ -28,7 +28,7 @@ Gateway API is increasingly important for modern Kubernetes:
 
 | Feature | Ingress | Gateway API v1.4 |
 |---------|---------|-------------------|
-| **API Maturity** | Stable (v1) | Stable (v1.1) |
+| **API Maturity** | Stable (v1) | Stable (v1.4) |
 | **Expressiveness** | Basic routing | Advanced routing + Service Mesh |
 | **Role Separation** | Single resource | Multiple resources |
 | **Protocol Support** | HTTP/HTTPS | HTTP, HTTPS, TCP, UDP, gRPC, GRPC-Web |
@@ -86,7 +86,7 @@ spec:
 **Common GatewayClasses**:
 - `istio`: Istio Gateway Controller (v1.20+)
 - `envoy`: Envoy Gateway (v1.0+)
-- `nginx`: NGINX Gateway Controller (v1.1+)
+- `nginx`: NGINX Gateway Controller (v1.4+)
 - `traefik`: Traefik Gateway Controller (v3.0+)
 - `cilium`: Cilium Gateway Controller (v1.14+)
 
@@ -332,7 +332,7 @@ These steps are required because you are installing Envoy Gateway, which uses th
 * Install Gateway API CRDs 
 ```
 kubectl create namespace envoy-gateway-system
-kubectl apply --server-side -f https://github.com/kubernetes-sigs/gateway-api/releases/download/v1.1.0/standard-install.yaml
+kubectl apply --server-side -f https://github.com/kubernetes-sigs/gateway-api/releases/download/v1.4.0/standard-install.yaml
 ```
 
 * Verify installation (should show v1 and v1beta1 as available versions for backward compatibility)
@@ -771,7 +771,7 @@ spec:
 
 Gateway API in Gateway API v1.4 provides next-generation traffic management:
 
-- **Enhanced API**: Stable v1.1 with Policy API support
+- **Enhanced API**: Stable v1.4 with Policy API support
 - **Multi-Protocol**: HTTP, HTTPS, gRPC, TCP, UDP support
 - **Role-Oriented**: Clear separation of concerns
 - **Service Mesh**: Native integration with Istio, Linkerd

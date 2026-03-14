@@ -15,7 +15,7 @@
 
 This repository is **fully updated for Kubernetes v1.35** with cutting-edge features:
 
-- 🆕 **Gateway API v1.1** - Next-generation ingress with Policy API
+- 🆕 **Gateway API v1.4** - Next-generation ingress with Policy API
 - 🆕 **In-Place Pod Updates** - Update resources without pod restart
 - 🆕 **User Namespaces** - Enhanced container security isolation
 - 🆕 **Gang Scheduling** - Coordinated pod scheduling for ML/AI workloads

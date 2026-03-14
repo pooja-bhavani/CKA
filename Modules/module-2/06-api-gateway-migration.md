@@ -48,7 +48,7 @@ Gateway API solves these limitations with:
 
 ### Phase 1: Preparation and Assessment
 1. **Audit existing Ingress resources**
-2. **Install Gateway API v1.1 CRDs** (latest for v1.35)
+2. **Install Gateway API v1.4 CRDs** (latest for v1.35)
 3. **Install Gateway Controller** (Envoy, NGINX, Istio, etc.)
 4. **Create GatewayClass resources**
 5. **Plan role separation** (Infrastructure vs Application teams)
