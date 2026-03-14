@@ -453,5 +453,3 @@ kubectl logs -n kube-system <kube-proxy-pod>
 4. **Health checks** - Configure readiness probes so unhealthy pods are removed from endpoints
 5. **DNS naming** - Use service names for inter-service communication
 6. **Namespace awareness** - Access services in other namespaces: `<service>.<namespace>.svc.cluster.local`
-
----

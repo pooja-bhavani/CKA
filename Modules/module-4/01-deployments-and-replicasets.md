@@ -1,3 +1,5 @@
+# Deployments and Replicasets
+
 ## Overview
 
 Deployments and ReplicaSets are fundamental workload resources in Kubernetes v1.35, providing declarative updates and scaling capabilities with 
@@ -370,5 +372,3 @@ spec:
 4. **Troubleshoot failed deployments**
 5. **Configure resource limits**
 6. **Set up health checks**
-
----

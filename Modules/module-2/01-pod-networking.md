@@ -721,4 +721,3 @@ kubectl run test-pod --image=busybox --rm -it -- /bin/sh
 kubectl get events --sort-by='.lastTimestamp'
 kubectl describe pod <pod-name>
 ```
-

@@ -417,20 +417,3 @@ resources:
 6. **Backup Corefile**: Keep a backup of custom CoreDNS configurations
 7. **Resource limits**: Set appropriate CPU and memory limits
 8. **Log monitoring**: Monitor CoreDNS logs for errors and warnings
-
----
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

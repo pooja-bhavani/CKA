@@ -20,9 +20,13 @@ spec:
         image: ollama/ollama:latest
         ports:
         - containerPort: 11434
+        env:
+        - name: OLLAMA_HOST
+          value: "0.0.0.0"
         volumeMounts:
         - name: ollama-data
           mountPath: /root/.ollama
       volumes:
       - name: ollama-data
-        emptyDir: {}
+        persistentVolumeClaim:
+          claimName: ollama-pvc

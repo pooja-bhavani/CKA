@@ -25,7 +25,10 @@ spec:
         - name: SPRING_DATASOURCE_USERNAME
           value: root
         - name: SPRING_DATASOURCE_PASSWORD
-          value: root
+          valueFrom:
+            secretKeyRef:
+              name: bankapp-secret
+              key: MYSQL_ROOT_PASSWORD
         - name: OLLAMA_ENDPOINT
           value: "http://ollama.bankapp.svc.cluster.local:11434"  
         resources:
@@ -34,6 +37,6 @@ spec:
             memory: "256Mi"
           limits:
             cpu: "500m"
-            memory: "512Gi"
+            memory: "512Mi"
 
    

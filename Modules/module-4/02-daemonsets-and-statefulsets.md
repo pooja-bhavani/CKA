@@ -1,3 +1,5 @@
+# Daemonsets and Statefulsets
+
 ## Overview
 
 DaemonSets and StatefulSets are specialized workload controllers in Kubernetes v1.35 that provide unique deployment patterns for system services 
@@ -187,5 +189,3 @@ spec:
 3. **Pod Anti-Affinity**: Spread pods across nodes for HA
 4. **Graceful Shutdown**: Set appropriate terminationGracePeriodSeconds
 5. **Backup Strategy**: Implement regular backup procedures
-
----

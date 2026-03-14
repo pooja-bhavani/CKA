@@ -310,23 +310,3 @@ spec:
 6. **Default behavior**: No policy = all allowed; any policy = default deny
 7. **Multiple policies**: Policies are additive (union of all rules)
 8. **Practice scenarios**: Default deny, namespace isolation, multi-tier apps
-
----
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

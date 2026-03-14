@@ -312,5 +312,3 @@ spec:
 3. **Deadlines**: Set `startingDeadlineSeconds` to handle scheduling delays
 4. **Timezone**: Explicitly set timezone for clarity
 5. **Idempotency**: Ensure jobs are idempotent for safe retries
-
----

@@ -1,8 +1,11 @@
-# 🚀 Complete CKA (Certified Kubernetes Administrator) Guide
+# Complete CKA (Certified Kubernetes Administrator) Guide
 
+<div align="center">
 [![Kubernetes](https://img.shields.io/badge/Kubernetes-v1.35-326CE5?style=for-the-badge&logo=kubernetes&logoColor=white)](https://kubernetes.io/)
 [![AWS](https://img.shields.io/badge/AWS-FF9900?style=for-the-badge&logo=amazon-aws&logoColor=white)](https://aws.amazon.com/)
 [![License](https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge)](LICENSE)
+</div>
+
 
 > The most comprehensive, hands-on CKA exam preparation guide for Kubernetes v1.35 with real-world projects
 
@@ -16,6 +19,7 @@ This repository is **fully updated for Kubernetes v1.35** with cutting-edge feat
 - 🆕 **Gang Scheduling** - Coordinated pod scheduling for ML/AI workloads
 - 🆕 **Enhanced Debugging** - Improved troubleshooting capabilities
 - 🆕 **Pod Certificates** - Native certificate management for pods
+
 ---
 
 ### 📚 Learning Sequence - Module Files (Complete Path)
@@ -24,11 +28,11 @@ This repository is **fully updated for Kubernetes v1.35** with cutting-edge feat
 
 | # | File | Topic | Subtopics | Exam Weight |
 |---|------|-------|-----------|------------|
-| **1** | [`Modules/module1/01-cluster-lifecycle.md`](./Modules/module1/01-cluster-lifecycle.md) | **Cluster Lifecycle** | kubeadm init • cluster upgrades • etcd backup/restore • cluster scaling | 25% |
-| **2** | [`Modules/module1/02-pod-security.md`](./Modules/module1/02-pod-security.md) | **Pod Security** | Pod security policies • certificate management • security standards • network policies | 15% |
-| **3** | [`Modules/module1/03-rbac.md`](./Modules/module1/03-rbac.md) | **RBAC & Access Control** | Roles • ClusterRoles • RoleBindings • ServiceAccounts • permissions | 15% |
-| **4** | [`Modules/module1/04-crd's.md`](./Modules/module1/04-crd's.md) | **Custom Resources (CRDs)** | Custom resource definitions • APIgroups • custom objects • schemas | 25% |
-| **5** | [`Modules/module1/05-kustomize.md`](./Modules/module1/05-kustomize.md) | **Kustomize** | Configuration management • overlays • patches • templates • merging | 25% |
+| **1** | [`Modules/module-1/01-cluster-lifecycle.md`](./Modules/module-1/01-cluster-lifecycle.md) | **Cluster Lifecycle** | kubeadm init • cluster upgrades • etcd backup/restore • cluster scaling | 25% |
+| **2** | [`Modules/module-1/02-pod-security.md`](./Modules/module-1/02-pod-security.md) | **Pod Security** | Pod security policies • certificate management • security standards • network policies | 15% |
+| **3** | [`Modules/module-1/03-rbac.md`](./Modules/module-1/03-rbac.md) | **RBAC & Access Control** | Roles • ClusterRoles • RoleBindings • ServiceAccounts • permissions | 15% |
+| **4** | [`Modules/module-1/04-crds.md`](./Modules/module-1/04-crds.md) | **Custom Resources (CRDs)** | Custom resource definitions • APIgroups • custom objects • schemas | 25% |
+| **5** | [`Modules/module-1/05-helm-and-kustomize.md`](./Modules/module-1/05-helm-and-kustomize.md) | **Kustomize** | Configuration management • overlays • patches • templates • merging | 25% |
 
 ---
 
@@ -36,41 +40,59 @@ This repository is **fully updated for Kubernetes v1.35** with cutting-edge feat
 
 | # | File | Topic | Subtopics | Exam Weight |
 |---|------|-------|-----------|------------|
-| **6** | [`Modules/module2/01-pod-networking.md`](./Modules/module2/01-pod-networking.md) | **Pod Networking Fundamentals** | Pod-to-pod communication • DNS resolution • Service discovery • CoreDNS | 20% |
-| **7** | [`Modules/module2/02-service-endpoints.md`](./Modules/module2/02-service-endpoints.md) | **Services & Endpoints** | ClusterIP services • NodePort services • LoadBalancer services • endpoint management | 20% |
-| **8** | [`Modules/module2/03-networking-policies.md`](./Modules/module2/03-networking-policies.md) | **Network Policies** | Network segmentation • ingress rules • egress rules • traffic filtering | 20% |
-| **9** | [`Modules/module2/04-core-dns.md`](./Modules/module2/04-core-dns.md) | **CoreDNS Configuration** | DNS resolution • DNS troubleshooting • name resolution • CoreDNS setup | 20% |
+| **6** | [`Modules/module-2/01-pod-networking.md`](./Modules/module-2/01-pod-networking.md) | **Pod Networking Fundamentals** | Pod-to-pod communication • DNS resolution • Service discovery • CoreDNS | 20% |
+| **7** | [`Modules/module-2/02-service-endpoints.md`](./Modules/module-2/02-service-endpoints.md) | **Services & Endpoints** | ClusterIP services • NodePort services • LoadBalancer services • endpoint management | 20% |
+| **8** | [`Modules/module-2/03-networking-policies.md`](./Modules/module-2/03-networking-policies.md) | **Network Policies** | Network segmentation • ingress rules • egress rules • traffic filtering | 20% |
+| **9** | [`Modules/module-2/04-core-dns.md`](./Modules/module-2/04-core-dns.md) | **CoreDNS Configuration** | DNS resolution • DNS troubleshooting • name resolution • CoreDNS setup | 20% |
 
 ---
 
-**Happy Learning!
 #### **MODULE 3: Advanced Topics & Ingress**
 
 | # | File | Topic | Subtopics | Exam Weight |
 |---|------|-------|-----------|------------|
-| **10** | [`Modules/Module3/01-api-gateway-fundamentals.md`](./Modules/Module3/01-api-gateway-fundamentals.md) | **Ingress & API Gateway Basics** | Ingress controller • routing rules • host-based routing • path-based routing | 20% |
-| **11** | [`Modules/Module3/02-api-gateway-migration.md`](./Modules/Module3/02-api-gateway-migration.md) | **Advanced API Gateway Patterns** | Traffic management • blue-green deployments • canary deployments • advanced routing | 20% |
+| **10** | [`Modules/module-3/01-api-gateway-fundamentals.md`](./Modules/module-3/01-api-gateway-fundamentals.md) | **Ingress & API Gateway Basics** | Ingress controller • routing rules • host-based routing • path-based routing | 20% |
+| **11** | [`Modules/module-3/02-api-gateway-migration.md`](./Modules/module-3/02-api-gateway-migration.md) | **Advanced API Gateway Patterns** | Traffic management • blue-green deployments • canary deployments • advanced routing | 20% |
+
+---
+
+#### **MODULE 4: Workloads & Scheduling**
+
+| # | File | Topic | Subtopics | Exam Weight |
+|---|------|-------|-----------|------------|
+| **12** | [`Modules/module-4/01-deployments-and-replicasets.md`](./Modules/module-4/01-deployments-and-replicasets.md) | **Deployments & ReplicaSets** | Deployments • rolling updates • rollbacks • scaling | 15% |
+| **13** | [`Modules/module-4/02-daemonsets-and-statefulsets.md`](./Modules/module-4/02-daemonsets-and-statefulsets.md) | **DaemonSets & StatefulSets** | Daemonsets • stateful applications • persistent volumes | 15% |
+| **14** | [`Modules/module-4/03-jobs-and-cronjobs.md`](./Modules/module-4/03-jobs-and-cronjobs.md) | **Jobs & CronJobs** | Batch processing • scheduled tasks • parallel executions | 10% |
+| **15** | [`Modules/module-4/04-scheduling.md`](./Modules/module-4/04-scheduling.md) | **Scheduling** | nodeSelector • affinity • anti-affinity • taints & tolerations | 15% |
+| **16** | [`Modules/module-4/05-resource-management.md`](./Modules/module-4/05-resource-management.md) | **Resource Management** | CPU/Memory requests & limits • ResourceQuotas • LimitRanges | 20% |
 
 ---
 
 ### ✅ Quick Module Navigation
 
 **🔗 Module 1 Files:**
-- [01-cluster-lifecycle.md](./Modules/module1/01-cluster-lifecycle.md) - kubeadm, upgrades, backups
-- [02-pod-security.md](./Modules/module1/02-pod-security.md) - security policies, certificates
-- [03-rbac.md](./Modules/module1/03-rbac.md) - roles, bindings, permissions
-- [04-crd's.md](./Modules/module1/04-crd's.md) - custom resources, APIs
-- [05-kustomize.md](./Modules/module1/05-kustomize.md) - configuration management
+- [01-cluster-lifecycle.md](./Modules/module-1/01-cluster-lifecycle.md) - kubeadm, upgrades, backups
+- [02-pod-security.md](./Modules/module-1/02-pod-security.md) - security policies, certificates
+- [03-rbac.md](./Modules/module-1/03-rbac.md) - roles, bindings, permissions
+- [04-crds.md](./Modules/module-1/04-crds.md) - custom resources, APIs
+- [05-helm-and-kustomize.md](./Modules/module-1/05-helm-and-kustomize.md) - configuration management
 
 **🔗 Module 2 Files:**
-- [01-pod-networking.md](./Modules/module2/01-pod-networking.md) - pod communication, DNS
-- [02-service-endpoints.md](./Modules/module2/02-service-endpoints.md) - services, endpoints
-- [03-networking-policies.md](./Modules/module2/03-networking-policies.md) - network segmentation
-- [04-core-dns.md](./Modules/module2/04-core-dns.md) - DNS troubleshooting
+- [01-pod-networking.md](./Modules/module-2/01-pod-networking.md) - pod communication, DNS
+- [02-service-endpoints.md](./Modules/module-2/02-service-endpoints.md) - services, endpoints
+- [03-networking-policies.md](./Modules/module-2/03-networking-policies.md) - network segmentation
+- [04-core-dns.md](./Modules/module-2/04-core-dns.md) - DNS troubleshooting
 
 **🔗 Module 3 Files:**
-- [01-api-gateway-fundamentals.md](./Modules/Module3/01-api-gateway-fundamentals.md) - ingress basics
-- [02-api-gateway-migration.md](./Modules/Module3/02-api-gateway-migration.md) - advanced patterns
+- [01-api-gateway-fundamentals.md](./Modules/module-3/01-api-gateway-fundamentals.md) - ingress basics
+- [02-api-gateway-migration.md](./Modules/module-3/02-api-gateway-migration.md) - advanced patterns
+
+**🔗 Module 4 Files:**
+- [01-deployments-and-replicasets.md](./Modules/module-4/01-deployments-and-replicasets.md) - deployments, updates
+- [02-daemonsets-and-statefulsets.md](./Modules/module-4/02-daemonsets-and-statefulsets.md) - daemonsets, statefulsets
+- [03-jobs-and-cronjobs.md](./Modules/module-4/03-jobs-and-cronjobs.md) - jobs, scheduling
+- [04-scheduling.md](./Modules/module-4/04-scheduling.md) - taints, tolerations, affinity
+- [05-resource-management.md](./Modules/module-4/05-resource-management.md) - quotas, limits
 
 ---
 
@@ -184,15 +206,15 @@ http://localhost:8080
 
 
 
-
 ## 🧩 Finding it Difficult?
 
 Don't worry — share your doubt as a post or reach out on:
-- 💬 **[Discord Community](https://discord.gg/yMDNaYEP)**
+- 💬 **[Discord Community](https://discord.gg/t8bF6Vux88)**
 - 💭 **[LinkedIn](https://www.linkedin.com/in/shubhamlondhe1996/)**
 - 💬 **[Official Website](https://www.trainwithshubham.com/)** 
 
+<div align="center">
 Happy Learning!
 
 **TrainWithShubham**
-
+</div>

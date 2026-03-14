@@ -401,4 +401,3 @@ Migrating from Ingress to Gateway API in Kubernetes v1.35 provides:
 - **Standardization**: Portable configurations across different implementations
 
 The migration requires careful planning but delivers significant long-term benefits for modern Kubernetes networking.
-

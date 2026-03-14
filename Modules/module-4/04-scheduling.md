@@ -622,4 +622,3 @@ Kubernetes v1.35 brings significant enhancements to pod scheduling:
 - **Improved Topology Spread Constraints** for better distribution
 - **Advanced Scheduler Profiles** for custom scheduling logic
 - **Better Performance** with optimized scheduling algorithms
---- 
