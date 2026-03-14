@@ -148,11 +148,13 @@ kubectl get nodes
 <img width="679" height="292" alt="image" src="https://github.com/user-attachments/assets/bb31e371-d615-4815-8350-7b88787ed3b5" />
 
 * Load image into kind
+
 ```
 kind load docker-image bankapp:docker --name bankapp
 ```
 
 * Verify is the pod is visible
+
 ```
 kubectl run bankapp-test \
   --image=bankapp:docker \
@@ -160,9 +162,11 @@ kubectl run bankapp-test \
   --port=8080 \
   -n bankapp
 ```
+
 ```
 kubectl get pod bankapp-test -n bankapp
 ```
+
 <img width="1016" height="271" alt="image" src="https://github.com/user-attachments/assets/0b7adc74-0a9a-4c9e-bf94-726941e792e7" />
 
 
@@ -171,6 +175,7 @@ kubectl get pod bankapp-test -n bankapp
 ```
 kubectl create namespace bankapp
 ```
+
 * Apply all the yaml files
 
 ```
@@ -180,13 +185,17 @@ kubectl apply -f <filename>
 <img width="1015" height="321" alt="image" src="https://github.com/user-attachments/assets/ed51cf44-2682-43aa-819d-e4ee07d702e7" />
 
 * Check the pod status
+
 ```
 kubectl get pods -n bankapp
 ```
+
 * Describe the pod for more information
+
 ```
 kubectl describe pod <podname> -n namespace
 ```
+
 <img width="803" height="86" alt="image" src="https://github.com/user-attachments/assets/39217fed-7271-4eda-8d21-a4de356889d0" />
 
 Wait until all pods are Running.
