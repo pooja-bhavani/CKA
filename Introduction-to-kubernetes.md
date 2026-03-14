@@ -48,5 +48,3 @@ As a DevOps Engineer mastering K8s helps you to understand how to optimize CICD 
 by constantly monitoring the repo. You define the infrastructure declaratively, achieving extreme velocity in getting code to production.
 
 In this course you’ll work on real-world Kubernetes activities such as cluster lifecycle management, security/RBAC, and networking.
-
----
