@@ -76,7 +76,7 @@ type: kubernetes.io/service-account-token
 
 #### Enhanced Security Context Integration
 
-```yml
+```yaml
 # v1.35: RBAC + Pod Security integration
 apiVersion: v1
 kind: Pod
@@ -104,7 +104,7 @@ spec:
 
 **how RBAC works with the new Pod Certificates feature**
 
-```yml
+```yaml
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
@@ -146,7 +146,7 @@ Motive: Allow app-sa to list/get/watch Pods only in dev namespace.
 
 **Roles**
 
-```yml
+```yaml
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
@@ -160,7 +160,7 @@ rules:
 
 **RoleBinding**
 
-```yml
+```yaml
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
@@ -187,7 +187,7 @@ Motive: Allow app-sa to list/get/watch Pods in all namespace.
 
 **clusterrole**
 
-```yml
+```yaml
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
@@ -200,7 +200,7 @@ rules:
 
 **ClusterRoleBinding**
 
-```yml
+```yaml
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:

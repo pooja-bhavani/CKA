@@ -134,7 +134,7 @@ kubectl get nodes
 ```
 
 #### Test v1.35 in-place resource updates
-```
+```bash
 kubectl run test-v135 --image=nginx --requests='cpu=100m,memory=128Mi'
 kubectl patch pod test-v135 --type='merge' -p='{"spec":{"containers":[{"name":"test-v135","resources":{"limits":{"cpu":"200m","memory":"256Mi"}}}]}}'
 ```
@@ -297,9 +297,8 @@ kubectl get pods -A
 echo "✅ Restore completed. Verify your v1.35 cluster is working correctly."
 ```
 
-#### Step 4: Upgrade kubelet and kubectl (on worker node)
 # On worker node
-```
+```bash
 sudo apt-mark unhold kubelet kubectl
 sudo apt-get update
 sudo apt-get install -y kubelet=1.35.0-1.1 kubectl=1.35.0-1.1
@@ -429,7 +428,7 @@ kubectl patch service <service-name> --type='merge' -p='{"spec":{"trafficDistrib
 
 **Issue**: ipvs mode warnings in v1.35
 # Check current kube-proxy mode
-```
+```bash
 kubectl get configmap kube-proxy -n kube-system -o jsonpath='{.data.config\.conf}' | grep mode
 
 # Migrate to nftables mode (recommended for v1.35)

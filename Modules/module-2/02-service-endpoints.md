@@ -293,6 +293,7 @@ spec:
     - port: 3306
       targetPort: 3306
 ```
+
 ## Troubleshooting 
 
 ### Error 1: Service Not Accessible

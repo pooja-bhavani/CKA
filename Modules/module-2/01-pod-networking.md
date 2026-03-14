@@ -43,7 +43,7 @@ Kubernetes imposes the following fundamental requirements on any networking impl
 3. **Pods in the host network** can communicate with all pods on all nodes without NAT.
 
 ### Network Model Diagram
-```
+```text
 ┌─────────────────────────────────────────────────────────────┐
 │                         Cluster                             │
 │                                                             │
@@ -87,7 +87,7 @@ sudo ip netns exec <namespace-id> ip addr
 
 CNI creates veth pairs to connect pod to node:
 
-```
+```text
 ┌─────────────────────────────────────┐
 │           Node                      │
 │                                     │
@@ -215,7 +215,7 @@ kubectl get pods -n kube-system | grep calico
 ```
 
 **Architecture**:
-```
+```text
 ┌─────────────────────────────────────────┐
 │  Node 1                                 │
 │  ┌─────────┐  ┌─────────┐               │

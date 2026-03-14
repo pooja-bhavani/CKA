@@ -15,7 +15,7 @@ CoreDNS is the default DNS server in Kubernetes clusters (since v1.13). It provi
 
 ### DNS Naming Convention
 
-```
+```text
 <service-name>.<namespace>.svc.cluster.local
 ```
 

@@ -18,7 +18,7 @@ CRDs allow you to extend Kubernetes by defining new resource types without modif
 
 ### CRD Architecture
 
-```
+```text
 ┌─────────────────────────────────────┐
 │         Kubernetes API              │
 │                                     │
@@ -43,7 +43,7 @@ Operator = CRD + Controller + Operational Knowledge
 
 ### Operator Pattern
 
-```
+```text
 ┌─────────────────────────────────────────┐
 │           Kubernetes API                │
 └────────────┬────────────────────────────┘
@@ -348,7 +348,7 @@ kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/v2
 #### Issue 1: CRD Not Found
 
 **Error:**
-```
+```text
 error: the server doesn't have a resource type "databases"
 ```
 
@@ -408,7 +408,7 @@ kubectl auth can-i --list --as=system:serviceaccount:<namespace>:<sa>
 You are working in a cloud platform team responsible for managing internal PostgreSQL databases using a custom Kubernetes Operator.
 Your organization has defined a custom resource called Database, which developers use to request new PostgreSQL instances for their applications. A junior DevOps engineer submits the following manifest to create a new database:
 
-```bash
+```yaml
 spec:
   replicas: "three"
 ```
@@ -420,7 +420,7 @@ However, in your CRD definition, spec.replicas is strictly defined as an integer
 
 **Error Message:**
 
-```
+```text
 The Database "my-db" is invalid: 
 spec.replicas: Invalid value: "three": spec.replicas in body must be of type integer: "string"
 ```
@@ -465,7 +465,7 @@ Your team wants to support two API versions of the Database CRD:
 
 **Error Message:**
 
-```
+```text
 The CustomResourceDefinition "databases.example.com" is invalid: 
 spec.versions: Invalid value: ...: must have exactly one version marked as storage version
 ```

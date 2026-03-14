@@ -290,7 +290,7 @@ spec:
 ## Role-Oriented Design
 
 Gateway API separates responsibilities:
-```
+```text
 ┌─────────────────────────────────────────────────┐
 │ Infrastructure Provider                         │
 │ - Installs Gateway Controller                   │
@@ -330,13 +330,13 @@ These steps are required because you are installing Envoy Gateway, which uses th
 
 
 * Install Gateway API CRDs 
-```
+```bash
 kubectl create namespace envoy-gateway-system
 kubectl apply --server-side -f https://github.com/kubernetes-sigs/gateway-api/releases/download/v1.4.0/standard-install.yaml
 ```
 
 * Verify installation (should show v1 and v1beta1 as available versions for backward compatibility)
-```
+```bash
 kubectl get crd | grep gateway
 ```
 
@@ -344,12 +344,12 @@ kubectl get crd | grep gateway
 
 
 * Install Envoy Gateway
-```
+```bash
 kubectl apply -f https://github.com/envoyproxy/gateway/releases/download/v1.5.9/install.yaml
 ```
 
 * Verify installation
-```
+```bash
 kubectl get pods -n envoy-gateway-system
 ```
 
@@ -497,12 +497,12 @@ spec:
 
 ## Real-World Use Cases
 
-### Use Case 1: Multi-Tenant Platform
+**Use Case 1: Multi-Tenant Platform**
 
 **Scenario**: SaaS platform with multiple customers, each with their own subdomain
 
-```yaml
-Multi-Tenant SaaS Platform
+**Multi-Tenant SaaS Platform Configuration:**
+
 ```yaml
 # Shared Gateway with enhanced security
 apiVersion: gateway.networking.k8s.io/v1
