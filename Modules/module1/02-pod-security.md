@@ -78,30 +78,31 @@ metadata:
 **Namespace-Pod-security**              
 [namespace-pod-security.yaml](../../k8s/security/01-namespaces-pod-security.yaml)
 
-```
+```bash
 kubectl apply -f 01-namespaces-pod-security.yaml
 kubectl get ns --show-labels
 ```
+
 <img width="1318" height="242" alt="image" src="https://github.com/user-attachments/assets/7f26c46d-1c47-428b-9b0d-eaba30f43127" />
 
 **What this does:**
-* bankapp-dev is relaxed – good for experimentation.
-* bankapp-staging enforces baseline and monitors for restricted.
-* bankapp-prod fully enforces restricted:v1.35, so only hardened Pods are admitted.
+* `enforce: restricted` ensures only hardened pods are admitted.
+* `warn: baseline` provides feedback for pods that don't meet the standard.
+* `audit: baseline` logs violations for later review.
 
 ### Pod Security – Bad vs Good Pod
 
 **Pod-Privileged (insecure pod)**              
 [02-pod-privileged.yaml](../../k8s/security/02-pod-privileged.yaml)
 
-```
+```bash
 kubectl apply -f 02-pod-privileged.yaml
 ```
 <img width="1007" height="173" alt="image" src="https://github.com/user-attachments/assets/66d3bcdf-dab3-4912-b647-40cac182d3f5" />
 
 
 * violates PodSecurity "restricted:v1.35": privileged containers, hostPath volumes are not allowed                   
-The bankapp-prod namespace, which enforces restricted:v1.35. When I try to run this privileged Pod with a hostPath to /var/log, the API server rejects it at admission time. It tells me why: the container is privileged, it uses hostPath, it can escalate privileges, it has all capabilities, and it doesn’t set runAsNonRoot. None of these Pods will ever start on my nodes.
+When trying to run a privileged Pod with a hostPath to /var/log in a restricted namespace, the API server rejects it at admission time. It tells me why: the container is privileged, it uses hostPath, it can escalate privileges, it has all capabilities, and it doesn’t set runAsNonRoot.
 
 **Pod-Secure-Baseline-Restricted (Secure Pod)**                    
 [03-pod-secure-baseline-restricted.yaml](../../k8s/security/03-pod-secure-baseline-restricted.yaml)
@@ -142,7 +143,7 @@ spec:
 **User Namespaces**           
 [04-pod-user-namespace.yaml](../../k8s/security/04-pod-user-namespace.yaml)
 
-```
+```bash
 kubectl apply -f 04-pod-user-namespace.yaml
 ```
 
@@ -188,7 +189,7 @@ spec:
 **Pod Certificates**       
 [05-pod-cert.yaml](../../k8s/security/05-pod-cert.yaml)
 
-```
+```bash
 kubectl apply -f 05-pod-cert.yaml
 ```
 
@@ -245,7 +246,7 @@ Admission controllers are plugins that intercept requests to the Kubernetes API 
 - **Behavior**: Approves/denies certificate requests
 
 ### Checking Enabled Admission Controllers
-```
+```bash
 # Check enabled admission controllers
 kubectl exec -n kube-system kube-apiserver-<node> -- kube-apiserver -h | grep enable-admission-plugins
 ```
@@ -314,7 +315,7 @@ kubectl apply -f pod.yaml
 #### Example 2 : ResourceQuota Exceeded
 
 **Error Message:**
-```
+```text
 Error from server (Forbidden): pods "my-pod" is forbidden: 
 exceeded quota: compute-quota, requested: requests.cpu=2, used: requests.cpu=8, limited: requests.cpu=10
 ```
@@ -333,7 +334,7 @@ kubectl edit resourcequota compute-quota -n <namespace>
 #### Example 3: LimitRange Violation
 
 **Error Message:**
-```
+```text
 Error from server (Forbidden): pods "my-pod" is forbidden: 
 maximum cpu usage per Container is 2, but limit is 4
 ```
@@ -381,7 +382,7 @@ kubectl label namespace <namespace> \
 
 #### Example 4: Running as Root Blocked (In v1.35)
 **Error Message:**
-```
+```text
 Error from server (Forbidden): pods "app" is forbidden: violates PodSecurity "restricted:latest": runAsNonRoot != true
 ```
 
@@ -447,7 +448,6 @@ kubectl api-resources | grep certificates
 
 # Check feature gates on API server
 kubectl get pods -n kube-system kube-apiserver-$(hostname) -o yaml | grep feature-gates
-
 ```
 
 **Solution:**
