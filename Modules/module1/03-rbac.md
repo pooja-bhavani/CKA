@@ -23,20 +23,22 @@ ServiceAccounts provide an identity for processes running in Pods. Every namespa
 ### ServiceAccount creation and use
 
 #### Create namespace and ServiceAccount
-```
+
+```bash
 kubectl create namespace dev
 kubectl create serviceaccount app-sa -n dev
 ```
 
 #### Inspect
-```
+
+```bash
 kubectl get sa -n dev
 kubectl describe sa app-sa -n dev
 ```
 
 Use this in a Pod:
 
-```
+```yaml
 apiVersion: v1
 kind: Pod
 metadata:
@@ -52,7 +54,8 @@ spec:
 #### ServiceAccount Token Changes
 
 **ServiceAccount with explicit token management**
-```
+
+```yaml
 apiVersion: v1
 kind: ServiceAccount
 metadata:
@@ -73,7 +76,7 @@ type: kubernetes.io/service-account-token
 
 #### Enhanced Security Context Integration
 
-```
+```yaml
 # v1.35: RBAC + Pod Security integration
 apiVersion: v1
 kind: Pod
@@ -100,7 +103,8 @@ spec:
 #### Integration with Pod Certificates 
 
 **how RBAC works with the new Pod Certificates feature**
-```
+
+```yaml
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
@@ -141,7 +145,8 @@ spec:
 Motive: Allow app-sa to list/get/watch Pods only in dev namespace.
 
 **Roles**
-```
+
+```yaml
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
@@ -152,8 +157,10 @@ rules:
   resources: ["pods"]
   verbs: ["get", "list", "watch"]
 ```
+
 **RoleBinding**
-```
+
+```yaml
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
@@ -168,7 +175,8 @@ roleRef:
   kind: Role
   name: pod-reader
 ```
-```
+
+```bash
 kubectl apply -f <filename.yaml>
 kubectl apply -f <filename.yaml>
 ```
@@ -179,7 +187,7 @@ Motive: Allow app-sa to list/get/watch Pods in all namespace.
 
 **clusterrole**
 
-```
+```yaml
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
@@ -192,7 +200,7 @@ rules:
 
 **ClusterRoleBinding**
 
-```
+```yaml
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
@@ -232,17 +240,20 @@ kubectl auth can-i --list
 # List all permissions in namespace
 kubectl auth can-i --list --namespace=production
 ```
+
 ### Examples
 
 #### Example 1: ServiceAccount Cannot Access Resources
 
 **Error:**
-```
+
+```bash
 Error from server (Forbidden): deployments.apps is forbidden: 
 User "system:serviceaccount:default:app-sa" cannot list resource "deployments"
 ```
 
 **Debug:**
+
 ```bash
 # Check ServiceAccount permissions
 kubectl auth can-i list deployments \
@@ -255,9 +266,11 @@ kubectl get rolebindings -n default -o yaml | grep -A 10 "app-sa"
 # Describe ServiceAccount
 kubectl describe serviceaccount app-sa -n default
 ```
+
 **Solution:**
 
 ### Create Role and RoleBinding
+
 ```yaml
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
@@ -283,15 +296,18 @@ roleRef:
   name: deployment-reader
   apiGroup: rbac.authorization.k8s.io
 ```
+
 #### Example 2: Forbidden - User Cannot Perform Action
 
 **Error:**
-```
+
+```bash
 Error from server (Forbidden): pods is forbidden: 
 User "jane" cannot list resource "pods" in API group "" in the namespace "default"
 ```
 
 **Debug:**
+
 ```bash
 # Check if user has permission
 kubectl auth can-i list pods --as=jane --namespace=default
@@ -304,6 +320,7 @@ kubectl get clusterrolebindings -o yaml | grep -A 5 "name: jane"
 ```
 
 **Solution:**
+
 ```bash
 # Create appropriate RoleBinding
 kubectl create rolebinding jane-pod-reader \
@@ -349,6 +366,7 @@ rules:
   resources: ["pods"]
   verbs: ["get", "list", "watch"]
 ```
+
 ##### ✅ Correct Configuration
 
 ```yaml
@@ -438,6 +456,7 @@ roleRef:
 ```
 
 ### Verification
+
 ```bash
 # Test permission
 kubectl auth can-i create deployments --as=bob --namespace=production
@@ -446,5 +465,3 @@ kubectl auth can-i create deployments --as=bob --namespace=production
 # Try creating a deployment
 kubectl create deployment nginx --image=nginx --as=bob --namespace=production
 ```
-
----
