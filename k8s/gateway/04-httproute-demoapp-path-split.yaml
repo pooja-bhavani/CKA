@@ -1,26 +1,26 @@
 apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
 metadata:
-  name: bankapp-path-routing
-  namespace: bankapp
+  name: demoapp-path-routing
+  namespace: demo-ns
 spec:
   parentRefs:
-  - name: bankapp-gateway
+  - name: sample-gateway
     namespace: gateway-system
   hostnames:
-  - "bankapp.example.com"
+  - "demoapp.example.com"
   rules:
   - matches:
     - path:
         type: PathPrefix
         value: /api
     backendRefs:
-    - name: bankapp
+    - name: demo-api-svc
       port: 8080
   - matches:
     - path:
         type: PathPrefix
         value: /
     backendRefs:
-    - name: bankapp-web
+    - name: demo-web-svc
       port: 80
